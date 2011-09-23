@@ -1,0 +1,39 @@
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+IndexIgnore *
+
+RewriteEngine On
+
+# if a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# otherwise forward it to index.php
+RewriteRule .* index.php
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+SetOutputFilter DEFLATE
+SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.pdf$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.avi$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.mov$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.mp3$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.mp4$ no-gzip dont-vary
+SetEnvIfNoCase Request_URI \.rm$ no-gzip dont-vary
+
+#remove Etag
+FileETag MTime Size
+<ifmodule mod_expires.c>
+  <filesmatch "\.(jpg|gif|png|css|js|ico)$">
+       ExpiresActive on
+       ExpiresDefault "access plus 1 month"
+   </filesmatch>
+</ifmodule>
