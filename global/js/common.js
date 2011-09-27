@@ -111,4 +111,30 @@ $(function(){
   Common.load();
   MenuSetting.create();
   $('#loader').remove();
+  
+  $('.nav > li').each(function(){
+		
+					if($(this).children('a').attr('href') == document.URL){
+			
+						$(this).addClass('active');
+		
+					}
+				});
+
+				// POSITION STATIC TWIPSIES
+				$(window).bind( 'load resize', function () {
+		  
+					$('body > .topbar').scrollSpy();
+		
+					$(".twipsies a").each(function () {
+						$(this)
+						.twipsy({
+							live: false
+							, placement: $(this).attr('title')
+							, trigger: 'manual'
+							, offset: 2
+						})
+						.twipsy('show');
+					});
+				});
 });

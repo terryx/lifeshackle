@@ -1,11 +1,11 @@
 <?php
 
 $route['*']['/'] = array('HomeController', 'index');
-$route['*']['/home'] = array('HomeController', 'index');
+$route['*']['/home'] = array('HomeController', 'home');
 $route['*']['/article'] = array('HomeController', 'article');
 $route['*']['/picture'] = array('HomeController', 'picture');
 $route['*']['/video'] = array('HomeController', 'video');
-$route['*']['/about'] = array('HomeController', 'about');
+$route['*']['/about'] = array('AboutController', 'index');
 $route['*']['/signin'] = array('HomeController', 'signin');
 
 $route['post']['/login'] = array('LoginController', 'login');

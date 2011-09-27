@@ -45,6 +45,5 @@ $dbmap['Users']['has_many']['Article'] = array('foreign_key' => 'user_id');
 $dbmap['Article']['belongs_to']['LatestUpdate'] = array('foreign_key' => 'latest_id');
 $dbmap['LatestUpdate']['has_one']['Article'] = array('foreign_key' => 'latest_id');
 
-//$dbconfig['dev'] = array('localhost', 'lifeshac_terryxbase', 'lifeshac', 'terryX1314???', 'mysql', true, 'collate'=>'utf8_general_ci', 'charset'=>'utf8');
-$dbconfig['dev'] = array('localhost', 'terryxbase', 'root', 'root', 'mysql', true);
+$dbconfig['dev'] = array('localhost', 'terryxbase', 'root', '', 'mysql', true);
 ?>

@@ -1,0 +1,58 @@
+/*--------------- Navigation ---------------*/
+body {
+	padding-top: 40px;
+}
+/*#life-nav {
+	margin:0 auto;
+	display:block;
+	height:68px;
+}
+
+#life-nav img {
+	margin-right: 5px;
+	vertical-align: bottom;
+}
+#life-nav a  {
+	float: left;
+	font-size: 15px;
+	width: 88px;
+	border-top:1px solid #ccc;
+	border-right:1px solid #ccc;
+	padding: 20px 20px 20px 15px;
+	text-align: center;
+	color: #333333;
+}
+#life-nav a:first-child {
+	padding-left: 0px;
+	border-left:1px solid #ccc;
+}
+#life-nav a:last-child {
+	padding: 15px 20px 17px 15px;
+}
+#life-nav a:hover {
+	background: #f3f3f3;
+	border-bottom:2px solid #ccc;
+	text-decoration: none;
+}
+#life-nav .active {
+	background: #f3f3f3;
+	border-bottom:2px solid #ccc;
+}*/
+
+#life:before, #life:after {
+	display: table;
+	content: "";
+	clear:both;
+}
+#life .main-content {
+	width:665px;
+	float:left;
+	padding: 0 5px;
+
+}
+#life .sidebar {
+	width:250px;
+	float:left;
+	padding: 0 5px;
+}
+

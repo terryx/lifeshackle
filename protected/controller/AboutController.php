@@ -11,9 +11,17 @@
  * @author terryx
  */
 class AboutController extends CommonController {
-  //put your code here
-  
 
+	public function index() {
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['title'] = "About Terry";
+		$data['content'] = 'about';
+		$data['nav'] = self::navigation();
+
+		$this->render('template/layout', $data, true);
+		
+	}
+	
 
 }
 

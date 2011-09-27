@@ -104,9 +104,7 @@ class ArticleController extends CommonController {
 
   public function getArticleList() {
     $rs = $this->db()->find('Article', array('select' =>
-                'article_id as k0,
-					 title as k1,
-					 created as k2',
+                'article_id as k0, title as k1, created as k2, visible as k3',
                 'desc' => 'created'));
     $this->toJSON($rs, true, true);
   }

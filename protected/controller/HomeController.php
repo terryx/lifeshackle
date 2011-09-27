@@ -2,45 +2,25 @@
 
 class HomeController extends CommonController {
 
-  public function index() {
+	public function signin() {
+		if (isset($_SESSION['user']) && $_SESSION['user']['is_logged_in'] === true) {
+			$this->redirect('home');
+		}
 
-    $data = self::assignNavigation();
-    $this->renderc('index', $data);
-  }
+		$data = self::assignNavigation();
+		$this->renderc('signin', $data);
+	}
 
-  public function article() {
-    $data = self::assignNavigation();
-    $this->renderc('article', $data);
-  }
+	public function index() {
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['title'] = "Life Shackle";
+		$data['content'] = 'index';
+		$data['nav'] = self::navigation();
+		$data['customscript'] = "global/js/ori/index.js?v1";
 
-  public function picture() {
-    $data = self::assignNavigation();
-    $this->renderc('picture', $data);
-  }
-
-  public function about() {
-//    if(isset($_SESSION['user']) && $_SESSION['is_logged_in'] === true && $_SESSION['user']['role'] === "super_admin" ){
-//
-//    }
-
-    $data = self::assignNavigation();
-    $this->renderc('about', $data);
-  }
-
-   public function video() {
-    $data = self::assignNavigation();
-    $this->renderc('video', $data);
-  }
-
-  public function signin() {
-    if(isset($_SESSION['user']) && $_SESSION['user']['is_logged_in'] === true){
-    $this->redirect('home');
-    }
-
-    $data = self::assignNavigation();
-    $this->renderc('signin', $data);
-  }
+		$this->render('template/layout', $data, true);
+		
+	}
 
 }
-
 ?>
