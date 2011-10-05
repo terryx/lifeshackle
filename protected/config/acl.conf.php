@@ -1,7 +1,7 @@
 <?php
 
 //set access control level for different users
-$acl['super_admin']['allow'] = '*';
+$acl['master']['allow'] = '*';
 
 $acl['inactive']['failRoute'] = array('ErrorController' => array('banUser'));
 

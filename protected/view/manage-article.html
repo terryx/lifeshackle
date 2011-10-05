@@ -1,6 +1,6 @@
 <!--  <div id="main-content">
     <div class="content">
-      <form id="manage-article-form" class="blk-form" action="<?php echo $data['baseurl']; ?>article/save_article" method="post">
+      <form id="manage-article-form" class="blk-form" action="{{baseurl}}article/save_article" method="post">
         <input type="hidden" id="article_id" name="article_id" />
         <label for="title" class="flat">Title</label>
         <input type="text" id="title" name="title" class="extend validate[required]" />
@@ -26,7 +26,7 @@
 
 
 <div id="main-content" class="span11">
-	<form id="manage-article-form" class="form-stacked" action="<?php echo $data['baseurl']; ?>article/save-article" method="post">
+	<form id="manage-article-form" class="form-stacked" action="{{baseurl}}article/save-article" method="post">
 			<fieldset>
 	<legend>Manage Article</legend>
 		<input type="hidden" id="article_id" name="article_id" />
@@ -63,24 +63,24 @@
         <button type="submit" id="search-button" name="search-button"></button>
       </form>
     </div>
-    <div id="search_result"> </div>
+    <div id="search_result"></div>
 </div>
 
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
+<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
+<script type="text/javascript" src="{{baseurl}}global/min/common.js?{{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}global/plugin/tiny_mce/jquery.tinymce.js"></script>
   <script type="text/javascript">
     $('#txtcontent').tinymce({
-      script_url : '<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/tiny_mce_gzip.php',
+      script_url : '{{baseurl}}global/plugin/tiny_mce/tiny_mce_gzip.php',
 
       theme : "advanced",
       plugins : "advimage,advlink,emotions,inlinepopups,preview,media,print,contextmenu,paste,fullscreen,noneditable,nonbreaking",
       dialog_type : "modal",
-      content_css : "<?php echo $data['baseurl']; ?>global/css/editor.css",
+      content_css : "{{baseurl}}global/css/editor.css",
       // Theme options
       theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
       theme_advanced_buttons2 : "image,media,emotions,|,bullist,numlist,|,blockquote,|,undo,redo,|,anchor,cleanup,code,|,forecolor,backcolor,|,hr,removeformat,|,charmap,|,print,|,fullscreen,|,preview",
@@ -95,10 +95,10 @@
 
   <script type="text/javascript">
     function deleteArticle(id){
-      $.delete_('<?php echo $data['baseurl']; ?>article/delete_article/'+id, function(data){
+      $.delete_('{{baseurl}}article/delete_article/'+id, function(data){
         if(data){
           $('#newForm').click();
-          Search.onload('<?php echo $data['baseurl']; ?>article/get_article_list', '#manage-article-form');
+          Search.onload('{{baseurl}}article/get_article_list', '#manage-article-form');
 
         }
         else {
@@ -162,7 +162,7 @@
 
     function refreshForm(id){
       $('#progress').show();
-      $.get('<?php echo $data['baseurl']; ?>article/get_one_article/'+id, function(data){
+      $.get('{{baseurl}}article/get_one_article/'+id, function(data){
         if(data){
           $('#article_id').val(data.article_id);
           $('#title').val(data.title);
@@ -199,7 +199,7 @@
 
 
       //Render search list at side content
-      Search.onload('<?php echo $data['baseurl']; ?>article/get_article_list', '#manage-article-form');
+      Search.onload('{{baseurl}}article/get_article_list', '#manage-article-form');
 
     }); //end document ready
 

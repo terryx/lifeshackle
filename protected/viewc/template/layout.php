@@ -7,10 +7,9 @@
 	<body>
 		<div class="container">
 			<?php $this->render($data['nav']); ?>
-			<div id="life">
-				<?php $this->render($data['content']); ?>	
+			<div class="row">
+				<?php $this->render($data['content'], $data, true); ?>	
 			</div>
-			<?php include 'footer.php'; ?>
 		</div>
 	</body>
 </html>

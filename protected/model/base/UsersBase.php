@@ -34,7 +34,7 @@ class UsersBase extends DooModel{
     public $email;
 
     /**
-     * @var enum 'normal','admin','super_admin').
+     * @var enum 'normal','admin','master').
      */
     public $type;
 

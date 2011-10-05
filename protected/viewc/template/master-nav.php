@@ -54,22 +54,22 @@
 	<div class="topbar" data-dropdown="dropdown">
 		<div class="topbar-inner">
 			<div class="container">
-				<a class="brand" href="{{baseurl}}home">Life's Shackle</a>
+				<a class="brand" href="<?php echo $data['baseurl']; ?>home">Life's Shackle</a>
 				<ul class="nav">
-					<li><a href="{{baseurl}}video">Video</a></li>
-					<li><a href="{{baseurl}}about">About</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>about">About</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle">Manage</a>
 						<ul class="dropdown-menu">
-							<li><a href="{{baseurl}}manage-article">Article</a></li>
-							<li><a href="{{baseurl}}manage-video">Video</a></li>
+							<li><a href="<?php echo $data['baseurl']; ?>manage-article">Article</a></li>
+							<li><a href="<?php echo $data['baseurl']; ?>manage-video">Video</a></li>
 							<li class="divider"></li>
-							<li><a href="{{baseurl}}manage-about">About</a></li>
+							<li><a href="<?php echo $data['baseurl']; ?>manage-about">About</a></li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="secondary-nav">
-					<li><a href="{{baseurl}}logout">Sign out</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>logout">Sign out</a></li>
 				</ul>
 			</div>
 		</div>

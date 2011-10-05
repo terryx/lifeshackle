@@ -3,6 +3,17 @@
 class VideoController extends CommonController {
 
 	public $per_page = 20;
+	
+	public function index() {
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['title'] = "Video Clip";
+		$data['content'] = 'video';
+		$data['nav'] = self::navigation();
+		$data['customscript'] = "global/js/video.js?v2";
+
+		$this->render('template/layout', $data, true);
+		
+	}
 
 	public function manageVideoPage() {
 		$menu = self::assignMenu();
@@ -152,6 +163,22 @@ class VideoController extends CommonController {
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}
+	
+//	public function getPagination(){
+//		
+//		if (intval($this->params['page']) < 1) {
+//			return 404;
+//		}
+//		
+//		$per_page = $this->per_page;
+//		$current_page = $this->params['page'];
+//		$offset = ($current_page - 1) * $per_page;
+//$sql = 'SELECT video.video_id as k0, video.title as k1, video.link as k2, video.thumbnail as k3 FROM video';
+//		$sql .=' WHERE video.visible = 1 ORDER BY video.video_id DESC LIMIT ' . $offset . ', ' . $per_page;
+//		
+//		$rs = $this->db()->fetchAll($sql);
+//		$this->toJSON($rs, true);
+//	}
 
 }
 

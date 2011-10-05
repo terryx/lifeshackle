@@ -2,7 +2,7 @@
 	<h3>Living under the shadow</h3>
 </div>
 <div id="main-content" class="span11 ">
-	<form id="login-form" method="post" action="{{baseurl}}login">
+	<form id="login-form" method="post" action="<?php echo $data['baseurl']; ?>login">
 		<div class="clearfix">
 			<label for="username">Username</label>
 			<div class="input">
@@ -32,7 +32,7 @@
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/common.js?{{version}}"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
-<script type="text/javascript" src="{{customscript}}"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['customscript']; ?>"></script>

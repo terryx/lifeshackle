@@ -66,7 +66,7 @@ var Search = {
     $('#search_result').html('');
     $.get(ajaxCall, function(data){
       if(data){
-        var list = '<ul id="search_ul">';
+        var list = '<ul id="search_ul" class="zebra-striped">';
 
         for(var i=0;i<data.length;i++){
           list += '<li id="'+ data[i].k0+'">'+ data[i].k1+'</li>';

@@ -62,33 +62,6 @@ class CommonController extends DooController {
 		}
 	}
 
-	//set navigation and menu bar for registered and non-register user
-	// nav -> navigation bar
-	//menu -> menu bar
-//	protected static function assignNavigation() {
-//		//set navigation to admin if is user
-//		if (isset($_SESSION['user']) && $_SESSION['user']['status'] === 'active') {
-//			$data['nav'] = 'template/a-nav';
-//			switch ($_SESSION['user']['role']) {
-//				case 'normal':
-//					$data['menu'] = 'template/normal-menu';
-//					break;
-//				case 'admin':
-//					$data['menu'] = 'template/admin-menu';
-//					break;
-//				case 'super_admin':
-//					$data['menu'] = 'template/master-menu';
-//					break;
-//			}
-//		} else {
-//			//set navigation to visitor
-//			$data['nav'] = 'template/v-nav';
-//			$data['menu'] = 'template/v-menu';
-//		}
-//		return $data;
-//	}
-	
-
 	public static function navigation() {
 		$nav = null;
 		
@@ -97,7 +70,7 @@ class CommonController extends DooController {
 				case "admin":
 					$nav = "template/admin-nav";
 					break;
-				case "super_admin":
+				case "master":
 					$nav = "template/master-nav";
 					break;
 				default :

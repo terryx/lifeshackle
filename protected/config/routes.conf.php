@@ -1,16 +1,16 @@
 <?php
 
 $route['*']['/'] = array('HomeController', 'index');
-$route['*']['/home'] = array('HomeController', 'home');
+$route['*']['/home'] = array('HomeController', 'index');
 $route['*']['/article'] = array('HomeController', 'article');
 $route['*']['/picture'] = array('HomeController', 'picture');
-$route['*']['/video'] = array('HomeController', 'video');
+$route['*']['/video'] = array('VideoController', 'index');
 $route['*']['/about'] = array('AboutController', 'index');
-$route['*']['/signin'] = array('HomeController', 'signin');
+$route['*']['/sign-in'] = array('LoginController', 'index');
 
 $route['post']['/login'] = array('LoginController', 'login');
 $route['*']['/logout'] = array('LoginController', 'logout');
-$route['*']['/super_admin'] = array('SuperAdminController', 'index');
+$route['*']['/master'] = array('MasterController', 'index');
 $route['*']['/finance'] = array('FinanceController', 'index');
 
 //Article
@@ -30,11 +30,11 @@ $route['post']['/expense/save-expense'] = array('ExpenseController', 'saveExpens
 //Finance
 $route['*']['/manage-finance'] = array('FinanceController', 'manageFinancePage');
 
-//Super Administrator rights
-$route['*']['/manage-user'] = array('SuperAdminController', 'manageUserPage');
-$route['post']['/super_admin/save_user'] = array('SuperAdminController', 'saveUser');
-$route['get']['/super_admin/get_user_list'] = array('SuperAdminController', 'getUserList');
-$route['get']['/super_admin/get_one_user/:id'] = array('SuperAdminController', 'getOneUser');
+//Master rights
+$route['*']['/manage-user'] = array('MasterController', 'manageUserPage');
+$route['post']['/master/save_user'] = array('MasterController', 'saveUser');
+$route['get']['/master/get_user_list'] = array('MasterController', 'getUserList');
+$route['get']['/master/get_one_user/:id'] = array('MasterController', 'getOneUser');
 
 //Picture Gallery
 $route['*']['/manage-picture'] = array('PictureController', 'managePicturePage');
@@ -69,6 +69,26 @@ $route['*']['/test-page'] = array('TestController', 'testPage');
 
 
 //---------- Delete if not needed ------------
+
+$admin = array('admin'=>'1234');
+
+//view the logs and profiles XML, filename = db.profile, log, trace.log, profile
+$route['*']['/debug/:filename'] = array('MainController', 'debug', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//show all urls in app
+$route['*']['/allurl'] = array('MainController', 'allurl', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate routes file. This replace the current routes.conf.php. Use with the sitemap tool.
+$route['post']['/gen_sitemap'] = array('MainController', 'gen_sitemap', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate routes & controllers. Use with the sitemap tool.
+$route['post']['/gen_sitemap_controller'] = array('MainController', 'gen_sitemap_controller', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate Controllers automatically
+$route['*']['/gen_site'] = array('MainController', 'gen_site', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate Models automatically
+$route['*']['/gen_model'] = array('MainController', 'gen_model', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
 
 
 ?>

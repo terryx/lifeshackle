@@ -1,6 +1,18 @@
 <?php
 
-class LoginController extends DooController {
+class LoginController extends CommonController {
+	
+	public function index() {
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['version'] = Doo::conf()->version;
+		$data['title'] = "Sign In";
+		$data['content'] = 'login';
+		$data['nav'] = self::navigation();
+		$data['customscript'] = $data['baseurl']."global/js/login.js?".$data['version'];
+
+		$this->render('template/layout', $data, true);
+		
+	}
 
   //set auto login cookie for 1 year
   protected function setRememberMe($cookie_user, $cookie_pass) {
@@ -24,7 +36,6 @@ class LoginController extends DooController {
       if ($rs) {
 
         if ($rs->status === 'active') {
-          session_start();
           $_SESSION['user'] = array(
               'id' => $rs->id,
               'username' => $rs->username,
@@ -36,7 +47,7 @@ class LoginController extends DooController {
           //if remember me is selected
           (isset($_POST['remember'])) ? $this->setRememberMe($username, $u->password) : false;
 
-          $this->toJSON(array('is_logged_in' => true, 'role' => $rs->type), true);
+          $this->toJSON(array('is_logged_in' => true), true);
 
           return 200;
         } else {
@@ -54,7 +65,6 @@ class LoginController extends DooController {
   }
 
   public function logout() {
-    session_start();
     unset($_SESSION['user']);
     session_destroy();
     if (isset($_COOKIE['lfshacksuser']) && isset($_COOKIE['lfshackspwd'])) {
