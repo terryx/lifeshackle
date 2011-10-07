@@ -1,30 +1,3 @@
-<!--  <div id="main-content">
-    <div class="content">
-      <form id="manage-article-form" class="blk-form" action="<?php echo $data['baseurl']; ?>article/save_article" method="post">
-        <input type="hidden" id="article_id" name="article_id" />
-        <label for="title" class="flat">Title</label>
-        <input type="text" id="title" name="title" class="extend validate[required]" />
-        <label for="txtcontent">Content</label>
-        <textarea id="txtcontent" name="txtcontent" rows="13" cols="75"></textarea>
-        <label for="tag" class="flat">Tags</label>
-        <input type="text" id="tag" name="tag" class="extend" /><br />
-        <input type="submit" id="submit" name="submit" value="Post" class="pre" />
-        <span id="deleteButton"></span>
-      </form>
-    </div>
-  </div>
-
-  <div id="side-content">
-    <div id="search-container">
-      <form id="search-form">
-        <input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" />
-        <button type="submit" id="search-button" name="search-button"></button>
-      </form>
-    </div>
-    <div id="search_result"> </div>
-  </div>-->
-
-
 <div id="main-content" class="span11">
 	<form id="manage-article-form" class="form-stacked" action="<?php echo $data['baseurl']; ?>article/save-article" method="post">
 			<fieldset>
@@ -59,18 +32,18 @@
 <div class="span5">
 	<div id="search-container">
       <form id="search-form">
-        <input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" />
+        <input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
         <button type="submit" id="search-button" name="search-button"></button>
       </form>
     </div>
-    <div id="search_result"> </div>
+    <div id="search-result"></div>
 </div>
 
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
   <script type="text/javascript">
@@ -167,7 +140,6 @@
           $('#article_id').val(data.article_id);
           $('#title').val(data.title);
           $('#txtcontent').val(data.body);
-          $('.cleditorMain >iframe').contents().find('body').html(data.body);
           $('#tag').val(data.tag);
 
           var str = '<input class="glassbutton" type="button" onclick="deleteArticle('+ data.article_id +');" value="Delete" />';

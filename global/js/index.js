@@ -5,10 +5,10 @@ function filterByArchive(date){
 //			Common.removeDiv("#pagination");
 			Common.clearDiv("#main-content");
 			for(var i=0;i<data.length;i++){
-				str += '<div class="span11">';
-				str += '<h1>'+data[i].k1+'</h1>';
-				str += 'By '+data[i].k5 + ' on '+data[i].k2+'<hr />';
-				str += data[i].k3
+				str += '<div class="span10 i-content">';
+				str += '<h2>'+data[i].k1+'</h2>';
+				str += '<div class="i-publish">By <span class="i-bold">'+data[i].k5 + '</span> on '+data[i].k2+'</div>';
+				str += data[i].k3;
 				str += '</div>';
 			}
 		}
@@ -45,9 +45,6 @@ function getPagination(page){
 			}
 			$(str).appendTo('#main-content');
 
-		}
-		else {
-			return false;
 		}
 	});
 }

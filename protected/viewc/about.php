@@ -1,8 +1,6 @@
-<div class="main-content">			
-
+<div id="main-content" class="span11">	
 	<h3>Summary</h3>
-	A PHP freak and jQuery ninja wannable.
-
+	<p>A PHP freak and jQuery ninja wannable.</p>
 
 	<h3>Software skills</h3>
 	Experience with :
@@ -26,7 +24,12 @@
 		<li>Operating Systems : Windows XP, Windows 7, Mac OS X</li>
 	</ul>
 </div>
-
-<div class="sidebar">
-	ABC
+<div class="span5">
+	<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
 </div>
+
+<div id="footer"></div>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>

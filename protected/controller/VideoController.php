@@ -6,6 +6,7 @@ class VideoController extends CommonController {
 	
 	public function index() {
 		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['version'] = Doo::conf()->version;
 		$data['title'] = "Video Clip";
 		$data['content'] = 'video';
 		$data['nav'] = self::navigation();
@@ -16,8 +17,13 @@ class VideoController extends CommonController {
 	}
 
 	public function manageVideoPage() {
-		$menu = self::assignMenu();
-		$this->renderc('/manage-video', $menu);
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['version'] = Doo::conf()->version;
+		$data['title'] = "Manage Video";
+		$data['content'] = 'manage-video';
+		$data['nav'] = self::navigation();
+
+		$this->render('template/layout', $data, true);
 	}
 
 	public function saveVideo() {

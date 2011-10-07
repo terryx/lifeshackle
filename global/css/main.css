@@ -23,7 +23,11 @@ body {
 	float: right;
 	display: none;
 }
-
+#progress {
+	background: url(../img/loader.gif) 50% 50% no-repeat;
+	min-width:66px;
+	height:325px;
+}
 /*----------- pagination ------------*/
 #pagination {
 	clear:both;
@@ -191,7 +195,7 @@ span.jPag-snext-img{
 	text-align: center;
 }
 
-/*-------------- Form ------------------*/
-.custom-form {
-	
+/*-------------- Search ------------------*/
+#search-result tr{
+	cursor: pointer;
 }
