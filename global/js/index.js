@@ -8,7 +8,9 @@ function filterByArchive(date){
 				str += '<div class="span10 i-content">';
 				str += '<h2>'+data[i].k1+'</h2>';
 				str += '<div class="i-publish">By <span class="i-bold">'+data[i].k5 + '</span> on '+data[i].k2+'</div>';
+				str += '<div class="span10">';
 				str += data[i].k3;
+				str += '</div>';
 				str += '</div>';
 			}
 		}
@@ -40,7 +42,9 @@ function getPagination(page){
 				str += '<div class="span10 i-content">';
 				str += '<h2>'+data[i].k1+'</h2>';
 				str += '<div class="i-publish">By <span class="i-bold">'+data[i].k5 + '</span> on '+data[i].k2+'</div>';
+				str += '<div class="span10">';
 				str += data[i].k3;
+				str += '</div>';
 				str += '</div>';
 			}
 			$(str).appendTo('#main-content');

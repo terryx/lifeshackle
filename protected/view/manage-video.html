@@ -1,5 +1,6 @@
 <div id="main-content" class="span11">
-	<div id="video-frame" class="span10" style="text-align: center"></div>
+	<div id="video-frame" class="span10"></div>
+	<div class="clear"></div>
 	<form id="manage-video-form" action="{{baseurl}}video/save_video" method="post" class="form-stacked">
 		<input type="hidden" id="video_id" name="video_id" />
 		<input type="hidden" id="title" name="title" />
@@ -98,25 +99,22 @@
 	}
 
 	function refreshForm(id){
+		Common.clearDiv('#video-frame');
+		Common.clearDiv('#manage-video-form');
 		Common.wait();
 		$.get('video/get_one_video/'+id, function(data){
 			if(data){
 				var id = videoLinkId(data.link);
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
 
-				Common.clearDiv('#video-frame');
-				Common.clearDiv('#manage-video-form');
-				$('#video-frame').append(iframe);
-
-				$('iframe').load(function(){
-
+//				$('iframe').load(function(){
 					var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
 					str += '<div class="row">';
-					str += '<div class=clearfix>';
+					str += '<div class="clearfix">';
 					str += '<label for="visible">Visible to public ?</label>';
 					str +=  is_visible(data.visible);
 					str += '</div>';
-					str +='<div class=clearfix>';
+					str +='<div class="clearfix">';
 					str += '<label for="title">Title</label>';
 					str += data.title;
 					str += '</div>';
@@ -125,9 +123,11 @@
 					str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
 					str += '</div>';
 					str += '</div>';
-					$('#manage-video-form').append(str);
+					
 					Common.end();
-				});
+					$('#video-frame').append(iframe);
+					$('#manage-video-form').append(str);
+//				});
 			}
 
 		});
@@ -141,7 +141,7 @@
 		}
 
 		else{
-			visible = '<input type="radio" name="visible" value="1" />Yes';
+			visible = '<input type="radio" name="visible" value="1" />&nbsp;Yes&nbsp;&nbsp;';
 			visible += '<input type="radio" name="visible" value="0" checked /> No';
 		}
 		return visible;

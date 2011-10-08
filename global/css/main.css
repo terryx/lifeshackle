@@ -26,7 +26,10 @@ body {
 #progress {
 	background: url(../img/loader.gif) 50% 50% no-repeat;
 	min-width:66px;
-	height:325px;
+	height:326px;
+}
+.clear {
+	clear:both;
 }
 /*----------- pagination ------------*/
 #pagination {
@@ -180,6 +183,7 @@ span.jPag-snext-img{
 }
 #video-frame {
 	padding-top: 10px;
+	text-align: center;
 }
 .video-box {
 	cursor: pointer;

@@ -4,7 +4,7 @@ var Common = {
 		$('#loader').height(body);
 	},
 	wait : function() {
-		var str = '<div id="progress" /></div>';
+		var str = '<div id="progress"></div>';
 		$('#main-content').append(str);
 	},
 	end : function(){

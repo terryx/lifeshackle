@@ -2,7 +2,7 @@
 
 class ArticleController extends CommonController {
 
-	public $per_page = 2;
+	public $per_page = 5;
 
 	public function escape_val($val) {
 
