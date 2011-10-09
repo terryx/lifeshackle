@@ -25,8 +25,10 @@
 </div>
 
 <div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
+<script type="text/javascript" src="{{baseurl}}global/js/jquery.js"></script>
+<script type="text/javascript" src="{{baseurl}}global/js/jquery-ui.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
@@ -78,26 +80,22 @@
 		});
 	}
 
-	function beforeCall(){
-		Common.wait();
-		Common.bindLoading('#submit');
-		return true;
-	}
-	function ajaxValidationCallback(status, form, json){
-		Common.end();
-		if(status === true){
-			if(json[2] !== undefined){
-				refreshForm(json[2]);
-			} else {
-				ajaxSuccess(json[0], json[1]);
-			}
 
-		}
-		else {
-			ajaxFail('System database error. Please try again later', 'Error');
-		}
-		Search.onload('video/get_video_list', '#manage-video-form');
-	}
+	//	function ajaxValidationCallback(status, form, json){
+	//		Common.end();
+	//		if(status === true){
+	//			if(json[2] !== undefined){
+	//				refreshForm(json[2]);
+	//			} else {
+	//				ajaxSuccess(json[0], json[1]);
+	//			}
+	//
+	//		}
+	//		else {
+	//			ajaxFail('System database error. Please try again later', 'Error');
+	//		}
+	//		Search.onload('video/get_video_list', '#manage-video-form');
+	//	}
 
 	function refreshForm(id){
 		Common.clearDiv('#video-frame');
@@ -148,41 +146,53 @@
 		return visible;
 	}
 
-	function ajaxFail(msg){
-		Common.removeDiv('#dialog-confirm');
-		$('body').append('<div id="dialog-confirm">'+$.parseJSON(msg)+'</div>');
-		$('#dialog-confirm').dialog({
-			width: 350,
-			height: 160,
-			title: 'Oops..Something has go wrong',
-			modal: true,
-			buttons: {
-				"Ok": function() {
-					$(this).dialog('close');
-					$(this).remove();
-				}
-			}
-		});
-		Common.unbindLoading("#submit", "Post");
-	}
+	//	function ajaxFail(msg){
+	//		Common.removeDiv('#dialog-confirm');
+	//		$('body').append('<div id="dialog-confirm">'+$.parseJSON(msg)+'</div>');
+	//		$('#dialog-confirm').dialog({
+	//			width: 350,
+	//			height: 160,
+	//			title: 'Oops..Something has go wrong',
+	//			modal: true,
+	//			buttons: {
+	//				"Ok": function() {
+	//					$(this).dialog('close');
+	//					$(this).remove();
+	//				}
+	//			}
+	//		});
+	//		Common.unbindLoading("#submit", "Post");
+	//	}
 
-	function ajaxSuccess(success, text){
-		Common.removeDiv('#dialog-confirm');
-		$('<div id="dialog-confirm">'+text+'</div>').appendTo('body');
-		$('#dialog-confirm').dialog({
-			width: 350,
-			height: 160,
-			title: success,
-			modal: true,
-			buttons: {
-				"Ok": function() {
-					$(this).dialog('close');
-					$(this).remove();
-				}
+	//	function ajaxSuccess(success, text){
+	//		Common.removeDiv('#dialog-confirm');
+	//		$('<div id="dialog-confirm">'+text+'</div>').appendTo('body');
+	//		$('#dialog-confirm').dialog({
+	//			width: 350,
+	//			height: 160,
+	//			title: success,
+	//			modal: true,
+	//			buttons: {
+	//				"Ok": function() {
+	//					$(this).dialog('close');
+	//					$(this).remove();
+	//				}
+	//			}
+	//		});
+	//		Common.unbindLoading("#submit", "Update");
+	//	}
+	function ajaxCallback(status, form, json){
+		$('body').css('cursor', 'default');
+		
+	
+		
+		if(status === true ) {
+			if(json === 200){
+				displayMessage('success', 'Video has updated');
 			}
-		});
-		Common.unbindLoading("#submit", "Update");
+		}
 	}
+	
 	$(function(){
 
 		MenuSetting.resetButton({
@@ -192,7 +202,7 @@
 		//form validation
 		$('#manage-video-form').validationEngine({
 			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxValidationCallback,
+			onAjaxFormComplete: ajaxCallback,
 			onBeforeAjaxFormValidation: beforeCall
 		});
 

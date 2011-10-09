@@ -37,7 +37,6 @@
 <script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
 <script type="text/javascript">
 
-
 	function ajaxCallback(status, form, msg){
 		$('body').css('cursor', 'default');
 		
@@ -46,7 +45,7 @@
 				window.location = 'home';
 			} else {
 				if ($('.alert-message').length === 0) {
-					var str = '<div id="test" class="alert-message error" data-alert>'+
+					var str = '<div class="alert-message error" data-alert>'+
 						'<a class="close" href="#">x</a>'+
 						'<p>'+msg+'</p>'+
 						'</div>';
