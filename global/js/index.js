@@ -2,15 +2,12 @@ function filterByArchive(date){
 	$.get("article/filter-by-archive/"+date, function(data){
 		if(data){
 			var str = '';
-//			Common.removeDiv("#pagination");
 			Common.clearDiv("#main-content");
 			for(var i=0;i<data.length;i++){
 				str += '<div class="span10 i-content">';
 				str += '<h2>'+data[i].k1+'</h2>';
-				str += '<div class="i-publish">By <span class="i-bold">'+data[i].k5 + '</span> on '+data[i].k2+'</div>';
-				str += '<div class="span10">';
+				str += '<strong>'+data[i].k2+'</strong><br />';
 				str += data[i].k3;
-				str += '</div>';
 				str += '</div>';
 			}
 		}
@@ -41,10 +38,8 @@ function getPagination(page){
 			for(var i=0;i<data.length;i++){
 				str += '<div class="span10 i-content">';
 				str += '<h2>'+data[i].k1+'</h2>';
-				str += '<div class="i-publish">By <span class="i-bold">'+data[i].k5 + '</span> on '+data[i].k2+'</div>';
-				str += '<div class="span10">';
+				str += '<strong>'+data[i].k2+'</strong><br />';
 				str += data[i].k3;
-				str += '</div>';
 				str += '</div>';
 			}
 			$(str).appendTo('#main-content');

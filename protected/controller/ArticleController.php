@@ -199,8 +199,8 @@ class ArticleController extends CommonController {
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
 		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-		$sql .= 'article.body as k3, article.tag as k4, users.username as k5 FROM article, users';
-		$sql .=' WHERE article.visible = 1 AND article.user_id = users.id ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		$sql .= 'article.body as k3, article.tag as k4 FROM article';
+		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
 
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
@@ -218,13 +218,17 @@ class ArticleController extends CommonController {
 
 		Doo::loadModel("Article");
 
-		$a = new Article;
-		$opt['select'] = "article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4, users.username as k5";
-		$opt["where"] = "article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
-		$opt['desc'] = 'article.article_id';
-		$rs = $a->relate("Users", $opt);
-
-		$this->toJSON($rs, true, true);
+//		$a = new Article;
+//		$opt['select'] = "article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4";
+//		$opt["where"] = "article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
+//		$opt['desc'] = 'article.article_id';
+//		$rs = $a->relate("Users", $opt);
+		$sql = "SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4 FROM article";
+		$sql .= " WHERE article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
+		$sql .= " ORDER BY article.article_id DESC";
+		
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
 	}
 
 }

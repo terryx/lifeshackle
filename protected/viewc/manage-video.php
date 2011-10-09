@@ -30,6 +30,7 @@
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.tablesorter.min.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript">
 	function loadIframe(){
 
@@ -107,27 +108,27 @@
 				var id = videoLinkId(data.link);
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
 
-//				$('iframe').load(function(){
-					var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
-					str += '<div class="row">';
-					str += '<div class="clearfix">';
-					str += '<label for="visible">Visible to public ?</label>';
-					str +=  is_visible(data.visible);
-					str += '</div>';
-					str +='<div class="clearfix">';
-					str += '<label for="title">Title</label>';
-					str += data.title;
-					str += '</div>';
-					str += '<div class="actions">';
-					str += '<button class="btn primary" type="submit" id="submit" name="submit">Update</button>&nbsp;';
-					str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
-					str += '</div>';
-					str += '</div>';
+				//				$('iframe').load(function(){
+				var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
+				str += '<div class="row">';
+				str += '<div class="clearfix">';
+				str += '<label for="visible">Visible to public ?</label>';
+				str +=  is_visible(data.visible);
+				str += '</div>';
+				str +='<div class="clearfix">';
+				str += '<label for="title">Title</label>';
+				str += data.title;
+				str += '</div>';
+				str += '<div class="actions">';
+				str += '<button class="btn primary" type="submit" id="submit" name="submit">Update</button>&nbsp;';
+				str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
+				str += '</div>';
+				str += '</div>';
 					
-					Common.end();
-					$('#video-frame').append(iframe);
-					$('#manage-video-form').append(str);
-//				});
+				Common.end();
+				$('#video-frame').append(iframe);
+				$('#manage-video-form').append(str);
+				//				});
 			}
 
 		});
@@ -141,7 +142,7 @@
 		}
 
 		else{
-			visible = '<input type="radio" name="visible" value="1" />Yes';
+			visible = '<input type="radio" name="visible" value="1" />&nbsp;Yes&nbsp;&nbsp;';
 			visible += '<input type="radio" name="visible" value="0" checked /> No';
 		}
 		return visible;
@@ -198,16 +199,19 @@
 		//Render search list at side content
 		Search.onload('video/get_video_list', '#manage-video-form');
 
-		$('#newForm').click(function(){
-			Common.clearDiv('#manage-video-form');
-			Common.clearDiv('#video-frame');
-			var str = '<input type="hidden" id="video_id" name="video_id" />' +
-				'<input type="hidden" id="title" name="title" />' +
-				'<input type="hidden" id="thumbnail" name="thumbnail" />' +
-				'<label for="videolink" class="flat">Video Link</label>' +
-				'<input type="text" id="videolink" name="videolink" class="extend validate[required]" onchange="loadIframe();" /><br />';
-			$('#manage-video-form').append(str);
-		});
+		//		$('#newForm').click(function(){
+		//			Common.clearDiv('#manage-video-form');
+		//			Common.clearDiv('#video-frame');
+		//			var str = '<input type="hidden" id="video_id" name="video_id" />' +
+		//				'<input type="hidden" id="title" name="title" />' +
+		//				'<input type="hidden" id="thumbnail" name="thumbnail" />' +
+		//				'<label for="videolink" class="flat">Video Link</label>' +
+		//				'<input type="text" id="videolink" name="videolink" class="extend validate[required]" onchange="loadIframe();" /><br />';
+		//			$('#manage-video-form').append(str);
+		//		});
 
+		$(function() {
+			$("table#sortTableExampl").tablesorter({ sortList: [['a','z']] });
+		});
 	}); //end document ready
 </script>

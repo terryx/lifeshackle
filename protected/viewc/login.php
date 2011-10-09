@@ -2,7 +2,7 @@
 	<h3>Living under the shadow</h3>
 </div>
 <div id="main-content" class="span11 ">
-	<form id="login-form" method="post" action="<?php echo $data['baseurl']; ?>login">
+	<form id="login-form" method="get" action="<?php echo $data['baseurl']; ?>login">
 		<div class="clearfix">
 			<label for="username">Username</label>
 			<div class="input">
@@ -35,4 +35,34 @@
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['customscript']; ?>"></script>
+<script type="text/javascript">
+
+
+	function ajaxCallback(status, form, msg){
+		$('body').css('cursor', 'default');
+		
+		if(status === true ) {
+			if( msg.is_logged_in === true){
+				window.location = 'home';
+			} else {
+				if ($('.alert-message').length === 0) {
+					var str = '<div id="test" class="alert-message error" data-alert>'+
+						'<a class="close" href="#">x</a>'+
+						'<p>'+msg+'</p>'+
+						'</div>';
+					$('#main-content').prepend(str);
+				}
+			}// failed to authenticate
+		}
+	}
+	
+	$(function(){
+		jQuery("#login-form").validationEngine({
+			ajaxFormValidation: true,
+			onBeforeAjaxFormValidation: beforeCall,
+			onAjaxFormComplete: ajaxCallback
+		});
+
+	});
+
+</script>
