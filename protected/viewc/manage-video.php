@@ -167,7 +167,6 @@
 	function getPagination(page){
 		$.get('video/admin-get-pagination/'+page, function(data){
 			if(data){
-				console.log(data);
 				//				Common.clearDiv('#main-content');
 				//				var str = '';
 				//				for(var i=0;i<data.length;i++){
@@ -187,6 +186,7 @@
 		$.get('video/admin-count-page', function(data){
 			if(data){
 				paginate(data);
+				Search.onload('video/admin-get-pagination/1', '#manage-video-form');
 			} else {
 				return false;
 			}
@@ -208,16 +208,15 @@
 			images					: false,
 			mouse					: 'press',
 			onChange     			: function(page){
-				getPagination(page);
+				Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+page);
 			}
 		});
-
 	}
 	
 	$(function(){
 		
 		countPage();
-		getPagination(1);
+		 
 	
 		//form validation
 		$('#manage-video-form').validationEngine({
@@ -227,7 +226,6 @@
 		});
 
 		//Render search list at side content
-		Search.onload('video/get_video_list', '#manage-video-form');
 
 		//		$('#newForm').click(function(){
 		//			Common.clearDiv('#manage-video-form');

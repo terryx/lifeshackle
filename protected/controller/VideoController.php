@@ -84,7 +84,7 @@ class VideoController extends CommonController {
 	}
 
 	public function adminCountPage() {
-		$per_page = $this->per_page;
+		$per_page = 10;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -101,7 +101,7 @@ class VideoController extends CommonController {
 		if (intval($this->params['page']) < 1) {
 			return 404;
 		}
-		$per_page = $this->per_page;
+		$per_page = 10;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
 
