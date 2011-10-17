@@ -3,11 +3,9 @@
 class LoginController extends CommonController {
 
 	public function index() {
-		$data['baseurl'] = Doo::conf()->APP_URL;
-		$data['version'] = Doo::conf()->version;
+		$data = self::templateData();
 		$data['title'] = "Sign In";
-		$data['content'] = 'login';
-		$data['nav'] = self::navigation();
+		$data['content'] = $data['role'] . 'login';
 
 		$this->render('template/layout', $data, true);
 	}
@@ -47,14 +45,17 @@ class LoginController extends CommonController {
 					$this->toJSON(array('is_logged_in' => true), true);
 
 					return 200;
-				} else {
+				}
+				else {
 					//status is not active - blocked by admin
 					$this->toJSON("You are not allow to access. Please contact the administrator", true);
 				}
-			} else {
+			}
+			else {
 				$this->toJSON(array("Invalid combination of username and password"), true);
 			}
-		} else {
+		}
+		else {
 			$this->toJSON("Connection error. Please try again.", true);
 		}
 	}

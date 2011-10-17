@@ -11,22 +11,38 @@ class ArticleController extends CommonController {
 		}
 		return $val;
 	}
+	
+	public function calculateExactPage($page_number){
+		$page = 0;
+		//if page number is int then return the value
+		if (is_int($page_number)) {
+			$page = $page_number;
+		}
+		else if ($page_number < 1) {
+			$page = 1;
+		}
+		else {
+			$page = $page_number + 1;
+			$page = explode(".", $page);
+		}
+		return $page;
+	}
+
+	public function article() {
+		//article and index page is currently same
+		//TODO make own article page or merge manage article with index
+		$data = self::templateData();
+		$data['title'] = 'Article';
+		$data['content'] = 'index';
+
+		$this->render('template/layout', $data, true);
+	}
 
 	public function manageArticlePage() {
-		$data['baseurl'] = Doo::conf()->APP_URL;
-		$data['version'] = Doo::conf()->version;
-		$data['title'] = "Life Shackle";
+		$data = self::templateData();
+		$data['title'] = "Edit Article";
 		$data['content'] = 'manage-article';
-		$data['nav'] = self::navigation();
-		
-		if (isset($_SESSION['user']['role'])) {
 
-			$data['customscript'] = "global/js/" . $_SESSION['user']['role'] . "/index.js?v1";
-		} else {
-
-			$data['customscript'] = "global/js/index.js?v1";
-		}
-		
 		$this->render('template/layout', $data, true);
 	}
 
@@ -125,7 +141,8 @@ class ArticleController extends CommonController {
 	public function getOneArticle() {
 		if (!$this->params['id'] || intval($this->params['id']) < 1) {
 			return 404;
-		} else {
+		}
+		else {
 			Doo::loadModel('Article');
 			$a = new Article();
 			$a->article_id = $this->params['id'];
@@ -133,7 +150,8 @@ class ArticleController extends CommonController {
 
 			if ($rs) {
 				$this->toJSON($rs, true, true);
-			} else {
+			}
+			else {
 				$this->toJSON('Article not found', true);
 				return 400;
 			}
@@ -168,27 +186,48 @@ class ArticleController extends CommonController {
 				$a->rollBack();
 				return 500;
 			}
-		} else {
+		}
+		else {
 			return 404;
 		}
 	}
 
 	public function countPage() {
 		$per_page = $this->per_page;
-		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-		$sql .= 'WHERE article.visible = 1';
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = $rs[0]['num_of_item'];
-		//if page number is int then return the value
-		if (is_int($page_number)) {
-			$this->toJSON($page_number, true);
-		} else if ($page_number < 1) {
-			$page = 1;
-			$this->toJSON($page, true);
-		} else {
-			$page = strrpos($page_number, '.') + 1;
-			$this->toJSON($page, true);
+		$role = self::checkRole();
+
+		if ($role) {
+			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
 		}
+		else {
+			//visitor
+			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
+			$sql .= 'WHERE article.visible = 1';
+		}
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $this->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+	
+	public function adminCountPage(){
+		$per_page = $this->per_page;
+		$role = self::checkRole();
+
+		if ($role) {
+			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
+		}
+		else {
+			//visitor
+			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
+			$sql .= 'WHERE article.visible = 1';
+		}
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $this->calculateExactPage($page_number);
+		$this->toJSON($page, true);
 	}
 
 	public function getPagination() {
@@ -198,9 +237,18 @@ class ArticleController extends CommonController {
 		$per_page = $this->per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
-		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-		$sql .= 'article.body as k3, article.tag as k4 FROM article';
-		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		$role = self::checkRole();
+
+		if ($role) {
+			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+			$sql .= 'article.body as k3, article.tag as k4 FROM article';
+			$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		}
+		else {
+			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+			$sql .= 'article.body as k3, article.tag as k4 FROM article';
+			$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		}
 
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
@@ -226,7 +274,7 @@ class ArticleController extends CommonController {
 		$sql = "SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4 FROM article";
 		$sql .= " WHERE article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
 		$sql .= " ORDER BY article.article_id DESC";
-		
+
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}

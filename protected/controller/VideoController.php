@@ -2,28 +2,114 @@
 
 class VideoController extends CommonController {
 
-	public $per_page = 20;
-	
-	public function index() {
-		$data['baseurl'] = Doo::conf()->APP_URL;
-		$data['version'] = Doo::conf()->version;
-		$data['title'] = "Video Clip";
+	protected $per_page = 20;
+
+	public function video() {
+		//direct to video main page
+		//TODO : merge video and manage-video into one page
+		$data = self::templateData();
+		$data['title'] = 'Videos';
 		$data['content'] = 'video';
-		$data['nav'] = self::navigation();
-		$data['customscript'] = "global/js/video.js?v2";
 
 		$this->render('template/layout', $data, true);
-		
 	}
 
+	public function getVideoList() {
+		$rs = $this->db()->find('Video', array(
+			'select' => 'video_id as k0, title as k1',
+			'desc' => 'video_id'
+				));
+		$this->toJSON($rs, true, true);
+	}
+
+	public function getOneVideo() {
+		if (!$this->params['id'] || intval($this->params['id']) < 1) {
+			return 404;
+		}
+		else {
+			Doo::loadModel('Video');
+			$a = new Video();
+			$a->video_id = $this->params['id'];
+			$rs = $a->getOne();
+
+			if ($rs) {
+				$this->toJSON($rs, true, true);
+			}
+			else {
+				$this->toJSON('Video not found', true);
+				return 400;
+			}
+		}
+	}
+
+	public function countPage() {
+		$per_page = $this->per_page;
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
+
+		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video ';
+		$sql .= 'WHERE video.visible = 1';
+
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $pagination->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+
+	public function getPagination() {
+		if (intval($this->params['page']) < 1) {
+			return 404;
+		}
+		$per_page = $this->per_page;
+		$current_page = $this->params['page'];
+		$offset = ($current_page - 1) * $per_page;
+
+		$sql = 'SELECT video.video_id as k0, video.title as k1, video.link as k2, video.thumbnail as k3 FROM video';
+		$sql .=' WHERE video.visible = 1 ORDER BY video.video_id DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+
+//----------------------------------------------------------------//
+//------------------------ admin section -------------------------//
+//----------------------------------------------------------------//
 	public function manageVideoPage() {
-		$data['baseurl'] = Doo::conf()->APP_URL;
-		$data['version'] = Doo::conf()->version;
+		$data = self::templateData();
 		$data['title'] = "Manage Video";
 		$data['content'] = 'manage-video';
-		$data['nav'] = self::navigation();
 
 		$this->render('template/layout', $data, true);
+	}
+
+	public function adminCountPage() {
+		$per_page = $this->per_page;
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
+
+		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video ';
+
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $pagination->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+
+	public function adminGetPagination() {
+		if (intval($this->params['page']) < 1) {
+			return 404;
+		}
+		$per_page = $this->per_page;
+		$current_page = $this->params['page'];
+		$offset = ($current_page - 1) * $per_page;
+
+		$sql = 'SELECT video.video_id as k0, video.title as k1, video.link as k2, video.thumbnail as k3 FROM video';
+		$sql .=' ORDER BY video.video_id DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
 	}
 
 	public function saveVideo() {
@@ -37,11 +123,12 @@ class VideoController extends CommonController {
 			if ($v->video_id = $_POST['video_id']) {
 				$v->update();
 				$this->toJSON(200, true);
-				
-			} else {
+			}
+			else {
 				$this->toJSON('Video could not be save.', true);
 			}
-		} elseif (empty($_POST['video_id'])) {
+		}
+		elseif (empty($_POST['video_id'])) {
 			// upload video
 			if ($_POST['title'] && $_POST['videolink']) {
 
@@ -70,40 +157,14 @@ class VideoController extends CommonController {
 
 				$this->toJSON(array('Video has posted successfully', 'Post Success', $new_video_id), true);
 				return 201;
-			} else {
+			}
+			else {
 				$this->toJSON('Video could not be save.', true);
 			}
 		}
 	}
 
-	public function getVideoList() {
-		$rs = $this->db()->find('Video', array(
-			'select' => 'video_id as k0, title as k1',
-			'desc' => 'video_id'
-				));
-		$this->toJSON($rs, true, true);
-	}
-
-	public function getOneVideo() {
-		if (!$this->params['id'] || intval($this->params['id']) < 1) {
-			return 404;
-		} else {
-			Doo::loadModel('Video');
-			$a = new Video();
-			$a->video_id = $this->params['id'];
-			$rs = $a->getOne();
-
-			if ($rs) {
-				$this->toJSON($rs, true, true);
-			} else {
-				$this->toJSON('Video not found', true);
-				return 400;
-			}
-		}
-	}
-
 	public function deleteVideo() {
-
 		//get video
 		$v = $this->db()->find('Video', array(
 			'limit' => 1,
@@ -130,59 +191,11 @@ class VideoController extends CommonController {
 				$v->rollBack();
 				return 500;
 			}
-		} else {
+		}
+		else {
 			return 404;
 		}
 	}
-
-	public function countPage() {
-		$per_page = $this->per_page;
-		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video ';
-		$sql .= 'WHERE video.visible';
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = $rs[0]['num_of_item'];
-
-		//if page number is int then return the value
-		if (is_int($page_number)) {
-			$this->toJSON($page_number, true);
-		} else if ($page_number < 1) {
-			$page = 1;
-			$this->toJSON($page, true);
-		} else {
-			$page = strrpos($page_number, '.') + 1;
-			$this->toJSON($page, true);
-		}
-	}
-
-	public function getPagination() {
-		if (intval($this->params['page']) < 1) {
-			return 404;
-		}
-		$per_page = $this->per_page;
-		$current_page = $this->params['page'];
-		$offset = ($current_page - 1) * $per_page;
-		$sql = 'SELECT video.video_id as k0, video.title as k1, video.link as k2, video.thumbnail as k3 FROM video';
-		$sql .=' WHERE video.visible = 1 ORDER BY video.video_id DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-	
-//	public function getPagination(){
-//		
-//		if (intval($this->params['page']) < 1) {
-//			return 404;
-//		}
-//		
-//		$per_page = $this->per_page;
-//		$current_page = $this->params['page'];
-//		$offset = ($current_page - 1) * $per_page;
-//$sql = 'SELECT video.video_id as k0, video.title as k1, video.link as k2, video.thumbnail as k3 FROM video';
-//		$sql .=' WHERE video.visible = 1 ORDER BY video.video_id DESC LIMIT ' . $offset . ', ' . $per_page;
-//		
-//		$rs = $this->db()->fetchAll($sql);
-//		$this->toJSON($rs, true);
-//	}
 
 }
 

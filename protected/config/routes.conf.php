@@ -2,18 +2,26 @@
 
 $route['*']['/'] = array('HomeController', 'index');
 $route['*']['/home'] = array('HomeController', 'index');
-$route['*']['/article'] = array('HomeController', 'article');
 $route['*']['/picture'] = array('HomeController', 'picture');
-$route['*']['/video'] = array('VideoController', 'index');
-$route['*']['/about'] = array('AboutController', 'index');
+
 $route['*']['/sign-in'] = array('LoginController', 'index');
+$route['*']['/quote'] = array('QuoteController', 'index');
 
 $route['post']['/login'] = array('LoginController', 'login');
 $route['*']['/logout'] = array('LoginController', 'logout');
 $route['*']['/master'] = array('MasterController', 'index');
 $route['*']['/finance'] = array('FinanceController', 'index');
 
+//Profile
+$route['*']['/profile'] = array('ProfileController', 'profile');
+$route['post']['/profile/save'] = array('ProfileController', 'save');
+$route['get']['/profile/get'] = array('ProfileController', 'get');
+$route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
+//iframe picture
+$route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
+
 //Article
+$route['*']['/article'] = array('ArticleController', 'article');
 $route['*']['/manage-article'] = array('ArticleController', 'manageArticlePage');
 $route['post']['/article/save_article'] = array('ArticleController', 'saveArticle');
 $route['get']['/article/get_article_list'] = array('ArticleController', 'getArticleList');
@@ -23,12 +31,6 @@ $route['get']['/article/count-page'] = array('ArticleController', 'countPage');
 $route['get']['/article/get-pagination/:page'] = array('ArticleController', 'getPagination');
 $route['get']['/article/archive'] = array('ArticleController', 'archive');
 $route['get']['/article/filter-by-archive/:date'] = array('ArticleController', 'filterByArchive');
-//Expense
-$route['*']['/manage-expense'] = array('ExpenseController', 'manageExpensePage');
-$route['post']['/expense/save-expense'] = array('ExpenseController', 'saveExpense');
-
-//Finance
-$route['*']['/manage-finance'] = array('FinanceController', 'manageFinancePage');
 
 //Master rights
 $route['*']['/manage-user'] = array('MasterController', 'manageUserPage');
@@ -44,10 +46,8 @@ $route['get']['/picture/get_one_picture/:id'] = array('PictureController', 'getO
 $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getPictureGallery');
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
 
-//Comic
-$route['*']['/manage_comic'] = array('ComicController', 'manageComicPage');
-
 //Video
+$route['*']['/video'] = array('VideoController', 'video');
 $route['*']['/manage-video'] = array('VideoController', 'manageVideoPage');
 $route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
 $route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');
@@ -55,6 +55,8 @@ $route['get']['/video/get_one_video/:id'] = array('VideoController', 'getOneVide
 $route['delete']['/video/delete_video/:id'] = array('VideoController', 'deleteVideo');
 $route['get']['/video/count-page'] = array('VideoController', 'countPage');
 $route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
+$route['get']['/video/admin-count-page'] = array('VideoController', 'adminCountPage');
+$route['get']['/video/admin-get-pagination/:page'] = array('VideoController', 'adminGetPagination');
 
 //Validation
 $route['*']['/validate/check_username'] = array('ValidateController', 'checkUsername');

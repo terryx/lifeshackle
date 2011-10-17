@@ -15,6 +15,10 @@
 </div>
 
 <div class="span5">
+	<div id="pagination">
+		
+	</div>
+
 	<div id="search-container">
 		<form id="search-form">
 			<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
@@ -25,12 +29,13 @@
 </div>
 
 <div id="footer"></div>
-<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery-ui.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<!--<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery-ui.js?<?php echo $data['version']; ?>"></script>-->
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.tablesorter.min.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript">
@@ -123,9 +128,9 @@
 				str += '</div>';
 				str += '</div>';
 					
-				Common.end();
 				$('#video-frame').append(iframe);
 				$('#manage-video-form').append(str);
+				Common.end();
 				//				});
 			}
 
@@ -146,41 +151,6 @@
 		return visible;
 	}
 
-	//	function ajaxFail(msg){
-	//		Common.removeDiv('#dialog-confirm');
-	//		$('body').append('<div id="dialog-confirm">'+$.parseJSON(msg)+'</div>');
-	//		$('#dialog-confirm').dialog({
-	//			width: 350,
-	//			height: 160,
-	//			title: 'Oops..Something has go wrong',
-	//			modal: true,
-	//			buttons: {
-	//				"Ok": function() {
-	//					$(this).dialog('close');
-	//					$(this).remove();
-	//				}
-	//			}
-	//		});
-	//		Common.unbindLoading("#submit", "Post");
-	//	}
-
-	//	function ajaxSuccess(success, text){
-	//		Common.removeDiv('#dialog-confirm');
-	//		$('<div id="dialog-confirm">'+text+'</div>').appendTo('body');
-	//		$('#dialog-confirm').dialog({
-	//			width: 350,
-	//			height: 160,
-	//			title: success,
-	//			modal: true,
-	//			buttons: {
-	//				"Ok": function() {
-	//					$(this).dialog('close');
-	//					$(this).remove();
-	//				}
-	//			}
-	//		});
-	//		Common.unbindLoading("#submit", "Update");
-	//	}
 	function ajaxCallback(status, form, json){
 		$('body').css('cursor', 'default');
 		
@@ -193,12 +163,62 @@
 		}
 	}
 	
-	$(function(){
+	
+	function getPagination(page){
+		$.get('video/admin-get-pagination/'+page, function(data){
+			if(data){
+				console.log(data);
+				//				Common.clearDiv('#main-content');
+				//				var str = '';
+				//				for(var i=0;i<data.length;i++){
+				//					str += '<div class="span10 i-content">';
+				//					str += '<h2>'+data[i].k1+'</h2>';
+				//					str += '<strong>'+data[i].k2+'</strong><br />';
+				//					str += data[i].k3;
+				//					str += '</div>';
+				//				}
+				//				$(str).appendTo('#main-content');
 
-		MenuSetting.resetButton({
-			form         : '#manage-video-form'
+			}
+		});
+	}
+	
+	function countPage(){
+		$.get('video/admin-count-page', function(data){
+			if(data){
+				paginate(data);
+			} else {
+				return false;
+			}
+		});
+	}
+
+	function paginate(count){
+		$("#pagination").paginate({
+			count 		: count,
+			start 		: 1,
+			//      display     : 3,
+			border					: true,
+			border_color			: '#fff',
+			text_color  			: '#fff',
+			background_color    	: 'black',
+			border_hover_color		: '#ccc',
+			text_hover_color  		: '#000',
+			background_hover_color	: '#fff',
+			images					: false,
+			mouse					: 'press',
+			onChange     			: function(page){
+				getPagination(page);
+			}
 		});
 
+	}
+	
+	$(function(){
+		
+		countPage();
+		getPagination(1);
+	
 		//form validation
 		$('#manage-video-form').validationEngine({
 			ajaxFormValidation: true,
@@ -220,8 +240,6 @@
 		//			$('#manage-video-form').append(str);
 		//		});
 
-		$(function() {
-			$("table#sortTableExampl").tablesorter({ sortList: [['a','z']] });
-		});
+		
 	}); //end document ready
 </script>

@@ -1,3 +1,5 @@
 .DS_Store
 common.conf.php
 db.conf.php
+/.settings/
+.project

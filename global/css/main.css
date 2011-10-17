@@ -31,6 +31,9 @@ body {
 .clear {
 	clear:both;
 }
+.bottom-padding {
+	padding-bottom: 20px;
+}
 /*----------- pagination ------------*/
 #pagination {
 	clear:both;

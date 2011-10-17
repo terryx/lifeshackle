@@ -62,26 +62,53 @@ class CommonController extends DooController {
 		}
 	}
 
-	public static function navigation() {
-		$nav = null;
-		
-		if (isset($_SESSION['user']) && $_SESSION['user']['status'] === "active") {
+	public static function templateData() {
+		$data = array('baseurl', 'version', 'role', 'title', 'nav', 'content');
+		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['version'] = Doo::conf()->version;
+		$data['role'] = null;
+		$data['title'] = null;
+		$data['content'] = null;
+		$data['customscript'] = null;
+
+		if (isset($_SESSION['user'])) {
 			switch ($_SESSION['user']['role']) {
 				case "admin":
-					$nav = "template/admin-nav";
+					$data['role'] = 'admin/';
 					break;
 				case "master":
-					$nav = "template/master-nav";
+					$data['role'] = 'master/';
 					break;
+				case 'minion':
+					$data['role'] = 'minion/';
 				default :
-					$nav = "template/minion-nav";
+					$data['role'] = null;
 					break;
 			}
-		} else {
-			$nav = "template/visitor-nav";
 		}
-		return $nav;
 		
+		$data['nav'] = $data['role'] . 'nav';
+		return $data;
+	}
+	
+	public static function checkRole() {
+		$role = null;
+		if (isset($_SESSION['user'])) {
+			switch ($_SESSION['user']['role']) {
+				case "admin":
+					$role = 'admin';
+					break;
+				case "master":
+					$role = 'master';
+					break;
+				case 'minion':
+					$role = 'minion';
+				default :
+					$role= null;
+					break;
+			}
+		}
+		return $role;
 	}
 
 	public function xss($str, $striptags=true) {
