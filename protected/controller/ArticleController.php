@@ -11,22 +11,6 @@ class ArticleController extends CommonController {
 		}
 		return $val;
 	}
-	
-	public function calculateExactPage($page_number){
-		$page = 0;
-		//if page number is int then return the value
-		if (is_int($page_number)) {
-			$page = $page_number;
-		}
-		else if ($page_number < 1) {
-			$page = 1;
-		}
-		else {
-			$page = $page_number + 1;
-			$page = explode(".", $page);
-		}
-		return $page;
-	}
 
 	public function article() {
 		//article and index page is currently same
@@ -38,12 +22,135 @@ class ArticleController extends CommonController {
 		$this->render('template/layout', $data, true);
 	}
 
+	public function getArticleList() {
+		$rs = $this->db()->find('Article', array('select' =>
+			'article_id as k0, title as k1, created as k2, visible as k3',
+			'desc' => 'created'));
+		$this->toJSON($rs, true, true);
+	}
+
+	public function getOneArticle() {
+		if (!$this->params['id'] || intval($this->params['id']) < 1) {
+			return 404;
+		}
+		else {
+			Doo::loadModel('Article');
+			$a = new Article();
+			$a->article_id = $this->params['id'];
+			$rs = $a->getOne();
+
+			if ($rs) {
+				$this->toJSON($rs, true, true);
+			}
+			else {
+				$this->toJSON('Article not found', true);
+				return 400;
+			}
+		}
+	}
+
+	public function countPage() {
+		$per_page = $this->per_page;
+
+		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
+		$sql .= 'WHERE article.visible = 1';
+
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $this->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+
+	public function getPagination() {
+		if (intval($this->params['page']) < 1) {
+			return 404;
+		}
+		$per_page = $this->per_page;
+		$current_page = $this->params['page'];
+		$offset = ($current_page - 1) * $per_page;
+		$role = self::checkRole();
+
+		if ($role) {
+			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+			$sql .= 'article.body as k3, article.tag as k4 FROM article';
+			$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		}
+		else {
+			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+			$sql .= 'article.body as k3, article.tag as k4 FROM article';
+			$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		}
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+
+	public function archive() {
+		$sql = "SELECT COUNT(article.article_id) as k0, DATE_FORMAT(created, '%M %Y') as k1";
+		$sql .= " FROM article GROUP BY DATE_FORMAT(article.created, '%M %Y') ORDER BY article.article_id DESC";
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+
+	public function filterbyArchive() {
+		$date = str_replace("%20", " ", $this->params['date']);
+
+		Doo::loadModel("Article");
+
+//		$a = new Article;
+//		$opt['select'] = "article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4";
+//		$opt["where"] = "article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
+//		$opt['desc'] = 'article.article_id';
+//		$rs = $a->relate("Users", $opt);
+		$sql = "SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4 FROM article";
+		$sql .= " WHERE article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
+		$sql .= " ORDER BY article.article_id DESC";
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+
+	/*
+	 *  Master section
+	 * 
+	 */
+
 	public function manageArticlePage() {
 		$data = self::templateData();
 		$data['title'] = "Edit Article";
 		$data['content'] = 'manage-article';
 
 		$this->render('template/layout', $data, true);
+	}
+
+	public function adminCountPage() {
+		$per_page = 10;
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
+
+		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
+		$rs = $this->db()->fetchAll($sql);
+		$page_number = doubleval($rs[0]['num_of_item']);
+
+		$page = $pagination->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+
+	public function adminGetPagination() {
+		if (intval($this->params['page']) < 1) {
+			return 404;
+		}
+		$per_page = 10;
+		$current_page = $this->params['page'];
+		$offset = ($current_page - 1) * $per_page;
+
+		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+		$sql .= 'article.body as k3, article.tag as k4 FROM article';
+		$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
 	}
 
 	public function saveArticle() {
@@ -73,9 +180,9 @@ class ArticleController extends CommonController {
 		//set word length of body content
 		$txtcontent = wordwrap($_POST['txtcontent'], 90, '\n');
 
-		//////////////////////////////////////////////
-		//create a new article if id is not defined //
-		//////////////////////////////////////////////
+		/*
+		 * 	create a new article if id is not defined
+		 */
 		if (empty($_POST['article_id'])) {
 
 			//insert latest id
@@ -131,33 +238,6 @@ class ArticleController extends CommonController {
 		return 404;
 	}
 
-	public function getArticleList() {
-		$rs = $this->db()->find('Article', array('select' =>
-			'article_id as k0, title as k1, created as k2, visible as k3',
-			'desc' => 'created'));
-		$this->toJSON($rs, true, true);
-	}
-
-	public function getOneArticle() {
-		if (!$this->params['id'] || intval($this->params['id']) < 1) {
-			return 404;
-		}
-		else {
-			Doo::loadModel('Article');
-			$a = new Article();
-			$a->article_id = $this->params['id'];
-			$rs = $a->getOne();
-
-			if ($rs) {
-				$this->toJSON($rs, true, true);
-			}
-			else {
-				$this->toJSON('Article not found', true);
-				return 400;
-			}
-		}
-	}
-
 	public function deleteArticle() {
 
 		//get article
@@ -190,93 +270,6 @@ class ArticleController extends CommonController {
 		else {
 			return 404;
 		}
-	}
-
-	public function countPage() {
-		$per_page = $this->per_page;
-		$role = self::checkRole();
-
-		if ($role) {
-			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-		}
-		else {
-			//visitor
-			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-			$sql .= 'WHERE article.visible = 1';
-		}
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = doubleval($rs[0]['num_of_item']);
-
-		$page = $this->calculateExactPage($page_number);
-		$this->toJSON($page, true);
-	}
-	
-	public function adminCountPage(){
-		$per_page = $this->per_page;
-		$role = self::checkRole();
-
-		if ($role) {
-			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-		}
-		else {
-			//visitor
-			$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-			$sql .= 'WHERE article.visible = 1';
-		}
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = doubleval($rs[0]['num_of_item']);
-
-		$page = $this->calculateExactPage($page_number);
-		$this->toJSON($page, true);
-	}
-
-	public function getPagination() {
-		if (intval($this->params['page']) < 1) {
-			return 404;
-		}
-		$per_page = $this->per_page;
-		$current_page = $this->params['page'];
-		$offset = ($current_page - 1) * $per_page;
-		$role = self::checkRole();
-
-		if ($role) {
-			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-			$sql .= 'article.body as k3, article.tag as k4 FROM article';
-			$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-		}
-		else {
-			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-			$sql .= 'article.body as k3, article.tag as k4 FROM article';
-			$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-		}
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-
-	public function archive() {
-		$sql = "SELECT COUNT(article.article_id) as k0, DATE_FORMAT(created, '%M %Y') as k1";
-		$sql .= " FROM article GROUP BY DATE_FORMAT(article.created, '%M %Y') ORDER BY article.article_id DESC";
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-
-	public function filterbyArchive() {
-		$date = str_replace("%20", " ", $this->params['date']);
-
-		Doo::loadModel("Article");
-
-//		$a = new Article;
-//		$opt['select'] = "article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4";
-//		$opt["where"] = "article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
-//		$opt['desc'] = 'article.article_id';
-//		$rs = $a->relate("Users", $opt);
-		$sql = "SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4 FROM article";
-		$sql .= " WHERE article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
-		$sql .= " ORDER BY article.article_id DESC";
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
 	}
 
 }

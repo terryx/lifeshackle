@@ -21,8 +21,9 @@ class PaginationController extends DooController {
 		else {
 			$page = $page_number + 1;
 			$page = explode(".", $page);
+			$page = $page[0];
 		}
-		return $page[0];
+		return $page;
 	}
 
 }

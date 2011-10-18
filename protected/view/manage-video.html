@@ -29,10 +29,10 @@
 </div>
 
 <div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<!--<script type="text/javascript" src="{{baseurl}}global/js/jquery.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/jquery-ui.js?{{version}}"></script>-->
+<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
+<script type="text/javascript" src="{{baseurl}}global/js/jquery.js"></script>
+<script type="text/javascript" src="{{baseurl}}global/js/jquery-ui.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/min/jquery.paginate.js?{{version}}"></script>
@@ -85,23 +85,6 @@
 		});
 	}
 
-
-	//	function ajaxValidationCallback(status, form, json){
-	//		Common.end();
-	//		if(status === true){
-	//			if(json[2] !== undefined){
-	//				refreshForm(json[2]);
-	//			} else {
-	//				ajaxSuccess(json[0], json[1]);
-	//			}
-	//
-	//		}
-	//		else {
-	//			ajaxFail('System database error. Please try again later', 'Error');
-	//		}
-	//		Search.onload('video/get_video_list', '#manage-video-form');
-	//	}
-
 	function refreshForm(id){
 		Common.clearDiv('#video-frame');
 		Common.clearDiv('#manage-video-form');
@@ -110,8 +93,7 @@
 			if(data){
 				var id = videoLinkId(data.link);
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
-
-				//				$('iframe').load(function(){
+				
 				var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
 				str += '<div class="row">';
 				str += '<div class="clearfix">';
@@ -127,11 +109,12 @@
 				str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
 				str += '</div>';
 				str += '</div>';
-					
 				$('#video-frame').append(iframe);
 				$('#manage-video-form').append(str);
+//				$('iframe').load(function(){
+					
 				Common.end();
-				//				});
+//				});
 			}
 
 		});
@@ -153,8 +136,6 @@
 
 	function ajaxCallback(status, form, json){
 		$('body').css('cursor', 'default');
-		
-	
 		
 		if(status === true ) {
 			if(json === 200){

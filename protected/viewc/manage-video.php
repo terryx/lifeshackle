@@ -29,10 +29,10 @@
 </div>
 
 <div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<!--<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery-ui.js?<?php echo $data['version']; ?>"></script>-->
+<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery-ui.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
@@ -110,8 +110,7 @@
 			if(data){
 				var id = videoLinkId(data.link);
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
-
-				//				$('iframe').load(function(){
+				
 				var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
 				str += '<div class="row">';
 				str += '<div class="clearfix">';
@@ -127,11 +126,12 @@
 				str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
 				str += '</div>';
 				str += '</div>';
-					
 				$('#video-frame').append(iframe);
 				$('#manage-video-form').append(str);
+//				$('iframe').load(function(){
+					
 				Common.end();
-				//				});
+//				});
 			}
 
 		});
@@ -161,25 +161,6 @@
 				displayMessage('success', 'Video has updated');
 			}
 		}
-	}
-	
-	
-	function getPagination(page){
-		$.get('video/admin-get-pagination/'+page, function(data){
-			if(data){
-				//				Common.clearDiv('#main-content');
-				//				var str = '';
-				//				for(var i=0;i<data.length;i++){
-				//					str += '<div class="span10 i-content">';
-				//					str += '<h2>'+data[i].k1+'</h2>';
-				//					str += '<strong>'+data[i].k2+'</strong><br />';
-				//					str += data[i].k3;
-				//					str += '</div>';
-				//				}
-				//				$(str).appendTo('#main-content');
-
-			}
-		});
 	}
 	
 	function countPage(){
@@ -216,7 +197,6 @@
 	$(function(){
 		
 		countPage();
-		 
 	
 		//form validation
 		$('#manage-video-form').validationEngine({

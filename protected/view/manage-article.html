@@ -30,6 +30,9 @@
 </div>
 
 <div class="span5">
+	<div id="pagination">
+		
+	</div>
 	<div id="search-container">
 		<form id="search-form">
 			<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
@@ -44,6 +47,7 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
+<script type="text/javascript" src="{{baseurl}}global/min/jquery.paginate.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
 <script type="text/javascript" src="{{baseurl}}global/plugin/tiny_mce/jquery.tinymce.js"></script>
 <script type="text/javascript">
@@ -67,6 +71,17 @@
 </script>
 
 <script type="text/javascript">
+	
+	function ajaxCallback(status, form, json){
+		$('body').css('cursor', 'default');
+		
+		if(status === true ) {
+			if(json === 200){
+				displayMessage('success', 'Video has updated');
+			}
+		}
+	}
+	
 	function deleteArticle(id){
 		$.delete_('{{baseurl}}article/delete_article/'+id, function(data){
 			if(data){
@@ -80,59 +95,6 @@
 		});
 	}
 
-	function beforeCall(){
-		Common.wait();
-		Common.bindLoading('#submit');
-		return true;
-	}
-
-	function ajaxFail(msg){
-		Common.removeDiv('#dialog-confirm');
-		$('body').append('<div id="dialog-confirm">'+$.parseJSON(msg)+'</div>');
-		$('#dialog-confirm').dialog({
-			width: 350,
-			height: 160,
-			title: 'Oops..Something has go wrong',
-			modal: true,
-			buttons: {
-				"Ok": function() {
-					$(this).dialog('close');
-					$(this).remove();
-				}
-			}
-		});
-		Common.unbindLoading("#submit", "Post");
-	}
-
-	function ajaxSuccess(success, text){
-		Common.removeDiv('#dialog-confirm');
-		$('<div id="dialog-confirm">'+text+'</div>').appendTo('body');
-		$('#dialog-confirm').dialog({
-			width: 350,
-			height: 160,
-			title: success,
-			modal: true,
-			buttons: {
-				"Ok": function() {
-					$(this).dialog('close');
-					$(this).remove();
-				}
-			}
-		});
-		Common.unbindLoading("#submit", "Post");
-	}
-
-	function ajaxValidationCallback(status, form, json){
-
-		$('#progress').hide();
-		if(status === true){
-			ajaxSuccess(json[0], json[1]);
-		}
-		else {ajaxFail('System database error. Please try again later', 'Error');
-		}
-		Search.onload('article/get_article_list', '#manage-article-form');
-	}
-
 	function refreshForm(id){
 		$('#progress').show();
 		$.get('{{baseurl}}article/get_one_article/'+id, function(data){
@@ -142,7 +104,7 @@
 				$('#txtcontent').val(data.body);
 				$('#tag').val(data.tag);
 
-				var str = '<input class="glassbutton" type="button" onclick="deleteArticle('+ data.article_id +');" value="Delete" />';
+				var str = '<input class="btn danger" type="button" onclick="deleteArticle('+ data.article_id +');" value="Delete" />';
 				Common.clearDiv('#deleteButton');
 				$('#deleteButton').append(str);
 			} else {
@@ -152,26 +114,48 @@
 			$('#progress').hide();
 		});
 	}
+	
+	function countPage(){
+		$.get('{{baseurl}}article/admin-count-page', function(data){
+			if(data){
+				paginate(data);
+				Search.onload('{{baseurl}}article/admin-get-pagination/1', '#manage-article-form');
+			} else {
+				return false;
+			}
+		});
+	}
+
+	function paginate(count){
+		$("#pagination").paginate({
+			count 		: count,
+			start 		: 1,
+			//      display     : 3,
+			border					: true,
+			border_color			: '#fff',
+			text_color  			: '#fff',
+			background_color    	: 'black',
+			border_hover_color		: '#ccc',
+			text_hover_color  		: '#000',
+			background_hover_color	: '#fff',
+			images					: false,
+			mouse					: 'press',
+			onChange     			: function(page){
+				Search.onload('{{baseurl}}article/admin-get-pagination/'+page);
+			}
+		});
+	}
 
 	$(function(){
 
-		//create a new button for form reset
-		MenuSetting.resetButton({
-			form         : '#manage-article-form',
-			iframe       : '.cleditorMain >iframe',
-			hiddenId     : '#article_id'
-		});
+		countPage();
 
 		//form validation
 		$('#manage-article-form').validationEngine({
 			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxValidationCallback,
+			onAjaxFormComplete: ajaxCallback,
 			onBeforeAjaxFormValidation: beforeCall
 		});
-
-
-		//Render search list at side content
-		Search.onload('{{baseurl}}article/get_article_list', '#manage-article-form');
 
 	}); //end document ready
 

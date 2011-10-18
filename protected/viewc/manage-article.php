@@ -30,6 +30,9 @@
 </div>
 
 <div class="span5">
+	<div id="pagination">
+		
+	</div>
 	<div id="search-container">
 		<form id="search-form">
 			<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
@@ -44,6 +47,7 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
 <script type="text/javascript">
@@ -142,7 +146,7 @@
 				$('#txtcontent').val(data.body);
 				$('#tag').val(data.tag);
 
-				var str = '<input class="glassbutton" type="button" onclick="deleteArticle('+ data.article_id +');" value="Delete" />';
+				var str = '<input class="btn danger" type="button" onclick="deleteArticle('+ data.article_id +');" value="Delete" />';
 				Common.clearDiv('#deleteButton');
 				$('#deleteButton').append(str);
 			} else {
@@ -152,15 +156,41 @@
 			$('#progress').hide();
 		});
 	}
+	
+	function countPage(){
+		$.get('<?php echo $data['baseurl']; ?>article/admin-count-page', function(data){
+			if(data){
+				paginate(data);
+				Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/1', '#manage-article-form');
+			} else {
+				return false;
+			}
+		});
+	}
+
+	function paginate(count){
+		$("#pagination").paginate({
+			count 		: count,
+			start 		: 1,
+			//      display     : 3,
+			border					: true,
+			border_color			: '#fff',
+			text_color  			: '#fff',
+			background_color    	: 'black',
+			border_hover_color		: '#ccc',
+			text_hover_color  		: '#000',
+			background_hover_color	: '#fff',
+			images					: false,
+			mouse					: 'press',
+			onChange     			: function(page){
+				Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+page);
+			}
+		});
+	}
 
 	$(function(){
 
-		//create a new button for form reset
-		MenuSetting.resetButton({
-			form         : '#manage-article-form',
-			iframe       : '.cleditorMain >iframe',
-			hiddenId     : '#article_id'
-		});
+		countPage();
 
 		//form validation
 		$('#manage-article-form').validationEngine({
@@ -168,10 +198,6 @@
 			onAjaxFormComplete: ajaxValidationCallback,
 			onBeforeAjaxFormValidation: beforeCall
 		});
-
-
-		//Render search list at side content
-		Search.onload('<?php echo $data['baseurl']; ?>article/get_article_list', '#manage-article-form');
 
 	}); //end document ready
 

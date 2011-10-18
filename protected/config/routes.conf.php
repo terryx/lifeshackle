@@ -31,6 +31,8 @@ $route['get']['/article/count-page'] = array('ArticleController', 'countPage');
 $route['get']['/article/get-pagination/:page'] = array('ArticleController', 'getPagination');
 $route['get']['/article/archive'] = array('ArticleController', 'archive');
 $route['get']['/article/filter-by-archive/:date'] = array('ArticleController', 'filterByArchive');
+$route['get']['/article/admin-count-page'] = array('ArticleController', 'adminCountPage');
+$route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
 //Master rights
 $route['*']['/manage-user'] = array('MasterController', 'manageUserPage');
