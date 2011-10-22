@@ -62,36 +62,19 @@ class CommonController extends DooController {
 		}
 	}
 
-	public static function templateData() {
-		$data = array('baseurl', 'version', 'role', 'title', 'nav', 'content');
+	public function templateData() {
+//		$data = array('baseurl', 'version', 'role', 'title', 'nav', 'content');
 		$data['baseurl'] = Doo::conf()->APP_URL;
 		$data['version'] = Doo::conf()->version;
-		$data['role'] = null;
 		$data['title'] = null;
+		$data['role'] = $this->checkRole();
 		$data['content'] = null;
 		$data['customscript'] = null;
 
-		if (isset($_SESSION['user'])) {
-			switch ($_SESSION['user']['role']) {
-				case "admin":
-					$data['role'] = 'admin/';
-					break;
-				case "master":
-					$data['role'] = 'master/';
-					break;
-				case 'minion':
-					$data['role'] = 'minion/';
-				default :
-					$data['role'] = null;
-					break;
-			}
-		}
-		
-		$data['nav'] = $data['role'] . 'nav';
 		return $data;
 	}
 	
-	public static function checkRole() {
+	protected function checkRole() {
 		$role = null;
 		if (isset($_SESSION['user'])) {
 			switch ($_SESSION['user']['role']) {

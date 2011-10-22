@@ -42,8 +42,7 @@ class LoginController extends CommonController {
 					//if remember me is selected
 					(isset($_POST['remember'])) ? $this->setRememberMe($username, $u->password) : false;
 
-					$this->toJSON(array('is_logged_in' => true), true);
-
+					$this->toJSON(array(true, $rs->type), true);
 					return 200;
 				}
 				else {

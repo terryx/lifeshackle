@@ -3,3 +3,4 @@ common.conf.php
 db.conf.php
 /.settings/
 .project
+global/plugin/tiny_mce/

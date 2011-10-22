@@ -1,3 +1,20 @@
+<section id="navigation">
+	<div class="topbar" >
+		<div class="topbar-inner">
+			<div class="container">
+				<a class="brand" href="<?php echo $data['baseurl']; ?>home">Life's Shackle</a>
+				<ul class="nav">
+					<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
+				</ul>
+				<ul class="secondary-nav">
+					<li><a href="<?php echo $data['baseurl']; ?>sign-in">Sign in</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+</section>
+<section id="main-container" class="row">
 <div id="main-content" class="span11">
 	<section id="personal">
 		<h5>Personal Info</h5>
@@ -23,7 +40,7 @@
 <div class="span5">
 	<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
 </div>
-
+</section>
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>

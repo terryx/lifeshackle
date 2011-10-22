@@ -3,11 +3,9 @@
 class MasterController extends CommonController {
 
 	public function index() {
-		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data = $this->templateData();
 		$data['title'] = "Life Shackle | Master";
-		$data['content'] = 'index';
-		$data['nav'] = self::navigation();
-		$data['customscript'] = "global/js/ori/index.js?v1";
+		$data['content'] = $data['role'].'/index';
 
 		$this->render('template/layout', $data, true);
 		

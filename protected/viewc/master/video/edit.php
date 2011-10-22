@@ -1,33 +1,65 @@
-<div id="main-content" class="span11">
-	<div id="video-frame" class="span10"></div>
-	<div class="clear"></div>
-	<form id="manage-video-form" action="<?php echo $data['baseurl']; ?>video/save_video" method="post" class="form-stacked">
-		<input type="hidden" id="video_id" name="video_id" />
-		<input type="hidden" id="title" name="title" />
-		<input type="hidden" id="thumbnail" name="thumbnail" />
-		<div class="clearfix">
-			<label for="videolink">Video Link</label>
-			<div class="input">
-				<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" onchange="loadIframe();" />
+<section id="navigation">
+	<div class="topbar" data-dropdown="dropdown">
+		<div class="topbar-inner">
+			<div class="container">
+				<a class="brand" href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>">Life's Shackle</a>
+				<ul class="nav">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle">Article</a>
+						<ul class="dropdown-menu">
+							<li><a href="<?php echo $data['baseurl']; ?>article/view">View</a></li>
+							<li class="divider"></li>
+							<li><a href="<?php echo $data['baseurl']; ?>article/edit">Edit</a></li>
+						</ul>
+					</li>
+					<li><a href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>/profile">Profile</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle">Video</a>
+						<ul class="dropdown-menu">
+							<li><a href="<?php echo $data['baseurl']; ?>video/view">View</a></li>
+							<li class="divider"></li>
+							<li><a href="#" onclick="clearForm()">New</a></li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="secondary-nav">
+					<li><a href="<?php echo $data['baseurl']; ?>logout">Sign out</a></li>
+				</ul>
 			</div>
 		</div>
-	</form>
-</div>
-
-<div class="span5">
-	<div id="pagination">
-		
+    </div>
+</section>
+<section id="main-container" class="row">
+	<div id="main-content" class="span11">
+		<div id="video-frame" class="span10"></div>
+		<div class="clear"></div>
+		<form id="manage-video-form" action="<?php echo $data['baseurl']; ?>video/save_video" method="post" class="form-stacked">
+			<input type="hidden" id="video_id" name="video_id" />
+			<input type="hidden" id="title" name="title" />
+			<input type="hidden" id="thumbnail" name="thumbnail" />
+			<div class="clearfix">
+				<label for="videolink">Video Link</label>
+				<div class="input">
+					<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" onchange="loadIframe();" />
+				</div>
+			</div>
+		</form>
 	</div>
 
-	<div id="search-container">
-		<form id="search-form">
-			<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
-			<button type="submit" id="search-button" name="search-button"></button>
-		</form>
-    </div>
-    <div id="search-result"></div>
-</div>
+	<div class="span5">
+		<div id="pagination">
 
+		</div>
+
+		<div id="search-container">
+			<form id="search-form">
+				<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
+				<button type="submit" id="search-button" name="search-button"></button>
+			</form>
+		</div>
+		<div id="search-result"></div>
+	</div>
+</section>
 <div id="footer"></div>
 <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
@@ -39,6 +71,23 @@
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.tablesorter.min.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript">
+	var cachePage = 1;
+	
+	function clearForm(){
+		Common.clearDiv('#video-frame');
+		Common.clearDiv('#manage-video-form');
+		var str = '<input type="hidden" id="video_id" name="video_id" />';
+		str += '<input type="hidden" id="title" name="title" />';
+		str += '<input type="hidden" id="thumbnail" name="thumbnail" />';
+		str += '<div class="clearfix">';
+		str += '<label for="videolink">Video Link</label>';
+		str += '<div class="input">';
+		str += '<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" onchange="loadIframe();" />'
+		str += '</div>';
+		str += '</div>';
+		$('#manage-video-form').append(str);
+	}
+	
 	function loadIframe(){
 
 		var url = $('#videolink').val();
@@ -73,7 +122,7 @@
 	}
 
 	function deleteVideo(id){
-		$.delete_('video/delete_video/'+id, function(data){
+		$.delete_('<?php echo $data['baseurl']; ?>video/delete_video/'+id, function(data){
 			if(data){
 				$('#newForm').click();
 				$('#video-frame').html('');
@@ -85,28 +134,11 @@
 		});
 	}
 
-
-	//	function ajaxValidationCallback(status, form, json){
-	//		Common.end();
-	//		if(status === true){
-	//			if(json[2] !== undefined){
-	//				refreshForm(json[2]);
-	//			} else {
-	//				ajaxSuccess(json[0], json[1]);
-	//			}
-	//
-	//		}
-	//		else {
-	//			ajaxFail('System database error. Please try again later', 'Error');
-	//		}
-	//		Search.onload('video/get_video_list', '#manage-video-form');
-	//	}
-
 	function refreshForm(id){
 		Common.clearDiv('#video-frame');
 		Common.clearDiv('#manage-video-form');
 		Common.wait();
-		$.get('video/get_one_video/'+id, function(data){
+		$.get('<?php echo $data['baseurl']; ?>video/get_one_video/'+id, function(data){
 			if(data){
 				var id = videoLinkId(data.link);
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
@@ -128,10 +160,10 @@
 				str += '</div>';
 				$('#video-frame').append(iframe);
 				$('#manage-video-form').append(str);
-//				$('iframe').load(function(){
+				//				$('iframe').load(function(){
 					
 				Common.end();
-//				});
+				//				});
 			}
 
 		});
@@ -154,20 +186,19 @@
 	function ajaxCallback(status, form, json){
 		$('body').css('cursor', 'default');
 		
-	
-		
 		if(status === true ) {
 			if(json === 200){
-				displayMessage('success', 'Video has updated');
+				displayMessage('info', 'Video has updated');
 			}
 		}
+		Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+cachePage, '#manage-video-form');
 	}
 	
 	function countPage(){
-		$.get('video/admin-count-page', function(data){
+		$.get('<?php echo $data['baseurl']; ?>video/admin-count-page', function(data){
 			if(data){
 				paginate(data);
-				Search.onload('video/admin-get-pagination/1', '#manage-video-form');
+				Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+cachePage, '#manage-video-form');
 			} else {
 				return false;
 			}
@@ -189,6 +220,7 @@
 			images					: false,
 			mouse					: 'press',
 			onChange     			: function(page){
+				cachePage = page;
 				Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+page);
 			}
 		});
@@ -202,7 +234,6 @@
 		$('#manage-video-form').validationEngine({
 			ajaxFormValidation: true,
 			onAjaxFormComplete: ajaxCallback,
-			onBeforeAjaxFormValidation: beforeCall
 		});
 
 		//Render search list at side content

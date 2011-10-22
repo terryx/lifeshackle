@@ -1,3 +1,20 @@
+<section id="navigation">
+	<div class="topbar" >
+		<div class="topbar-inner">
+			<div class="container">
+				<a class="brand" href="<?php echo $data['baseurl']; ?>home">Life's Shackle</a>
+				<ul class="nav">
+					<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
+				</ul>
+				<ul class="secondary-nav">
+					<li><a href="<?php echo $data['baseurl']; ?>sign-in">Sign in</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+</section>
+<section id="main-container" class="row">
 <div id="main-content" class="span11">			
 </div>
 
@@ -7,7 +24,10 @@
 	<div id="archive"></div>
 </div>
 
-<div class="pagination"></div>
+<div class="pagination">
+	
+</div>
+</section>
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
@@ -16,7 +36,7 @@
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript">
 	function filterByArchive(date){
-		$.get("article/filter-by-archive/"+date, function(data){
+		$.get("<?php echo $data['baseurl']; ?>article/filter-by-archive/"+date, function(data){
 			if(data){
 				var str = '';
 				Common.clearDiv("#main-content");
@@ -34,7 +54,7 @@
 	}
   
 	function archive(){
-		$.get("article/archive", function(data){
+		$.get("<?php echo $data['baseurl']; ?>article/archive", function(data){
 			if(data){
 				var str = "<h3>Archive</h3>";
 				str += "<ul class='span4'>";
@@ -48,7 +68,7 @@
 	}
 
 	function getPagination(page){
-		$.get('article/get-pagination/'+page, function(data){
+		$.get('<?php echo $data['baseurl']; ?>article/get-pagination/'+page, function(data){
 			if(data){
 				Common.clearDiv('#main-content');
 				var str = '';
@@ -65,7 +85,7 @@
 		});
 	}
 	function countPage(){
-		$.get('article/count-page', function(data){
+		$.get('<?php echo $data['baseurl']; ?>article/count-page', function(data){
 			if(data){
 				paginate(data);
 			} else {

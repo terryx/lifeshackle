@@ -6,10 +6,11 @@ $acl['master']['allow'] = '*';
 $acl['inactive']['failRoute'] = array('ErrorController' => array('banUser'));
 
 $acl['visitor']['allow'] = array(
-    'HomeController' => '*',
-    'PictureController' => array('getPictureGallery'),
+	'HomeController' => '*',
+	'PaginationController' => '*',
+	'PictureController' => array('getPictureGallery'),
 	'ProfileController' => array('profile', 'get'),
-    'ArticleController' => array('countPage', 'getPagination', 'arhive', 'filterbyArchive'),
-    'VideoController'   => array('countPage', 'getPagination')
+	'ArticleController' => array('countPage', 'getPagination', 'arhive', 'filterbyArchive'),
+	'VideoController' => array('countPage', 'getPagination')
 );
 ?>

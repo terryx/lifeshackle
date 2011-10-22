@@ -6,10 +6,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<?php $this->render($data['nav']); ?>
-			<div class="row">
-				<?php $this->render($data['content'], $data, true); ?>	
-			</div>
+			<?php $this->render($data['content'], $data, true); ?>
 		</div>
 	</body>
 </html>

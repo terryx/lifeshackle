@@ -3,16 +3,7 @@
 class VideoController extends CommonController {
 
 	protected $per_page = 20;
-
-	public function video() {
-		//direct to video main page
-		//TODO : merge video and manage-video into one page
-		$data = self::templateData();
-		$data['title'] = 'Videos';
-		$data['content'] = 'video';
-
-		$this->render('template/layout', $data, true);
-	}
+	protected $admin_per_page = 10;
 
 	public function getVideoList() {
 		$rs = $this->db()->find('Video', array(
@@ -75,16 +66,22 @@ class VideoController extends CommonController {
 //----------------------------------------------------------------//
 //------------------------ admin section -------------------------//
 //----------------------------------------------------------------//
-	public function manageVideoPage() {
-		$data = self::templateData();
-		$data['title'] = "Manage Video";
-		$data['content'] = 'manage-video';
-
-		$this->render('template/layout', $data, true);
+	public function viewPage() {
+		$data = $this->templateData();
+		$data["title"] = 'Video | ' . ucfirst($data['role']) . ' View';
+		$data["content"] = $data["role"] . "/video/view";
+		$this->view()->render('template/layout', $data, true);
 	}
 
+	public function editPage() {
+		$data = $this->templateData();
+		$data["title"] = 'Video | ' . ucfirst($data['role']) . ' Edit';
+		$data["content"] = $data["role"] . "/video/edit";
+		$this->view()->render('template/layout', $data, true);
+	}
+	
 	public function adminCountPage() {
-		$per_page = 10;
+		$per_page = $this->admin_per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -101,7 +98,7 @@ class VideoController extends CommonController {
 		if (intval($this->params['page']) < 1) {
 			return 404;
 		}
-		$per_page = 10;
+		$per_page = $this->admin_per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
 

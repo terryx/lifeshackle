@@ -1,7 +1,15 @@
 <?php
-
+//home page routing
 $route['*']['/'] = array('HomeController', 'index');
 $route['*']['/home'] = array('HomeController', 'index');
+$route['*']['/index'] = array('HomeController', 'index');
+$route['*']['/master'] = array('MasterController', 'index');
+
+//home page public module view
+$route['*']['/article'] = array('HomeController', 'article');
+$route['*']['/profile'] = array('HomeController', 'profile');
+$route['*']['/video'] = array('HomeController', 'video');
+
 $route['*']['/picture'] = array('HomeController', 'picture');
 
 $route['*']['/sign-in'] = array('LoginController', 'index');
@@ -9,11 +17,10 @@ $route['*']['/quote'] = array('QuoteController', 'index');
 
 $route['post']['/login'] = array('LoginController', 'login');
 $route['*']['/logout'] = array('LoginController', 'logout');
-$route['*']['/master'] = array('MasterController', 'index');
 $route['*']['/finance'] = array('FinanceController', 'index');
 
 //Profile
-$route['*']['/profile'] = array('ProfileController', 'profile');
+$route['*']['/master/profile'] = array('ProfileController', 'viewPage');
 $route['post']['/profile/save'] = array('ProfileController', 'save');
 $route['get']['/profile/get'] = array('ProfileController', 'get');
 $route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
@@ -21,9 +28,9 @@ $route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
 $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 //Article
-$route['*']['/article'] = array('ArticleController', 'article');
-$route['*']['/manage-article'] = array('ArticleController', 'manageArticlePage');
-$route['post']['/article/save_article'] = array('ArticleController', 'saveArticle');
+$route['*']['/article/view'] = array('ArticleController', 'viewPage');
+$route['*']['/article/edit'] = array('ArticleController', 'editPage');
+$route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
 $route['get']['/article/get_article_list'] = array('ArticleController', 'getArticleList');
 $route['get']['/article/get_one_article/:id'] = array('ArticleController', 'getOneArticle');
 $route['delete']['/article/delete_article/:id'] = array('ArticleController', 'deleteArticle');
@@ -49,7 +56,8 @@ $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getP
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
 
 //Video
-$route['*']['/video'] = array('VideoController', 'video');
+$route['*']['/video/view'] = array('VideoController', 'viewPage');
+$route['*']['/video/edit'] = array('VideoController', 'editPage');
 $route['*']['/manage-video'] = array('VideoController', 'manageVideoPage');
 $route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
 $route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');

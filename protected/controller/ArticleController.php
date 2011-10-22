@@ -2,7 +2,9 @@
 
 class ArticleController extends CommonController {
 
+	//global setting per page for visitor and admin
 	public $per_page = 5;
+	public $admin_per_page = 10;
 
 	public function escape_val($val) {
 
@@ -12,14 +14,21 @@ class ArticleController extends CommonController {
 		return $val;
 	}
 
-	public function article() {
+	public function viewPage() {
 		//article and index page is currently same
 		//TODO make own article page or merge manage article with index
-		$data = self::templateData();
-		$data['title'] = 'Article';
-		$data['content'] = 'index';
-
-		$this->render('template/layout', $data, true);
+		
+		$data = $this->templateData();
+		$data["title"] = 'View | Article';
+		$data["content"] = $data["role"]."/article/view";
+		$this->view()->render('template/layout', $data, true);
+	}
+	
+	public function editPage() {
+		$data = $this->templateData();
+		$data['title'] = 'Edit | Article';
+		$data['content'] = $data['role'].'/article/edit';
+		$this->view()->render('template/layout', $data, true);
 	}
 
 	public function getArticleList() {
@@ -51,6 +60,8 @@ class ArticleController extends CommonController {
 
 	public function countPage() {
 		$per_page = $this->per_page;
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
 
 		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
 		$sql .= 'WHERE article.visible = 1';
@@ -58,7 +69,7 @@ class ArticleController extends CommonController {
 		$rs = $this->db()->fetchAll($sql);
 		$page_number = doubleval($rs[0]['num_of_item']);
 
-		$page = $this->calculateExactPage($page_number);
+		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
 
@@ -69,7 +80,7 @@ class ArticleController extends CommonController {
 		$per_page = $this->per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
-		$role = self::checkRole();
+		$role = $this->checkRole();
 
 		if ($role) {
 			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
@@ -116,16 +127,9 @@ class ArticleController extends CommonController {
 	 * 
 	 */
 
-	public function manageArticlePage() {
-		$data = self::templateData();
-		$data['title'] = "Edit Article";
-		$data['content'] = 'manage-article';
-
-		$this->render('template/layout', $data, true);
-	}
 
 	public function adminCountPage() {
-		$per_page = 10;
+		$per_page = $this->admin_per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -141,7 +145,7 @@ class ArticleController extends CommonController {
 		if (intval($this->params['page']) < 1) {
 			return 404;
 		}
-		$per_page = 10;
+		$per_page = $this->admin_per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
 
@@ -173,8 +177,8 @@ class ArticleController extends CommonController {
 
 		$err = $v->validate($_POST, $rules);
 		if ($err) {
-			$this->toJSON($err, true);
-			return 400;
+			$this->toJSON(array('failed', $err), true);
+			return 200;
 		}
 
 		//set word length of body content
@@ -217,7 +221,6 @@ class ArticleController extends CommonController {
 		////////////////////////////////////////
 
 		if (!empty($_POST['article_id']) && intval($_POST['article_id']) > 0) {
-
 			$article = array(
 				'article_id' => $this->xss($_POST['article_id']),
 				'title' => $this->xss($_POST['title']),
@@ -229,8 +232,8 @@ class ArticleController extends CommonController {
 			Doo::loadModel('Article');
 			$a = new Article($article);
 			$a->update();
-
-			$this->toJSON(array($this->xss($_POST['title']) . ' has been edited', 'Update Success'), true);
+			
+			$this->toJSON(array('updated', $a->title), true);
 			return 200;
 		}
 

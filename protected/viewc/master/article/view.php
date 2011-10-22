@@ -1,42 +1,54 @@
 <section id="navigation">
-	<div class="topbar" >
+	<div class="topbar" data-dropdown="dropdown">
 		<div class="topbar-inner">
 			<div class="container">
-				<a class="brand" href="{{baseurl}}home">Life's Shackle</a>
+				<a class="brand" href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>">Life's Shackle</a>
 				<ul class="nav">
-					<li><a href="{{baseurl}}video">Video</a></li>
-					<li><a href="{{baseurl}}profile">Profile</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle">Article</a>
+						<ul class="dropdown-menu">
+							<li><a href="<?php echo $data['baseurl']; ?>article/view">View</a></li>
+							<li class="divider"></li>
+							<li><a href="<?php echo $data['baseurl']; ?>article/edit">Edit</a></li>
+						</ul>
+					</li>
+					<li><a href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>/profile">Profile</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle">Video</a>
+						<ul class="dropdown-menu">
+							<li><a href="<?php echo $data['baseurl']; ?>video/view">View</a></li>
+							<li class="divider"></li>
+							<li><a href="<?php echo $data['baseurl']; ?>video/edit">Edit</a></li>
+						</ul>
+					</li>
 				</ul>
 				<ul class="secondary-nav">
-					<li><a href="{{baseurl}}sign-in">Sign in</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>logout">Sign out</a></li>
 				</ul>
 			</div>
 		</div>
     </div>
 </section>
 <section id="main-container" class="row">
-<div id="main-content" class="span11">			
-</div>
+	<div id="main-content" class="span11">			
+	</div>
 
-<div class="span5">
-	<div id="pagination"></div>
-	<hr />
-	<div id="archive"></div>
-</div>
-
-<div class="pagination">
-	
-</div>
+	<div class="span5">
+		<div id="pagination"></div>
+		<hr />
+		<div id="archive"></div>
+	</div>
 </section>
+
+<div class="pagination"></div>
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/jquery.paginate.js?{{version}}"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript">
 	function filterByArchive(date){
-		$.get("{{baseurl}}article/filter-by-archive/"+date, function(data){
+		$.get("<?php echo $data['baseurl']; ?>article/filter-by-archive/"+date, function(data){
 			if(data){
 				var str = '';
 				Common.clearDiv("#main-content");
@@ -54,7 +66,7 @@
 	}
   
 	function archive(){
-		$.get("{{baseurl}}article/archive", function(data){
+		$.get("<?php echo $data['baseurl']; ?>article/archive", function(data){
 			if(data){
 				var str = "<h3>Archive</h3>";
 				str += "<ul class='span4'>";
@@ -68,7 +80,7 @@
 	}
 
 	function getPagination(page){
-		$.get('{{baseurl}}article/get-pagination/'+page, function(data){
+		$.get('<?php echo $data['baseurl']; ?>article/get-pagination/'+page, function(data){
 			if(data){
 				Common.clearDiv('#main-content');
 				var str = '';
@@ -85,7 +97,7 @@
 		});
 	}
 	function countPage(){
-		$.get('{{baseurl}}article/count-page', function(data){
+		$.get('<?php echo $data['baseurl']; ?>article/count-page', function(data){
 			if(data){
 				paginate(data);
 			} else {

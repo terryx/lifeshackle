@@ -7,14 +7,14 @@
  */
 class ProfileController extends CommonController {
 
-	public function profile() {
-		$data = self::templateData();
+	public function viewPage(){
+		$data = $this->templateData();
 		$data['title'] = "Terry Yuen";
-		$data['content'] = $data['role'] . 'profile';
+		$data['content'] = $data['role'] . '/profile';
 
 		$this->render('template/layout', $data, true);
 	}
-
+	
 	public function save() {
 
 		if (isset($_SESSION['user']['id'])) {
