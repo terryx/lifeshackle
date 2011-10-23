@@ -68,6 +68,7 @@ class CommonController extends DooController {
 		$data['version'] = Doo::conf()->version;
 		$data['title'] = null;
 		$data['role'] = $this->checkRole();
+		$data['nav'] = null;
 		$data['content'] = null;
 		$data['customscript'] = null;
 

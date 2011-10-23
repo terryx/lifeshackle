@@ -55,10 +55,11 @@ $route['get']['/picture/get_one_picture/:id'] = array('PictureController', 'getO
 $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getPictureGallery');
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
 
+//Status Update
+$route['*']['/status-update/edit'] = array('StatusUpdateController', 'editPage');
 //Video
 $route['*']['/video/view'] = array('VideoController', 'viewPage');
 $route['*']['/video/edit'] = array('VideoController', 'editPage');
-$route['*']['/manage-video'] = array('VideoController', 'manageVideoPage');
 $route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
 $route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');
 $route['get']['/video/get_one_video/:id'] = array('VideoController', 'getOneVideo');
