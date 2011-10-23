@@ -112,13 +112,14 @@
 					displayMessage('info', json[1] + ' has been updated');
 					break;
 				case 'created':
-					displayMessage('success', json[1] + ' has been created');
+					displayMessage('success', json[2] + ' has been created');
+					refreshForm(json[1]);
 					break;
 				default:
 					displayMessage('error', json[1]);
 			}
+			Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+cachePage, '#article-form');
 		}
-		Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+cachePage, '#article-form');
 	}
 	
 	function deleteArticle(id){

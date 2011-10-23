@@ -210,9 +210,9 @@ class ArticleController extends CommonController {
 
 			Doo::loadModel('Article');
 			$a = new Article($article);
-			$a->insert();
+			$new_id = $a->insert();
 
-			$this->toJSON(array('Article has created successfully', 'Create Success'), true);
+			$this->toJSON(array('created', $new_id, $a->title), true);
 			return 201;
 		}
 
