@@ -22,15 +22,13 @@
 		<div id="pagination">
 
 		</div>
-		<hr />
-		<div id="archive"></div>
 	</div>
 </section>
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?v1"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?v1"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?v1"></script>
 <script type="text/javascript">
 	function videoLinkId(url){
@@ -69,12 +67,10 @@
 	function getPagination(page){
 		$.get('<?php echo $data['baseurl']; ?>video/get-pagination/'+page, function(data){
 			if(data){
-				Common.clearDiv('#main-content');
 				var id;
 				var title;
 				var src;
 				var thumbnail;
-
 				var str = '<ul class="media-grid">';
 				for(var i = 0; i<data.length; i++){
 					id = data[i].k0;
@@ -86,6 +82,7 @@
 				}
 
 				str += '</ul>';
+				Common.end();
 				$('#main-content').append(str);
 				//setVideo(id, title, src);
 
@@ -121,6 +118,7 @@
 	}
 
 	$(function(){
+		Common.wait();
 		countPage();
 		getPagination(1);
 
