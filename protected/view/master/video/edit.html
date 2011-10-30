@@ -11,7 +11,7 @@
 			<div class="clearfix">
 				<label for="videolink">Video Link</label>
 				<div class="input">
-					<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" onchange="loadIframe();" />
+					<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" />
 				</div>
 			</div>
 		</form>
@@ -80,7 +80,7 @@
 					$('#thumbnail').val(thumbnail);
 				}
 			});
-			var str = '<input type="submit" id="submit" name="submit" value="Post" class=pre />';
+			var str = '<input type="submit" id="submit" name="submit" value="Post" class="btn primary" />';
 			$('#manage-video-form').append(str);
 		});
 	}
@@ -94,12 +94,11 @@
 	function deleteVideo(id){
 		$.delete_('{{baseurl}}video/delete_video/'+id, function(data){
 			if(data){
-				$('#newForm').click();
-				$('#video-frame').html('');
-				Search.onload('video/get_video_list', '#manage-video-form');
+				clearForm();
+				Search.onload('{{baseurl}}video/admin-get-pagination/'+cachePage, '#manage-video-form');
 			}
 			else {
-				ajaxFail('Video could not be removed');
+				displayMessage('warning', 'Video could not be deleted');
 			}
 		});
 	}
@@ -125,7 +124,7 @@
 				str += '</div>';
 				str += '<div class="actions">';
 				str += '<button class="btn primary" type="submit" id="submit" name="submit">Update</button>&nbsp;';
-				str += '<span id="deleteButton"><button class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
+				str += '<span id="deleteButton"><button type="button" class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
 				str += '</div>';
 				str += '</div>';
 				$('#video-frame').append(iframe);
@@ -155,10 +154,13 @@
 
 	function ajaxCallback(status, form, json){
 		$('body').css('cursor', 'default');
-		
 		if(status === true ) {
 			if(json === 200){
 				displayMessage('info', 'Video has updated');
+			}
+			if(json[0] === 201){
+				displayMessage('success', 'Video posted successfully');
+				refreshForm(json[1]);
 			}
 		}
 		Search.onload('{{baseurl}}video/admin-get-pagination/'+cachePage, '#manage-video-form');
@@ -203,21 +205,13 @@
 		//form validation
 		$('#manage-video-form').validationEngine({
 			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxCallback,
+			onAjaxFormComplete: ajaxCallback
 		});
 
-		//Render search list at side content
-
-		//		$('#newForm').click(function(){
-		//			Common.clearDiv('#manage-video-form');
-		//			Common.clearDiv('#video-frame');
-		//			var str = '<input type="hidden" id="video_id" name="video_id" />' +
-		//				'<input type="hidden" id="title" name="title" />' +
-		//				'<input type="hidden" id="thumbnail" name="thumbnail" />' +
-		//				'<label for="videolink" class="flat">Video Link</label>' +
-		//				'<input type="text" id="videolink" name="videolink" class="extend validate[required]" onchange="loadIframe();" /><br />';
-		//			$('#manage-video-form').append(str);
-		//		});
+		$('#videolink').bind('change', function(){
+			loadIframe();
+			
+		});
 
 		
 	}); //end document ready

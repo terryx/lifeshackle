@@ -106,17 +106,38 @@ var Search = {
 	}
 };
 
-function displayMessage(type, msg){
+function displayMessage(type, msg, div, close){
 	//type = warning, success, error, info
 	var checked = $('.alert-message').length >= 0 ? $('.alert-message').remove() : false;
-		
+	var closeView = '';
+	
+	//element setup - position where message box located
+	if(div === undefined){
+		div = '#main-content';
+	}
+	
+	//close button setup - enabled by default
+	if(close === undefined){
+		close = true;
+	} else {
+		close = false;
+	}
+	
+	if(close === true){
+		closeView = '<a class="close" href="#">x</a>';
+	}
+	
 	if(checked){
+		if(type !== 'warning' && type !== 'error' && type !== 'success' && type !== 'info'){
+			type = 'warning';
+		}
+		
 		var str = '<div class="alert-message '+ type +'" data-alert>'+
-		'<a class="close" href="#">x</a>'+
+		closeView +
 		'<p>'+ msg +'</p>'+
 		'</div>';
 		
-		$('#main-content').prepend(str);
+		$(div).prepend(str);
 	}	
 }
 

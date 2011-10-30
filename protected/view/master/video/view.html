@@ -22,24 +22,24 @@
 		return id;
 	}
 
-	function setVideo(id, src){
-
-		var url_id	= videoLinkId(src);
-		var modal	= 'modal-video-'+id; 
-
-		var str = '';
-		str += '<div id="'+ modal +'" class="modal hide fade">';
-		str += '<div class="modal-body">';
-		str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
-		str += '</div>';
-		str += '<div class="modal-footer">';
-		str += '<a href="#" class="close">&times;</a>';
-		str += '</div>';
-		str += '</div>';
-		$('#main-content').append(str);
-
-		renderModal(modal);
-	}
+	// function setVideo(id, src){
+	// 
+	// 	var url_id	= videoLinkId(src);
+	// 	var modal	= 'modal-video-'+id; 
+	// 
+	// 	var str = '';
+	// 	str += '<div id="'+ modal +'" class="modal hide fade">';
+	// 	str += '<div class="modal-body">';
+	// 	str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
+	// 	str += '</div>';
+	// 	str += '<div class="modal-footer">';
+	// 	str += '<a href="#" class="close">&times;</a>';
+	// 	str += '</div>';
+	// 	str += '</div>';
+	// 	$('#main-content').append(str);
+	// 
+	// 	renderModal(modal);
+	// }
 
 	function renderModal(modal){
 		$('#'+ modal).modal({
@@ -50,8 +50,10 @@
 	}
 
 	function getPagination(page){
+    
 		$.get('{{baseurl}}video/get-pagination/'+page, function(data){
 			if(data){
+				console.log(data);
 				var id;
 				var title;
 				var src;
@@ -63,7 +65,7 @@
 					src = data[i].k2
 					thumbnail = data[i].k3;
 
-					str += '<li><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" title="'+ title +'" onclick="setVideo(\''+ id +'\', \'' + src +'\')" /></li>';
+					str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 				}
 
 				str += '</ul>';

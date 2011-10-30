@@ -11,11 +11,7 @@
 </section>
 
 <div class="pagination"></div>
-<div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/jquery.paginate.js?{{version}}"></script>
+<!-- include '/template/footer' -->
 <script type="text/javascript">
 	function filterByArchive(date){
 		$.get("{{baseurl}}article/filter-by-archive/"+date, function(data){

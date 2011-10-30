@@ -22,7 +22,7 @@ class CommonController extends DooController {
 
 				if ($found_user && $found_user->status != 'active') {
 					$role = 'inactive';
-				} elseif ($found_user && $found_user->status == 'active') {
+				} else if ($found_user && $found_user->status == 'active') {
 
 					$_SESSION['user'] = array(
 						'id' => $found_user->id,

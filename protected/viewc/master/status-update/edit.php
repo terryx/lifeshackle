@@ -1,7 +1,7 @@
-<!-- include '/template/master-nav' -->
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
 <section id="main-container" class="row">
 	<div class="form-div">
-		<form id="status-update-form-0" class ="form-stacked" method ="POST" action ="{{baseurl}}status-update/save">
+		<form id="status-update-form-0" class ="form-stacked" method ="POST" action ="<?php echo $data['baseurl']; ?>status-update/save">
 			<div class ="clearfix">
 				<label for="status-update"> Update status </label>
 				<div class="input">
@@ -14,7 +14,7 @@
 	<div id="main-content" class="span11">
 	</div >
 </section>
-<!-- include '/template/footer' -->
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
 	function fetchStatusUpdate(data){
 		var str = '';
@@ -27,7 +27,7 @@
 			str += ' <div id = "status-block-'+ id +'" class = "span11 status-block d-show" > ';
 			str += msg;
 			str += ' </div>';
-			str += '<form id="status-update-form-'+ id  +'" class="form-stacked d-hide" method="POST" action="{{baseurl}}status-update/save ">';
+			str += '<form id="status-update-form-'+ id  +'" class="form-stacked d-hide" method="POST" action="<?php echo $data['baseurl']; ?>status-update/save ">';
 			str += '<div class="clearfix ">';
 			str += '<div class="input ">';
 			str += '<textarea id="status - update - '+ id +'" name="status_update " cols="70 " rows="3 " class="span10 hide ">'+ msg +'</textarea>';
@@ -81,7 +81,7 @@
 		//fetch status update
 		$.ajax({
 			type: 'GET',
-			url: '{{baseurl}}status-update/get-all',
+			url: '<?php echo $data['baseurl']; ?>status-update/get-all',
 			statusCode: {
 				200: function(data) {
 					fetchStatusUpdate(data);

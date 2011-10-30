@@ -57,6 +57,14 @@ class ArticleController extends CommonController {
 			}
 		}
 	}
+	
+	public function fetchArticleList(){
+		$sql = 'SELECT article_id as k0, title as k1, created as k2, body as k3 FROM article ';
+		$sql .= 'ORDER BY article_id DESC LIMIT 3';
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+		return 200;
+	}
 
 	public function countPage() {
 		$per_page = $this->per_page;

@@ -30,6 +30,7 @@ $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 //Article
 $route['*']['/article/view'] = array('ArticleController', 'viewPage');
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
+$route['*']['/article/fetch-article-list'] = array('ArticleController', 'fetchArticleList');
 $route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
 $route['get']['/article/get_article_list'] = array('ArticleController', 'getArticleList');
 $route['get']['/article/get_one_article/:id'] = array('ArticleController', 'getOneArticle');
@@ -41,7 +42,16 @@ $route['get']['/article/filter-by-archive/:date'] = array('ArticleController', '
 $route['get']['/article/admin-count-page'] = array('ArticleController', 'adminCountPage');
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
+//Chat
+$route['*']['/master/chat/edit'] = array('ChatController', 'editPage');
+$route['post']['/chat/save-user'] = array('ChatController', 'saveUser');
+$route['post']['/chat/save-chat'] = array('ChatController', 'saveChat');
+$route['get']['/chat/fetch-chat-list'] = array('ChatController', 'fetchChatList');
+$route['get']['/chat/pool-chat/:id'] = array('ChatController', 'poolChat');
+$route['get']['/chat/delete-chat-post'] = array('ChatController', 'deleteChatPost');
+
 //Master rights
+$route['*']['/master/homepage'] = array('MasterController', 'homePage');
 $route['*']['/manage-user'] = array('MasterController', 'manageUserPage');
 $route['post']['/master/save_user'] = array('MasterController', 'saveUser');
 $route['get']['/master/get_user_list'] = array('MasterController', 'getUserList');
@@ -56,7 +66,10 @@ $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getP
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
 
 //Status Update
-$route['*']['/status-update/edit'] = array('StatusUpdateController', 'editPage');
+$route['*']['/master/status-update/edit'] = array('StatusUpdateController', 'editPage');
+$route['get']['/status-update/get-all'] = array('StatusUpdateController', 'getAll');
+$route['post']['/status-update/save'] = array('StatusUpdateController', 'save');
+
 //Video
 $route['*']['/video/view'] = array('VideoController', 'viewPage');
 $route['*']['/video/edit'] = array('VideoController', 'editPage');
@@ -82,26 +95,26 @@ $route['*']['/test-page'] = array('TestController', 'testPage');
 
 
 //---------- Delete if not needed ------------
+/*
+$admin = array('admin'=>'1234');
 
-//$admin = array('admin'=>'1234');
-//
-////view the logs and profiles XML, filename = db.profile, log, trace.log, profile
-//$route['*']['/debug/:filename'] = array('MainController', 'debug', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
-////show all urls in app
-//$route['*']['/allurl'] = array('MainController', 'allurl', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
-////generate routes file. This replace the current routes.conf.php. Use with the sitemap tool.
-//$route['post']['/gen_sitemap'] = array('MainController', 'gen_sitemap', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
+//view the logs and profiles XML, filename = db.profile, log, trace.log, profile
+$route['*']['/debug/:filename'] = array('MainController', 'debug', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//show all urls in app
+$route['*']['/allurl'] = array('MainController', 'allurl', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate routes file. This replace the current routes.conf.php. Use with the sitemap tool.
+$route['post']['/gen_sitemap'] = array('MainController', 'gen_sitemap', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
 ////generate routes & controllers. Use with the sitemap tool.
-//$route['post']['/gen_sitemap_controller'] = array('MainController', 'gen_sitemap_controller', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
-////generate Controllers automatically
-//$route['*']['/gen_site'] = array('MainController', 'gen_site', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
-////generate Models automatically
-//$route['*']['/gen_model'] = array('MainController', 'gen_model', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
-//
+$route['post']['/gen_sitemap_controller'] = array('MainController', 'gen_sitemap_controller', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
 
+//generate Controllers automatically
+$route['*']['/gen_site'] = array('MainController', 'gen_site', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+//generate Models automatically
+$route['*']['/gen_model'] = array('MainController', 'gen_model', 'authName'=>'DooPHP Admin', 'auth'=>$admin, 'authFail'=>'Unauthorized!');
+
+*/
 ?>

@@ -1,34 +1,4 @@
-<section id="navigation">
-	<div class="topbar" data-dropdown="dropdown">
-		<div class="topbar-inner">
-			<div class="container">
-				<a class="brand" href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>">Life's Shackle</a>
-				<ul class="nav">
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle">Article</a>
-						<ul class="dropdown-menu">
-							<li><a href="<?php echo $data['baseurl']; ?>article/view">View</a></li>
-							<li class="divider"></li>
-							<li><a href="<?php echo $data['baseurl']; ?>article/edit">Edit</a></li>
-						</ul>
-					</li>
-					<li><a href="<?php echo $data['baseurl']; ?><?php echo $data['role']; ?>/profile">Profile</a></li>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle">Video</a>
-						<ul class="dropdown-menu">
-							<li><a href="<?php echo $data['baseurl']; ?>video/view">View</a></li>
-							<li class="divider"></li>
-							<li><a href="<?php echo $data['baseurl']; ?>video/edit">Edit</a></li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="secondary-nav">
-					<li><a href="<?php echo $data['baseurl']; ?>logout">Sign out</a></li>
-				</ul>
-			</div>
-		</div>
-    </div>
-</section>
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
 <section id="main-container" class="row">
 	<div id="main-content" class="span11">
 	</div>
@@ -37,14 +7,13 @@
 		<div id="pagination">
 
 		</div>
-		<hr />
-		<div id="archive"></div>
 	</div>
 </section>
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/common.js?v1"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?v1"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?v1"></script>
 <script type="text/javascript">
 	function videoLinkId(url){
@@ -53,24 +22,24 @@
 		return id;
 	}
 
-	function setVideo(id, src){
-
-		var url_id	= videoLinkId(src);
-		var modal	= 'modal-video-'+id; 
-
-		var str = '';
-		str += '<div id="'+ modal +'" class="modal hide fade">';
-		str += '<div class="modal-body">';
-		str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
-		str += '</div>';
-		str += '<div class="modal-footer">';
-		str += '<a href="#" class="close">&times;</a>';
-		str += '</div>';
-		str += '</div>';
-		$('#main-content').append(str);
-
-		renderModal(modal);
-	}
+	// function setVideo(id, src){
+	// 
+	// 	var url_id	= videoLinkId(src);
+	// 	var modal	= 'modal-video-'+id; 
+	// 
+	// 	var str = '';
+	// 	str += '<div id="'+ modal +'" class="modal hide fade">';
+	// 	str += '<div class="modal-body">';
+	// 	str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
+	// 	str += '</div>';
+	// 	str += '<div class="modal-footer">';
+	// 	str += '<a href="#" class="close">&times;</a>';
+	// 	str += '</div>';
+	// 	str += '</div>';
+	// 	$('#main-content').append(str);
+	// 
+	// 	renderModal(modal);
+	// }
 
 	function renderModal(modal){
 		$('#'+ modal).modal({
@@ -81,14 +50,14 @@
 	}
 
 	function getPagination(page){
+    
 		$.get('<?php echo $data['baseurl']; ?>video/get-pagination/'+page, function(data){
 			if(data){
-				Common.clearDiv('#main-content');
+				console.log(data);
 				var id;
 				var title;
 				var src;
 				var thumbnail;
-
 				var str = '<ul class="media-grid">';
 				for(var i = 0; i<data.length; i++){
 					id = data[i].k0;
@@ -96,10 +65,11 @@
 					src = data[i].k2
 					thumbnail = data[i].k3;
 
-					str += '<li><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" title="'+ title +'" onclick="setVideo(\''+ id +'\', \'' + src +'\')" /></li>';
+					str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 				}
 
 				str += '</ul>';
+				Common.end();
 				$('#main-content').append(str);
 				//setVideo(id, title, src);
 
@@ -135,6 +105,7 @@
 	}
 
 	$(function(){
+		Common.wait();
 		countPage();
 		getPagination(1);
 

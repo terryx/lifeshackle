@@ -1,19 +1,4 @@
-<section id="navigation">
-	<div class="topbar" >
-		<div class="topbar-inner">
-			<div class="container">
-				<a class="brand" href="{{baseurl}}home">Life's Shackle</a>
-				<ul class="nav">
-					<li><a href="{{baseurl}}video">Video</a></li>
-					<li><a href="{{baseurl}}profile">Profile</a></li>
-				</ul>
-				<ul class="secondary-nav">
-					<li><a href="{{baseurl}}sign-in">Sign in</a></li>
-				</ul>
-			</div>
-		</div>
-    </div>
-</section>
+<!-- include '/template/visitor-nav' -->
 <section id="main-container" class="row">
 	<div id="main-content" class="span11">
 	</div>
@@ -24,12 +9,7 @@
 		</div>
 	</div>
 </section>
-<div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/common.js?v1"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/jquery.paginate.js?v1"></script>
+<!-- include '/template/footer' -->
 <script type="text/javascript">
 	function videoLinkId(url){
 		var id;
@@ -37,36 +17,10 @@
 		return id;
 	}
 
-	function setVideo(id, src){
-
-		var url_id	= videoLinkId(src);
-		var modal	= 'modal-video-'+id; 
-
-		var str = '';
-		str += '<div id="'+ modal +'" class="modal hide fade">';
-		str += '<div class="modal-body">';
-		str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
-		str += '</div>';
-		str += '<div class="modal-footer">';
-		str += '<a href="#" class="close">&times;</a>';
-		str += '</div>';
-		str += '</div>';
-		$('#main-content').append(str);
-
-		renderModal(modal);
-	}
-
-	function renderModal(modal){
-		$('#'+ modal).modal({
-			show : true,
-			backdrop : true,
-			keyboard : true
-		});
-	}
-
 	function getPagination(page){
 		$.get('{{baseurl}}video/get-pagination/'+page, function(data){
 			if(data){
+				Common.clearDiv('#main-content');
 				var id;
 				var title;
 				var src;
@@ -78,14 +32,12 @@
 					src = data[i].k2
 					thumbnail = data[i].k3;
 
-					str += '<li><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" title="'+ title +'" onclick="setVideo(\''+ id +'\', \'' + src +'\')" /></li>';
+					str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 				}
 
 				str += '</ul>';
 				Common.end();
 				$('#main-content').append(str);
-				//setVideo(id, title, src);
-
 			}
 		});
 	}

@@ -28,9 +28,14 @@ class ProfileBase extends DooModel{
      */
     public $quote;
 
+    /**
+     * @var varchar Max length is 50.
+     */
+    public $picture;
+
     public $_table = 'profile';
     public $_primarykey = 'profile_id';
-    public $_fields = array('profile_id','user_id','personal','technical','quote');
+    public $_fields = array('profile_id','user_id','personal','technical','quote','picture');
 
     public function getVRules() {
         return array(
@@ -55,6 +60,11 @@ class ProfileBase extends DooModel{
                 ),
 
                 'quote' => array(
+                        array( 'notnull' ),
+                ),
+
+                'picture' => array(
+                        array( 'maxlength', 50 ),
                         array( 'notnull' ),
                 )
             );

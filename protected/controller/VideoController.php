@@ -152,7 +152,7 @@ class VideoController extends CommonController {
 				$v = new Video($video_array);
 				$new_video_id = $v->insert();
 
-				$this->toJSON(array('Video has posted successfully', 'Post Success', $new_video_id), true);
+				$this->toJSON(array(201, $new_video_id), true);
 				return 201;
 			}
 			else {
@@ -168,25 +168,25 @@ class VideoController extends CommonController {
 			'where' => 'video.video_id = ?',
 			'param' => array(intval($this->params['id']))
 				));
-
+		
 		if ($v->count()) {
 			//get latest id
-			$la = $this->db()->find('LatestUpdate', array(
-				'limit' => 1,
-				'where' => 'latest_update.latest_id = ?',
-				'param' => array($v->latest_id)
-					));
+//			$la = $this->db()->find('LatestUpdate', array(
+//				'limit' => 1,
+//				'where' => 'latest_update.latest_id = ?',
+//				'param' => array($v->latest_id)
+//					));
 
 			$v->beginTransaction();
-			$la->beginTransaction();
+//			$la->beginTransaction();
 			try {
 				$v->delete();
-				$la->delete();
+//				$la->delete();
 				$v->commit();
 				$this->toJSON(array('deleted'), true);
 			} catch (PDOException $e) {
 				$v->rollBack();
-				return 500;
+				return 400;
 			}
 		}
 		else {
