@@ -5,6 +5,15 @@ class HomeController extends CommonController {
 
 	public function index() {
 		$data = $this->templateData();
+		
+		if (isset($_COOKIE['lfshackschatuser']) && isset($_COOKIE['lfshackschatemail'])) {
+			$data['chatuser'] = $_COOKIE['lfshackschatuser'];
+			$data['chatemail'] = $_COOKIE['lfshackschatemail'];
+		} else {
+			$data['chatuser'] = '';
+			$data['chatemail'] = '';
+		}
+		
 		if ($data['role'] !== null) {
 			$data['title'] = "Life Shackle | " . ucfirst($data['role']);
 			$data['content'] = $data['role'] . '/index';

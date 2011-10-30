@@ -1,105 +1,223 @@
-<!-- include '/template/visitor-nav' -->
+<!-- include '/template/master-nav' -->
 <section id="main-container" class="row">
-<div id="main-content" class="span11">			
-</div>
+	<div id="main-content" class="span10">
+		<h6>Recent article</h6>
+		<div id="article">
+		</div>
+	</div>
+	<div id="side-content" class="span6">
+		<div id="chat-container">
+			<form id="chat-form"  method="post">
+				<div class="clearfix">
+					<textarea id="chat-content" class="span6" disabled="disabled"></textarea>
+				</div>
+				<div id="chat-actions">
 
-<div class="span5">
-	<div id="pagination"></div>
-	<hr />
-	<div id="archive"></div>
-</div>
+				</div>
+			</form>
+		</div>
+		<div class="chatbox">
 
-<div class="pagination">
-	
-</div>
+		</div>
+	</div>
 </section>
+
+<div id="user-form" class="modal hide fade">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h3>Please tell me about yourself :)</h3>
+	</div>
+	<div class="modal-body">
+		<form>
+			<div class="clearfix">
+				<label for="username">Name</label>
+				<div class="input">
+					<input type="text" id="username" />
+				</div>
+			</div>
+			<div class="clearfix">
+				<label for="email">Email</label>
+				<div class="input">
+					<input type="text" id="email" />
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" id="save" class="btn primary">Save</a>
+	</div>
+</div>
 <!-- include '/template/footer' -->
 <script type="text/javascript">
-	function filterByArchive(date){
-		$.get("{{baseurl}}article/filter-by-archive/"+date, function(data){
-			if(data){
-				var str = '';
-				Common.clearDiv("#main-content");
-				for(var i=0;i<data.length;i++){
-					str += '<div class="span10 i-content">';
-					str += '<h2>'+data[i].k1+'</h2>';
-					str += '<strong>'+data[i].k2+'</strong><br />';
-					str += data[i].k3;
-					str += '</div>';
+	var c_user = '{{chatuser}}';
+	var c_email = '{{chatemail}}';
+	var last_id = 0;
+	
+	function sendCommand(){
+		$('#chat-actions').html('');
+		$('#chat-content').removeAttr('disabled');
+		var str = '<button type="submit" class="btn primary">Send</button>&nbsp;';
+		str += '<button type="button" onclick="setUserInfo()" class="btn">Change name</button>&nbsp;';
+		$('#chat-actions').append(str);
+	}
+	
+	function setUserInfo(){
+		$('#user-form').modal({
+			backdrop : true,
+			keyboard : true,
+			show 	 : true
+		});
+	}
+	
+	function checkCookie(){
+		if(c_user && c_email !== undefined){
+			sendCommand();
+		} else {
+			var str = '<button type="button" id="lets-chat" onclick="setUserInfo()" class="btn">Lets Chat</button>';
+			$('#chat-actions').append(str);
+		}
+	}
+	
+	function fetchChatList(){
+		$.ajax({
+			type : 'GET',
+			url : '{{baseurl}}chat/fetch-chat-list',
+			dataType: 'json',
+			statusCode : {
+				200 : function(data){
+					Common.clearDiv('.chatbox');
+					var str = '';
+					
+					if(data){
+						for(var i = 0; i < data.length; i++){
+							str += '<div class="chatpost">';
+							str += '<a href="http://'+ data[i].k4 +'">'+ data[i].k3 + '</a>&nbsp;';
+							str += '<span class="chat-time">' + data[i].k1 + '</span><br />';
+							str += data[i].k2;
+							str += '</div>';
+						}
+						last_id = data.length;
+						$('.chatbox').append(str);
+					}
+				},
+				400 : function(){
+					
+				},
+				404 : function(){
+					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
 			}
-			$(str).appendTo('#main-content');
-
 		});
 	}
-  
-	function archive(){
-		$.get("{{baseurl}}article/archive", function(data){
-			if(data){
-				var str = "<h3>Archive</h3>";
-				str += "<ul class='span4'>";
-				for(var i=0;i<data.length;i++){
-					str += "<li><div class='num' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k0+"</div><div class='date' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k1+"</div></li>";
+	
+	function poolChat(){
+		$.ajax({
+			type : 'GET',
+			url : '{{baseurl}}chat/pool-chat/'+last_id,
+			dataType : 'json',
+			statusCode : {
+				200 : function(data){
+					if(data){
+						Common.clearDiv('.chatbox');
+						fetchChatList();
+					}
+				},
+				400 : function(){
+				
+				},
+				404 : function(){
+				
 				}
-				str += "</ul>";
-				$("#archive").append(str);
 			}
 		});
 	}
-
-	function getPagination(page){
-		$.get('{{baseurl}}article/get-pagination/'+page, function(data){
-			if(data){
-				Common.clearDiv('#main-content');
-				var str = '';
-				for(var i=0;i<data.length;i++){
-					str += '<div class="span10 i-content">';
-					str += '<h2>'+data[i].k1+'</h2>';
-					str += '<strong>'+data[i].k2+'</strong><br />';
-					str += data[i].k3;
-					str += '</div>';
+	
+	function fetchArticleList(){
+		$.ajax({
+			type : 'GET',
+			url : '{{baseurl}}article/fetch-article-list',
+			statusCode : {
+				200 : function(data){
+					if(data){
+						var str = '';
+						for(var i = 0; i < data.length; i++){
+							str += '<div class="span10 i-content">';
+							str += '<h2>'+data[i].k1+'</h2>';
+							str += '<strong>'+data[i].k2+'</strong><br />';
+							str += data[i].k3;
+							str += '</div>';
+						}
+						$(str).appendTo('#article');
+					}
+				},
+				404 : function(){
+					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
-				$(str).appendTo('#main-content');
-
 			}
-		});
+		})
 	}
-	function countPage(){
-		$.get('{{baseurl}}article/count-page', function(data){
-			if(data){
-				paginate(data);
-			} else {
-				return false;
-			}
-		});
-	}
-
-	function paginate(count){
-		$("#pagination").paginate({
-			count 		: count,
-			start 		: 1,
-			//      display     : 3,
-			border					: true,
-			border_color			: '#fff',
-			text_color  			: '#fff',
-			background_color    	: 'black',
-			border_hover_color		: '#ccc',
-			text_hover_color  		: '#000',
-			background_hover_color	: '#fff',
-			images					: false,
-			mouse					: 'press',
-			onChange     			: function(page){
-				getPagination(page);
-			}
-		});
-
-	}
-
+	
 	$(function(){
-		countPage();
-		getPagination(1);
-
-		archive();
-
+	
+		checkCookie();
+	
+		fetchChatList();
+			
+		fetchArticleList();
+		
+		setInterval(poolChat, 3000);
+		
+		$('#chat-form').submit(function(){
+			
+			//send chat
+			$.ajax({
+				type : 'POST',
+				url : '{{baseurl}}chat/save-chat',
+				data : { c_user : c_user, c_email : c_email, chat_content : $('#chat-content').val() },
+				dataType : 'json',
+				statusCode : {
+					201 : function(data){
+						fetchChatList();
+					},
+					400 : function(data){
+						displayMessage('error', eval(data.responseText));
+					},
+					404 : function(){
+						displayMessage('error', 'Page not found', '.modal-body', false);
+					}
+				}
+			});
+			
+			return false;
+		});
+		
+		$('#save').bind('click', function(){
+			var username = $('#username').val();
+			var email = $('#email').val();
+			
+			$.ajax({
+				type: 'POST',
+				url: '{{baseurl}}chat/save-user',
+				data : {username : username, email : email},
+				dataType : 'json',
+				statusCode : {
+					200 : function(data){
+						if(data){
+							c_user = data[0];
+							c_email = data[1];
+							sendCommand();
+							$('#user-form').modal('hide');
+						}
+					},
+					400 : function(data){
+						displayMessage('error', eval(data.responseText), '.modal-body', false);
+					},
+					404 : function(){
+						displayMessage('error', 'Page not found', '.modal-body', false);
+					}
+				}
+			});
+		});
+		
 	});
 </script>
