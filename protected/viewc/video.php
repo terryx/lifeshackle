@@ -1,14 +1,27 @@
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/visitor-nav.php"; ?>
-<section id="main-container" class="row">
-	<div id="main-content" class="span11">
-	</div>
-
-	<div class="span5">
+<div class="content">
+	<div class="page-header">
 		<div id="pagination">
 
 		</div>
 	</div>
-</section>
+	<div class="row">
+		<div id="main-content" class="span11">
+		</div>
+
+		<div id="side-content" class="span5">
+		</div>
+	</div>
+</div>
+
+<div id="login-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h3>Login Error</h3>
+	</div>
+	<div class="modal-body">
+		<div class="error-message"></div>
+	</div>
+</div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
 	function videoLinkId(url){
@@ -20,7 +33,7 @@
 	function getPagination(page){
 		$.get('<?php echo $data['baseurl']; ?>video/get-pagination/'+page, function(data){
 			if(data){
-				console.log(data);
+				Common.clearDiv('#main-content');
 				var id;
 				var title;
 				var src;
@@ -68,12 +81,48 @@
 			}
 		});
 	}
+	
+	function setLoginModal(){
+		$('#login-modal').modal({
+			backdrop : true,
+			keyboard : true,
+			show 	 : true
+		});
+	}
 
 	$(function(){
 		Common.wait();
 		countPage();
 		getPagination(1);
 
+		$('#login-form').bind('submit', function(e){
+			e.preventDefault();
+			$.ajax({
+				type : 'POST',
+				url : '<?php echo $data['baseurl']; ?>login',
+				data : {username : $('#username').val(), password : $('#password').val()},
+				dataType : 'json',
+				statusCode : {
+					200 : function(data){
+						window.location = data;
+					},
+					400 : function(data){
+						var str = "Invalid combination of username/password";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					},
+					404 : function(){
+						var str = "The page is not found.";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					}
+				}
+			});
+		});
 	});
 
 </script>

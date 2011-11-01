@@ -1,8 +1,37 @@
+html, body {
+	background-color: #eee;
+}
 body {
-	padding-top: 60px;
+	padding-top: 40px;
+}
+.container > footer p {
+	text-align: center;
+}
+.content {
+	background-color: #fff;
+	padding: 20px;
+	margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+	-webkit-border-radius: 0 0 6px 6px;
+	-moz-border-radius: 0 0 6px 6px;
+	border-radius: 0 0 6px 6px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	min-height: 500px;
 }
 
-#main-content {
+#side-content {
+	margin-left: 0;
+	padding-left: 17px;
+	border-left: 1px solid #eee;
+}
+
+.custom-span {
+	width: 280px;
+}
+
+.topbar .btn {
+	border: 0;
 }
 
 .i-content {
@@ -10,9 +39,6 @@ body {
 	padding-bottom: 40px;
 }
 
-/*#control {
-	display: none;
-}*/
 .i-publish {
 	float: left;
 	height: 30px;
@@ -38,6 +64,11 @@ body {
 }
 .hide {
 	display: none;
+}
+.error-message {
+	color: red;
+	font-weight: bold;
+	text-align: center;
 }
 /*----------- pagination ------------*/
 #pagination {
@@ -149,34 +180,34 @@ span.jPag-snext-img{
     padding: 9px;
 }
 #archive ul li {
-  padding: 2px;
-  text-align: center;
+	padding: 2px;
+	text-align: center;
 }
 
 #archive .num {
-  display:inline-block;
-  margin-left: 5px;
-  width: 25px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #999999;
-  background-color: #fff;
-  cursor: pointer;
+	display:inline-block;
+	margin-left: 5px;
+	width: 25px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #999999;
+	background-color: #fff;
+	cursor: pointer;
 }
 #archive .num:hover {
-  background-color: #f2f2f2;
+	background-color: #f2f2f2;
 }
 
 #archive .date {
-  display:inline-block;
-  margin-left: 5px;
-  width: 150px;
-   font-size: 15px;
-  color: #008000;
-   cursor: pointer;
+	display:inline-block;
+	margin-left: 5px;
+	width: 150px;
+	font-size: 15px;
+	color: #008000;
+	cursor: pointer;
 }
 #archive .date:hover {
- font-weight: bold;
+	font-weight: bold;
 }
 
 /*-------------- Index ----------------*/

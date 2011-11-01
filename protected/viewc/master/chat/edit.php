@@ -1,26 +1,30 @@
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
-<section id="main-container" class="row">
-	<div id="main-content" class="span10">
-		<div id="article">
+<div class="content">
+	<div class="page-header">
+		<h6>Recent article</h6>
+	</div>
+	<div class="row">
+		<div id="main-content" class="span10">
+			<div id="article">
 
+			</div>
+		</div>
+		<div id="side-content" class="span6">
+			<div id="chat-container">
+				<form id="chat-form"  method="post">
+					<div class="clearfix">
+						<textarea id="chat-content" class="span6" disabled="disabled"></textarea>
+					</div>
+					<div id="chat-actions">
+
+					</div>
+				</form>
+			</div>
+			<div class="chatbox">
+
+			</div>
 		</div>
 	</div>
-	<div id="side-content" class="span6">
-		<div id="chat-container">
-			<form id="chat-form"  method="post">
-				<div class="clearfix">
-					<textarea id="chat-content" class="span6" disabled="disabled"></textarea>
-				</div>
-				<div id="chat-actions">
-
-				</div>
-			</form>
-		</div>
-		<div class="chatbox">
-
-		</div>
-	</div>
-</section>
+</div>
 
 <div id="user-form" class="modal hide fade">
 	<div class="modal-header">
@@ -119,8 +123,16 @@
 			statusCode : {
 				200 : function(data){
 					if(data){
-						Common.clearDiv('.chatbox');
-						fetchChatList();
+						var str = '';
+						last_id = data[1];
+						for(var i = 0; i < data[0].length; i++){
+							str += '<div class="chatpost">';
+							str += '<a href="http://'+ data[0][i].k4 +'">'+ data[0][i].k3 + '</a>&nbsp;';
+							str += '<span class="chat-time">' + data[0][i].k1 + '</span><br />';
+							str += data[0][i].k2;
+							str += '</div>';
+							$('.chatbox').prepend(str);
+						}
 					}
 				},
 				400 : function(){
@@ -165,6 +177,8 @@
 			statusCode : {
 				200 : function(data){
 					displayMessage('success', 'Chat history is deleted', '#side-content');
+					Common.clearDiv('.chatbox');
+					last_id = 0;
 				},
 				400 : function(data){
 					displayMessage('error', 'Chat could not be deleted', '#side-content');

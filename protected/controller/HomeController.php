@@ -6,14 +6,6 @@ class HomeController extends CommonController {
 	public function index() {
 		$data = $this->templateData();
 		
-		if (isset($_COOKIE['lfshackschatuser']) && isset($_COOKIE['lfshackschatemail'])) {
-			$data['chatuser'] = $_COOKIE['lfshackschatuser'];
-			$data['chatemail'] = $_COOKIE['lfshackschatemail'];
-		} else {
-			$data['chatuser'] = '';
-			$data['chatemail'] = '';
-		}
-		
 		if ($data['role'] !== null) {
 			$data['title'] = "Life Shackle | " . ucfirst($data['role']);
 			$data['content'] = $data['role'] . '/index';
@@ -54,17 +46,12 @@ class HomeController extends CommonController {
 	}
 
 	public function video() {
-		$data = $this->templateData();
-		if ($data['role'] !== null) {
-			$data["title"] = 'Video | ' . ucfirst($data['role']) . ' View';
-			$data["content"] = $data["role"] . "/video/view";
-		}
-		else {
-			$data['title'] = 'Videos';
-			$data['content'] = 'video';
-		}
 
-		$this->render('template/layout', $data, true);
+		$data = $this->templateData();
+		$data["title"] = 'Video';
+		$data["content"] = 'video';
+
+		$this->view()->render('template/layout', $data, true);
 	}
 
 }

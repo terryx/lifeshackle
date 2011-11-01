@@ -42,7 +42,7 @@ class LoginController extends CommonController {
 					//if remember me is selected
 					(isset($_POST['remember'])) ? $this->setRememberMe($username, $u->password) : false;
 
-					$this->toJSON(array(true, $rs->type), true);
+					$this->toJSON($rs->type, true);
 					return 200;
 				}
 				else {
@@ -51,7 +51,8 @@ class LoginController extends CommonController {
 				}
 			}
 			else {
-				$this->toJSON(array("Invalid combination of username and password"), true);
+				//invalid username/password
+				return 400;
 			}
 		}
 		else {

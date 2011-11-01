@@ -7,14 +7,6 @@ class MasterController extends CommonController {
 		$data['title'] = "Life Shackle | Master HomePage";
 		$data['content'] = $data['role'].'/homepage';
 		
-		if (isset($_COOKIE['lfshackschatuser']) && isset($_COOKIE['lfshackschatemail'])) {
-			$data['chatuser'] = $_COOKIE['lfshackschatuser'];
-			$data['chatemail'] = $_COOKIE['lfshackschatemail'];
-		} else {
-			$data['chatuser'] = '';
-			$data['chatemail'] = '';
-		}
-
 		$this->render('template/layout', $data, true);
 	}
 	

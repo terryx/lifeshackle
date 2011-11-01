@@ -1,57 +1,79 @@
-<section id="navigation">
-	<div class="topbar" >
-		<div class="topbar-inner">
-			<div class="container">
-				<a class="brand" href="<?php echo $data['baseurl']; ?>home">Life's Shackle</a>
-				<ul class="nav">
-					<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
-					<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
-				</ul>
-				<ul class="secondary-nav">
-					<li><a href="<?php echo $data['baseurl']; ?>sign-in">Sign in</a></li>
-				</ul>
+<div class="content">
+	<div class="page-header">
+		<h6>have a nice day xD</h6>
+	</div>
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div id="personal">
+				<h5>Personal Info</h5>
+				<div id="personal-info">
+
+				</div>
+			</div>
+
+			<div id="technical">
+				<h5>Technical Skills</h5>
+				<div id="technical-info">
+
+				</div>
+			</div>
+
+			<div id="quote">
+				<h5>Favorite Quotes</h5>
+				<div id="quote-info">
+
+				</div>
 			</div>
 		</div>
-    </div>
-</section>
-<section id="main-container" class="row">
-<div id="main-content" class="span11">
-	<section id="personal">
-		<h5>Personal Info</h5>
-		<div id="personal-info">
-			
+		<div id="side-content" class="span5">
+			<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
 		</div>
-	</section>
-
-	<section id="technical">
-		<h5>Technical Skills</h5>
-		<div id="technical-info">
-
-		</div>
-	</section>
-	
-	<section id="quote">
-		<h5>Favorite Quotes</h5>
-		<div id="quote-info">
-
-		</div>
-	</section>
+	</div>
 </div>
-<div class="span5">
-	<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
+<div id="login-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h3>Login Error</h3>
+	</div>
+	<div class="modal-body">
+		<div class="error-message"></div>
+	</div>
 </div>
-</section>
-<div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
 	$(function(){
 	
 		//render all info here
 		getProfile();
+		
+				$('#login-form').bind('submit', function(e){
+			e.preventDefault();
+			$.ajax({
+				type : 'POST',
+				url : '<?php echo $data['baseurl']; ?>login',
+				data : {username : $('#username').val(), password : $('#password').val()},
+				dataType : 'json',
+				statusCode : {
+					200 : function(data){
+						window.location = data;
+					},
+					400 : function(data){
+						var str = "Invalid combination of username/password";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					},
+					404 : function(){
+						var str = "The page is not found.";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					}
+				}
+			});
+		});
 	
 	});
 	

@@ -19,14 +19,6 @@ class ChatController extends CommonController {
 		$data["title"] = 'Chat';
 		$data["content"] = $data["role"] . "/chat/edit";
 
-		if (isset($_COOKIE['lfshackschatuser']) && isset($_COOKIE['lfshackschatemail'])) {
-			$data['chatuser'] = $_COOKIE['lfshackschatuser'];
-			$data['chatemail'] = $_COOKIE['lfshackschatemail'];
-		} else {
-			$data['chatuser'] = '';
-			$data['chatemail'] = '';
-		}
-
 		$this->view()->render('template/layout', $data, true);
 	}
 
@@ -99,30 +91,42 @@ class ChatController extends CommonController {
 	public function poolChat() {
 		$id = $this->params['id'];
 
-		if (empty($id) || !intval($id) || $id === 0) {
+		if (intval($id) < 0) {
 			//return with empty data
 			return 200;
 		} else {
 			$sql = "SELECT MAX(chat_id) as k0 FROM chat";
 			$last_id = $this->db()->fetchAll($sql);
-
-			if ($id == $last_id[0]['k0']) {
+			$last_id = $last_id[0]['k0'];
+			if ($id === $last_id) {
 				return 200;
 			} else {
-				//get last id
-				$sql = "SELECT chat_id as k0, created as k1, message as k2, username as k3, email as k4";
-				$sql .=" FROM chat ORDER BY chat_id DESC";
-				$latest_entry = $this->db()->fetchAll($sql);
-				$this->toJSON($latest_entry, true);
+				//get untracked id by minus last id
+				if ($id === 0) {
+					$sql = "SELECT chat_id as k0, DATE_FORMAT(created, '%D %M %Y %r') as k1, message as k2, username as k3, email as k4";
+					$sql .= " FROM chat WHERE chat_id = 1 ORDER BY chat_id DESC";
+				} else {
+					$sql = "SELECT chat_id as k0, DATE_FORMAT(created, '%D %M %Y %r') as k1, message as k2, username as k3, email as k4";
+					$sql .= " FROM chat WHERE chat_id > {$id} ORDER BY chat_id DESC";
+				}
+				$untracked = $this->db()->fetchAll($sql);
+				
+				//if sql is empty
+				if(!$untracked){
+					return 200;
+				}
+
+				$this->toJSON(array($untracked, $last_id), true);
 				return 200;
 			}
 		}
+		return 404;
 	}
 
 	public function deleteChatPost() {
-		$sql = 'DELETE FROM chat';
+		$sql = 'TRUNCATE TABLE chat';
 		$rs = $this->db()->fetchAll($sql);
-		if($rs){
+		if ($rs) {
 			return 200;
 		} else {
 			return 400;

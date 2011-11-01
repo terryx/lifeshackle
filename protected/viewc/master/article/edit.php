@@ -1,7 +1,9 @@
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
-<section id="main-container" class="row">
+<div class="content">
+	<div class="page-header">
+			<button class="btn info" onclick="clearForm()">New</button><br />
+	</div>
+	<div class="row">
 	<div id="main-content" class="span11">
-		<button class="btn info" onclick="clearForm()">New</button>
 		<form id="article-form" class="form-stacked" action="<?php echo $data['baseurl']; ?>article/save-article" method="post">
 			<fieldset>
 				<input type="hidden" id="article_id" name="article_id" />
@@ -31,7 +33,7 @@
 		</form>
 	</div>
 
-	<div class="span5">
+	<div id="side-content" class="span5">
 		<div id="pagination">
 
 		</div>
@@ -43,12 +45,9 @@
 		</div>
 		<div id="search-result"></div>
 	</div>
-</section>
-<div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
+	</div>
+</div>
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
 <script type="text/javascript">
@@ -164,11 +163,19 @@
 			}
 		});
 	}
+	
+	function navModal(){
+		$('#nav-modal').modal({
+			backdrop : true,
+			keyboard : true,
+			show 	 : true
+		});
+	}
 
 	$(function(){
 
 		countPage();
-
+		navModal();
 		//form validation
 		$('#article-form').validationEngine({
 			ajaxFormValidation: true,

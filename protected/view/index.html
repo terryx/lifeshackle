@@ -1,27 +1,28 @@
-<!-- include '/template/master-nav' -->
-<section id="main-container" class="row">
-	<div id="main-content" class="span10">
+<div class="content">
+	<div class="page-header">
 		<h6>Recent article</h6>
-		<div id="article">
-		</div>
 	</div>
-	<div id="side-content" class="span6">
-		<div id="chat-container">
-			<form id="chat-form"  method="post">
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div id="article">
+
+			</div>
+		</div>
+		<div id="side-content" class="span5">
+			<form id="chat-form" method="post">
 				<div class="clearfix">
-					<textarea id="chat-content" class="span6" disabled="disabled"></textarea>
+					<textarea id="chat-content" class="span5" disabled="disabled"></textarea>
 				</div>
 				<div id="chat-actions">
 
 				</div>
 			</form>
-		</div>
-		<div class="chatbox">
+			<div class="chatbox">
 
+			</div>
 		</div>
 	</div>
-</section>
-
+</div>
 <div id="user-form" class="modal hide fade">
 	<div class="modal-header">
 		<a href="#" class="close">&times;</a>
@@ -47,6 +48,17 @@
 		<a href="#" id="save" class="btn primary">Save</a>
 	</div>
 </div>
+
+<div id="login-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h3>Login Error</h3>
+	</div>
+	<div class="modal-body">
+		<div class="error-message"></div>
+	</div>
+</div>
+
 <!-- include '/template/footer' -->
 <script type="text/javascript">
 	var c_user = '{{chatuser}}';
@@ -118,8 +130,16 @@
 			statusCode : {
 				200 : function(data){
 					if(data){
-						Common.clearDiv('.chatbox');
-						fetchChatList();
+						var str = '';
+						last_id = data[1];
+						for(var i = 0; i < data[0].length; i++){
+							str += '<div class="chatpost">';
+							str += '<a href="http://'+ data[0][i].k4 +'">'+ data[0][i].k3 + '</a>&nbsp;';
+							str += '<span class="chat-time">' + data[0][i].k1 + '</span><br />';
+							str += data[0][i].k2;
+							str += '</div>';
+							$('.chatbox').prepend(str);
+						}
 					}
 				},
 				400 : function(){
@@ -141,7 +161,7 @@
 					if(data){
 						var str = '';
 						for(var i = 0; i < data.length; i++){
-							str += '<div class="span10 i-content">';
+							str += '<div class="i-content">';
 							str += '<h2>'+data[i].k1+'</h2>';
 							str += '<strong>'+data[i].k2+'</strong><br />';
 							str += data[i].k3;
@@ -155,6 +175,14 @@
 				}
 			}
 		})
+	}
+	
+	function setLoginModal(){
+		$('#login-modal').modal({
+			backdrop : true,
+			keyboard : true,
+			show 	 : true
+		});
 	}
 	
 	$(function(){
@@ -177,10 +205,12 @@
 				dataType : 'json',
 				statusCode : {
 					201 : function(data){
-						fetchChatList();
+						$('#chat-form')[0].reset();
+						poolChat();
+						Common.removeDiv('.alert-message');
 					},
 					400 : function(data){
-						displayMessage('error', eval(data.responseText));
+						displayMessage('error', eval(data.responseText), '#side-content');
 					},
 					404 : function(){
 						displayMessage('error', 'Page not found', '.modal-body', false);
@@ -219,5 +249,34 @@
 			});
 		});
 		
+		/* Login */
+		$('#login-form').bind('submit', function(e){
+			e.preventDefault();
+			$.ajax({
+				type : 'POST',
+				url : '{{baseurl}}login',
+				data : {username : $('#username').val(), password : $('#password').val()},
+				dataType : 'json',
+				statusCode : {
+					200 : function(data){
+						window.location = data;
+					},
+					400 : function(data){
+						var str = "Invalid combination of username/password";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					},
+					404 : function(){
+						var str = "The page is not found.";
+						var message = $('.error-message');
+						Common.clearDiv(message);
+						message.html(str);
+						setLoginModal();
+					}
+				}
+			});
+		});
 	});
 </script>

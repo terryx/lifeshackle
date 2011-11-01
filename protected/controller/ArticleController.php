@@ -185,8 +185,8 @@ class ArticleController extends CommonController {
 
 		$err = $v->validate($_POST, $rules);
 		if ($err) {
-			$this->toJSON(array('failed', $err), true);
-			return 200;
+			$this->toJSON($err, true);
+			return 400;
 		}
 
 		//set word length of body content

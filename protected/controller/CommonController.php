@@ -34,7 +34,7 @@ class CommonController extends DooController {
 
 					$role = $_SESSION['user']['role'];
 				} else {
-					$role = "visitor";
+					$role = 'visitor';
 				}
 
 				$rs = $this->acl()->process($role, $resource, $action);
@@ -63,15 +63,16 @@ class CommonController extends DooController {
 	}
 
 	public function templateData() {
-//		$data = array('baseurl', 'version', 'role', 'title', 'nav', 'content');
+		$role = $this->checkRole();
 		$data['baseurl'] = Doo::conf()->APP_URL;
 		$data['version'] = Doo::conf()->version;
 		$data['title'] = null;
-		$data['role'] = $this->checkRole();
-		$data['nav'] = null;
+		$data['role'] = $role;
+		$data['nav'] = 'template/'. $role . 'nav';
 		$data['content'] = null;
 		$data['customscript'] = null;
-
+		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
+		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
 		return $data;
 	}
 	
