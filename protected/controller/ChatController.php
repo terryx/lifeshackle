@@ -23,12 +23,12 @@ class ChatController extends CommonController {
 	}
 
 	public function saveUser() {
-		$username = $_POST['username'];
-		$email = $_POST['email'];
+		$username = $_POST['chatuser'];
+		$email = $_POST['chatemail'];
 
 		$rules = array(
-			'username' => array('required', 'Name must not empty'),
-			'email' => array('email')
+			'chatuser' => array('required', 'Name must not empty'),
+			'chatemail' => array('email')
 		);
 
 		$v = new DooValidator();
@@ -93,13 +93,15 @@ class ChatController extends CommonController {
 
 		if (intval($id) < 0) {
 			//return with empty data
-			return 200;
+			header("Status: 200");
+			exit;
 		} else {
 			$sql = "SELECT MAX(chat_id) as k0 FROM chat";
 			$last_id = $this->db()->fetchAll($sql);
 			$last_id = $last_id[0]['k0'];
 			if ($id === $last_id) {
-				return 200;
+				header("Status: 200");
+				exit;
 			} else {
 				//get untracked id by minus last id
 				if ($id === 0) {
@@ -110,14 +112,19 @@ class ChatController extends CommonController {
 					$sql .= " FROM chat WHERE chat_id > {$id} ORDER BY chat_id DESC";
 				}
 				$untracked = $this->db()->fetchAll($sql);
-				
+
 				//if sql is empty
-				if(!$untracked){
-					return 200;
+				if (!$untracked) {
+					header("Status: 200");
+					exit;
 				}
 
 				$this->toJSON(array($untracked, $last_id), true);
-				return 200;
+				if (!headers_sent()) {
+					header("Status: 200");
+					exit;
+				}
+				exit;
 			}
 		}
 		return 404;

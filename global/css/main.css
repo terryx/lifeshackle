@@ -65,6 +65,9 @@ body {
 .hide {
 	display: none;
 }
+.header-message {
+	text-align: center;
+}
 .error-message {
 	color: red;
 	font-weight: bold;
@@ -267,4 +270,10 @@ span.jPag-snext-img{
 	font-size: 11px;
 	color: #ccc;
 	font-style: italic;
+}
+.chat-loader {
+	background: url(../img/loaderx.gif) no-repeat 45% 0;
+	width: 280px;
+	height: 48px;
+	position: absolute;
 }

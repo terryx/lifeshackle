@@ -119,6 +119,11 @@ class CommonController extends DooController {
 		header('Location:' . $url);
 		exit;
 	}
+	
+	protected function status_code_200(){
+		header("Status: 200");
+		exit;
+	}
 
 }
 

@@ -1,9 +1,9 @@
 <div class="content">
-	<div class="page-header">
-		<h6>Recent article</h6>
-	</div>
 	<div class="row">
 		<div id="main-content" class="span11">
+			<div class="page-header">
+				<h6>Recent article</h6>
+			</div>
 			<div id="article">
 
 			</div>
@@ -23,40 +23,31 @@
 		</div>
 	</div>
 </div>
-<div id="user-form" class="modal hide fade">
-	<div class="modal-header">
-		<a href="#" class="close">&times;</a>
-		<h3>Please tell me about yourself :)</h3>
-	</div>
-	<div class="modal-body">
-		<form>
-			<div class="clearfix">
-				<label for="username">Name</label>
-				<div class="input">
-					<input type="text" id="username" />
-				</div>
-			</div>
-			<div class="clearfix">
-				<label for="email">Email</label>
-				<div class="input">
-					<input type="text" id="email" />
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" id="save" class="btn primary">Save</a>
-	</div>
-</div>
 
-<div id="login-modal" class="modal hide fade">
-	<div class="modal-header">
-		<a href="#" class="close">&times;</a>
-		<h3>Login Error</h3>
-	</div>
-	<div class="modal-body">
-		<div class="error-message"></div>
-	</div>
+<div id="chat-modal" class="modal hide fade">
+	<form id="user-form">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>Please tell me about yourself :)</h3>
+		</div>
+		<div class="modal-body">
+			<div class="clearfix">
+				<label for="chatuser">Name</label>
+				<div class="input">
+					<input type="text" id="chatuser" name="chatuser" />
+				</div>
+			</div>
+			<div class="clearfix">
+				<label for="chatemail">Email</label>
+				<div class="input">
+					<input type="text" id="chatemail" name="chatemail" />
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn primary">Save</button>
+		</div>
+	</form>
 </div>
 
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
@@ -74,7 +65,7 @@
 	}
 	
 	function setUserInfo(){
-		$('#user-form').modal({
+		$('#chat-modal').modal({
 			backdrop : true,
 			keyboard : true,
 			show 	 : true
@@ -146,10 +137,12 @@
 				
 				},
 				404 : function(){
-				
+					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
 			}
+			
 		});
+	
 	}
 	
 	function fetchArticleList(){
@@ -177,14 +170,6 @@
 		})
 	}
 	
-	function setLoginModal(){
-		$('#login-modal').modal({
-			backdrop : true,
-			keyboard : true,
-			show 	 : true
-		});
-	}
-	
 	$(function(){
 	
 		checkCookie();
@@ -196,13 +181,16 @@
 		setInterval(poolChat, 3000);
 		
 		$('#chat-form').submit(function(){
-			
+			var str = '<div class="chat-loader"></div>'; 
 			//send chat
 			$.ajax({
 				type : 'POST',
 				url : '<?php echo $data['baseurl']; ?>chat/save-chat',
 				data : { c_user : c_user, c_email : c_email, chat_content : $('#chat-content').val() },
 				dataType : 'json',
+				beforeSend : function(){
+					$('.chatbox').prepend(str);
+				},
 				statusCode : {
 					201 : function(data){
 						$('#chat-form')[0].reset();
@@ -215,20 +203,22 @@
 					404 : function(){
 						displayMessage('error', 'Page not found', '.modal-body', false);
 					}
+				},
+				complete : function(){
+					Common.removeDiv('.chat-loader');
 				}
 			});
 			
 			return false;
 		});
 		
-		$('#save').bind('click', function(){
-			var username = $('#username').val();
-			var email = $('#email').val();
+		$('#user-form').bind('submit', function(e){
+			e.preventDefault();
 			
 			$.ajax({
 				type: 'POST',
 				url: '<?php echo $data['baseurl']; ?>chat/save-user',
-				data : {username : username, email : email},
+				data : {chatuser : $('#chatuser').val(), chatemail : $('#chatemail').val()},
 				dataType : 'json',
 				statusCode : {
 					200 : function(data){
@@ -236,7 +226,7 @@
 							c_user = data[0];
 							c_email = data[1];
 							sendCommand();
-							$('#user-form').modal('hide');
+							$('#chat-modal').modal('hide');
 						}
 					},
 					400 : function(data){
@@ -252,6 +242,15 @@
 		/* Login */
 		$('#login-form').bind('submit', function(e){
 			e.preventDefault();
+			
+			//declare class to be appended
+			var headerDiv = $('.header-message');
+			var errorDiv = $('.error-message');
+			
+			//declare message variable
+			var header = "";
+			var message = "";
+			
 			$.ajax({
 				type : 'POST',
 				url : '<?php echo $data['baseurl']; ?>login',
@@ -261,19 +260,22 @@
 					200 : function(data){
 						window.location = data;
 					},
-					400 : function(data){
-						var str = "Invalid combination of username/password";
-						var message = $('.error-message');
-						Common.clearDiv(message);
-						message.html(str);
-						setLoginModal();
+					400 : function(){
+						header = "Login Error";
+						message = "Invalid combination of username/password";
+						
+						Common.clearDiv(errorDiv);
+						headerDiv.html(header);
+						errorDiv.html(message);
+						Common.navModal();
 					},
 					404 : function(){
-						var str = "The page is not found.";
-						var message = $('.error-message');
+						header = "Login Error";
+						message = "The page is not found.";
+						
 						Common.clearDiv(message);
 						message.html(str);
-						setLoginModal();
+						Common.navModal();
 					}
 				}
 			});

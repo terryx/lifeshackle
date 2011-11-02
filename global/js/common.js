@@ -23,41 +23,12 @@ var Common = {
 	unbindLoading: function(id, msg){
 		$(id).removeClass('post').addClass('pre');
 		$(id).val(msg);
-	}
-}
-var MenuSetting = {
-	//	create : function(){
-	//		$('.menu').mouseover(function(){
-	//			$(this).children('a').css('display', 'block');
-	//		});
-	//		$('.menu').mouseout(function(){
-	//			$(this).children('a').css('display', 'none');
-	//		});
-	//	},
-	resetButton : function(options){
-
-		var str = '<div class="menu" style="margin-left:105px"><div id="newForm">New</div></div>';
-		$(str).appendTo('#menubar');
-
-			options : {
-				form          : null
-				iframe        : null
-				hiddenId      : null
-			}
-		$('#newForm').click(function(){
-			$(options.form)[0].reset();
-
-			//clear hidden field
-			options.hiddenId = null ? null : $(options.hiddenId).val('');
-
-			//clear iframe
-			if(options.iframe !== null){
-				$(options.iframe).contents().find('body').html('');
-			}
-
-			//clear delete button
-			$('#deleteButton').html('');
-
+	},
+	navModal: function (){
+		$('#nav-modal').modal({
+			backdrop : true,
+			keyboard : true,
+			show 	 : true
 		});
 	}
 }

@@ -14,3 +14,13 @@
         </div>
 	</div>
 </div>
+<div id="nav-modal" class="modal hide fade">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h4 class="header-message">Login Error</h4>
+	</div>
+	<div class="modal-body">
+		<div class="error-message"></div>
+	</div>
+	<div class="modal-footer"></div>
+</div>
