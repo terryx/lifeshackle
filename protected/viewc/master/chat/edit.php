@@ -26,30 +26,30 @@
 	</div>
 </div>
 
-<div id="user-form" class="modal hide fade">
-	<div class="modal-header">
-		<a href="#" class="close">&times;</a>
-		<h3>Please tell me about yourself :)</h3>
-	</div>
-	<div class="modal-body">
-		<form>
+<div id="chat-modal" class="modal hide fade">
+	<form id="user-form">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>Please tell me about yourself :)</h3>
+		</div>
+		<div class="modal-body">
 			<div class="clearfix">
-				<label for="username">Name</label>
+				<label for="chatuser">Name</label>
 				<div class="input">
-					<input type="text" id="username" />
+					<input type="text" id="chatuser" name="chatuser" />
 				</div>
 			</div>
 			<div class="clearfix">
-				<label for="email">Email</label>
+				<label for="chatemail">Email</label>
 				<div class="input">
-					<input type="text" id="email" />
+					<input type="text" id="chatemail" name="chatemail" />
 				</div>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" id="save" class="btn primary">Save</a>
-	</div>
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn primary">Save</button>
+		</div>
+	</form>
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
@@ -139,10 +139,12 @@
 				
 				},
 				404 : function(){
-				
+					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
 			}
+			
 		});
+	
 	}
 	
 	function fetchArticleList(){
@@ -171,9 +173,13 @@
 	}
 	
 	function deleteChatPost(){
+		var str = '<div class="chat-loader"></div>';
 		$.ajax({
 			type : 'GET',
 			url : '<?php echo $data['baseurl']; ?>chat/delete-chat-post',
+			beforeSend : function(){
+				$('.chatbox').prepend(str);
+			},
 			statusCode : {
 				200 : function(data){
 					displayMessage('success', 'Chat history is deleted', '#side-content');
@@ -183,6 +189,9 @@
 				400 : function(data){
 					displayMessage('error', 'Chat could not be deleted', '#side-content');
 				}
+			},
+			complete : function(){
+				Common.removeDiv('.chat-loader');
 			}
 		});
 	}
@@ -199,37 +208,44 @@
 		//setTimeout(poolChat, 4000);
 		
 		$('#chat-form').submit(function(){
-			
+			var str = '<div class="chat-loader"></div>'; 
 			//send chat
 			$.ajax({
 				type : 'POST',
 				url : '<?php echo $data['baseurl']; ?>chat/save-chat',
 				data : { c_user : c_user, c_email : c_email, chat_content : $('#chat-content').val() },
 				dataType : 'json',
+				beforeSend : function(){
+					$('.chatbox').prepend(str);
+				},
 				statusCode : {
 					201 : function(data){
-						fetchChatList();
+						$('#chat-form')[0].reset();
+						poolChat();
+						Common.removeDiv('.alert-message');
 					},
 					400 : function(data){
-						displayMessage('error', eval(data.responseText));
+						displayMessage('error', eval(data.responseText), '#side-content');
 					},
 					404 : function(){
 						displayMessage('error', 'Page not found', '.modal-body', false);
 					}
+				},
+				complete : function(){
+					Common.removeDiv('.chat-loader');
 				}
 			});
 			
 			return false;
 		});
 		
-		$('#save').bind('click', function(){
-			var username = $('#username').val();
-			var email = $('#email').val();
+		$('#user-form').bind('submit', function(e){
+			e.preventDefault();
 			
 			$.ajax({
 				type: 'POST',
 				url: '<?php echo $data['baseurl']; ?>chat/save-user',
-				data : {username : username, email : email},
+				data : {chatuser : $('#chatuser').val(), chatemail : $('#chatemail').val()},
 				dataType : 'json',
 				statusCode : {
 					200 : function(data){
@@ -237,7 +253,7 @@
 							c_user = data[0];
 							c_email = data[1];
 							sendCommand();
-							$('#user-form').modal('hide');
+							$('#chat-modal').modal('hide');
 						}
 					},
 					400 : function(data){

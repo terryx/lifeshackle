@@ -139,8 +139,10 @@
 				404 : function(){
 					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
+			},
+			complete : function(){
+				Common.removeDiv('.chat-loader');
 			}
-			
 		});
 	
 	}
@@ -203,9 +205,6 @@
 					404 : function(){
 						displayMessage('error', 'Page not found', '.modal-body', false);
 					}
-				},
-				complete : function(){
-					Common.removeDiv('.chat-loader');
 				}
 			});
 			
@@ -251,6 +250,9 @@
 			var header = "";
 			var message = "";
 			
+			Common.clearDiv(headerDiv);
+			Common.clearDiv(errorDiv);
+			
 			$.ajax({
 				type : 'POST',
 				url : '<?php echo $data['baseurl']; ?>login',
@@ -263,8 +265,6 @@
 					400 : function(){
 						header = "Login Error";
 						message = "Invalid combination of username/password";
-						
-						Common.clearDiv(errorDiv);
 						headerDiv.html(header);
 						errorDiv.html(message);
 						Common.navModal();
@@ -272,9 +272,8 @@
 					404 : function(){
 						header = "Login Error";
 						message = "The page is not found.";
-						
-						Common.clearDiv(message);
-						message.html(str);
+						headerDiv.html(header);
+						errorDiv.html(message);
 						Common.navModal();
 					}
 				}
