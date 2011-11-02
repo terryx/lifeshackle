@@ -2,58 +2,43 @@
 
 //homecontroller control all public pages for non-register user
 class HomeController extends CommonController {
-
-	public function index() {
+	
+	//set universal module , data template
+	//if is user page will redirect to role/page else page
+	private function setData($page) {
 		$data = $this->templateData();
-		
-		if ($data['role'] !== null) {
-			$data['title'] = "Life Shackle | " . ucfirst($data['role']);
-			$data['content'] = $data['role'] . '/index';
-		}
-		else {
-			$data['title'] = "Life Shackle";
-			$data['content'] = 'index';
-		}
-
+		$data['module_login'] = 'template/login';
+		$data['module_chat'] = 'template/chat';
+		$data['content'] = ($data['role'] !== null) ? $data['role'] . DIRECTORY_SEPARATOR . $page :  $page;
+		return $data;
+	}
+ 
+	public function index() {
+		$data = $this->setData(__FUNCTION__);
 		$this->render('template/layout', $data, true);
 	}
 
 	public function article() {
-		$data = $this->templateData();
+		$data = $this->setData(__FUNCTION__);
+		$data['title'] = 'Article';
+
 		if ($data['role'] !== null) {
-			$data["title"] = 'Article | ' . ucfirst($data['role']) . ' View';
 			$data["content"] = $data["role"] . "/article/view";
-		}
-		else {
-			$data['title'] = 'Article';
+		} else {
 			$data['content'] = 'index';
 		}
 		$this->render('template/layout', $data, true);
 	}
 
 	public function profile() {
-		$data = $this->templateData();
-		$data['title'] = "Profile";
-		if ($data['role'] !== null) {
-			$data['content'] = $data['role'] . '/profile';
-		}
-		else {
-			$data['title'] = "Profile";
-			$data['content'] = 'profile';
-		}
-
+		$data = $this->setData(__FUNCTION__);
 		$this->render('template/layout', $data, true);
 	}
 
 	public function video() {
-
-		$data = $this->templateData();
-		$data["title"] = 'Video';
-		$data["content"] = 'video';
-
+		$data = $this->setData(__FUNCTION__);
 		$this->view()->render('template/layout', $data, true);
 	}
-
 }
 
 ?>

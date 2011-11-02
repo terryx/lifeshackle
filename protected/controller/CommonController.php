@@ -63,14 +63,15 @@ class CommonController extends DooController {
 	}
 
 	public function templateData() {
+		//use $data['module_(name)']; without bracket to define module to import
+		//example : $data['module_chat
 		$role = $this->checkRole();
 		$data['baseurl'] = Doo::conf()->APP_URL;
 		$data['version'] = Doo::conf()->version;
 		$data['title'] = null;
 		$data['role'] = $role;
-		$data['nav'] = 'template/'. $role . 'nav';
+		$data['nav'] = ($role !== null) ? 'template/nav-' . $role : 'template/nav-visitor';
 		$data['content'] = null;
-		$data['customscript'] = null;
 		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
 		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
 		return $data;

@@ -30,15 +30,6 @@
 		</div>
 	</div>
 </div>
-<div id="login-modal" class="modal hide fade">
-	<div class="modal-header">
-		<a href="#" class="close">&times;</a>
-		<h3>Login Error</h3>
-	</div>
-	<div class="modal-body">
-		<div class="error-message"></div>
-	</div>
-</div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
 	$(function(){
@@ -46,35 +37,6 @@
 		//render all info here
 		getProfile();
 		
-				$('#login-form').bind('submit', function(e){
-			e.preventDefault();
-			$.ajax({
-				type : 'POST',
-				url : '<?php echo $data['baseurl']; ?>login',
-				data : {username : $('#username').val(), password : $('#password').val()},
-				dataType : 'json',
-				statusCode : {
-					200 : function(data){
-						window.location = data;
-					},
-					400 : function(data){
-						var str = "Invalid combination of username/password";
-						var message = $('.error-message');
-						Common.clearDiv(message);
-						message.html(str);
-						setLoginModal();
-					},
-					404 : function(){
-						var str = "The page is not found.";
-						var message = $('.error-message');
-						Common.clearDiv(message);
-						message.html(str);
-						setLoginModal();
-					}
-				}
-			});
-		});
-	
 	});
 	
 	function getProfile(){
@@ -104,5 +66,6 @@
 			}
 		});
 	}
-	
 </script>
+<?php include "{$data['module_login']}.php"; ?>
+<?php include "{$data['module_chat']}.php"; ?>
