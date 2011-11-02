@@ -251,6 +251,9 @@
 			var header = "";
 			var message = "";
 			
+			Common.clearDiv(headerDiv);
+			Common.clearDiv(errorDiv);
+			
 			$.ajax({
 				type : 'POST',
 				url : '{{baseurl}}login',
@@ -263,8 +266,6 @@
 					400 : function(){
 						header = "Login Error";
 						message = "Invalid combination of username/password";
-						
-						Common.clearDiv(errorDiv);
 						headerDiv.html(header);
 						errorDiv.html(message);
 						Common.navModal();
@@ -272,9 +273,8 @@
 					404 : function(){
 						header = "Login Error";
 						message = "The page is not found.";
-						
-						Common.clearDiv(message);
-						message.html(str);
+						headerDiv.html(header);
+						errorDiv.html(message);
 						Common.navModal();
 					}
 				}
