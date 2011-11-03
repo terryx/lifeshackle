@@ -60,8 +60,8 @@ class ChatController extends CommonController {
 		$v->checkMode = DooValidator::CHECK_SKIP;
 		$err = $v->validate($_POST, $rules);
 		if ($err) {
-			$this->toJSON($err, true);
-			return 400;
+			$this->toJSON(array('error', $err), true);
+			return 200;
 		} else {
 
 			Doo::loadModel('Chat');
@@ -75,8 +75,8 @@ class ChatController extends CommonController {
 			$c = new Chat($chat_array);
 			$new_id = $c->insert();
 
-			$this->toJSON(array($new_id), true);
-			return 201;
+			$this->toJSON(array('created', $new_id), true);
+			return 200;
 		}
 		return 404;
 	}

@@ -20,7 +20,7 @@
 		</form>
 	</div>
 	<div class="modal-footer">
-		<button type="submit" class="btn primary">Save</button>
+		<a href="#" id="submit-user-form" class="btn primary">Save</a>
 	</div>
 </div>
 <script type="text/javascript">
@@ -81,6 +81,9 @@
 				404 : function(){
 					displayMessage('error', 'Page not found', '.modal-body', false);
 				}
+			},
+			complete : function(){
+				setInterval(poolChat, 3000);
 			}
 		});
 	}
@@ -124,8 +127,6 @@
 		
 		fetchChatList();
 	
-		setInterval(poolChat, 3000);
-	
 		$('#chat-form').submit(function(){
 			var str = '<div class="chat-loader"></div>'; 
 			//send chat
@@ -137,17 +138,15 @@
 				beforeSend : function(){
 					$('.chatbox').prepend(str);
 				},
-				statusCode : {
-					201 : function(data){
+				success : function(data){
+					if(data){
 						$('#chat-form')[0].reset();
-						poolChat();
-						Common.removeDiv('.alert-message');
-					},
-					400 : function(data){
-						displayMessage('error', eval(data.responseText), '#side-content');
-					},
-					404 : function(){
-						displayMessage('error', 'Page not found', '.modal-body', false);
+						if(data[0] === 'created'){
+							poolChat();
+							Common.removeDiv('.alert-message');
+						} else {
+							displayMessage('error', data[1], '#side-content');
+						}
 					}
 				}
 			});
@@ -155,8 +154,7 @@
 			return false;
 		});
 		
-		$('#user-form').bind('submit', function(e){
-			e.preventDefault();
+		$('#submit-user-form').bind('click', function(e){
 			
 			$.ajax({
 				type: 'POST',

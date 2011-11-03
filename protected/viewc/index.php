@@ -54,7 +54,6 @@
 	$(function(){
 	
 		fetchArticleList();
-		
 	});
 </script>
 <?php include "{$data['module_login']}.php"; ?>
