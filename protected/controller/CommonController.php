@@ -62,20 +62,28 @@ class CommonController extends DooController {
 		}
 	}
 
-	public function templateData() {
-		//use $data['module_(name)']; without bracket to define module to import
-		//example : $data['module_chat
+	protected function templateData($content) {
 		$role = $this->checkRole();
+		$data['role'] = $role;
+		
 		$data['baseurl'] = Doo::conf()->APP_URL;
 		$data['version'] = Doo::conf()->version;
-		$data['title'] = null;
-		$data['role'] = $role;
+		
 		$data['nav'] = ($role !== null) ? 'template/nav-' . $role : 'template/nav-visitor';
-		$data['content'] = null;
-		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
-		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
+		
+		$data['title'] = ($content !== 'index') ? $content : 'Life Shackle';
+		$data['content'] = $role . DIRECTORY_SEPARATOR . $content;
+		
 		return $data;
 	}
+	
+//	private function setData($content) {
+//		$data = $this->templateData();
+//		$data['module_chat'] = 'template/chat';
+//		$data['title'] = ($content !== 'index') ? $content : 'Life Shackle';
+//		$data['content'] = ($data['role'] !== null) ? $data['role'] . DIRECTORY_SEPARATOR . $content : $content;
+//		$this->render('template/layout', $data, true);
+//	}
 	
 	protected function checkRole() {
 		$role = null;

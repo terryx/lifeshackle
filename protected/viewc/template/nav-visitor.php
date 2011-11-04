@@ -3,6 +3,7 @@
         <div class="container">
 			<a class="brand" href="<?php echo $data['baseurl']; ?>home">Life's Shackle</a>
 			<ul class="nav">
+				<li><a href="<?php echo $data['baseurl']; ?>article">Article</a></li>
 				<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
 				<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
 			</ul>

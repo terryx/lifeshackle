@@ -3,7 +3,7 @@
 $route['*']['/'] = array('HomeController', 'index');
 $route['*']['/home'] = array('HomeController', 'index');
 $route['*']['/index'] = array('HomeController', 'index');
-$route['*']['/master'] = array('MasterController', 'index');
+$route['*']['/master'] = array('HomeController', 'index');
 
 //home page public module view
 $route['*']['/article'] = array('HomeController', 'article');
@@ -28,7 +28,6 @@ $route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
 $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 //Article
-$route['*']['/article/view'] = array('ArticleController', 'viewPage');
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
 $route['*']['/article/fetch-article-list'] = array('ArticleController', 'fetchArticleList');
 $route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
@@ -51,7 +50,6 @@ $route['get']['/chat/pool-chat/:id'] = array('ChatController', 'poolChat');
 $route['get']['/chat/delete-chat-post'] = array('ChatController', 'deleteChatPost');
 
 //Master rights
-$route['*']['/master/homepage'] = array('MasterController', 'homePage');
 $route['*']['/manage-user'] = array('MasterController', 'manageUserPage');
 $route['post']['/master/save_user'] = array('MasterController', 'saveUser');
 $route['get']['/master/get_user_list'] = array('MasterController', 'getUserList');

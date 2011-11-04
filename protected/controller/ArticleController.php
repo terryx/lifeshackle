@@ -14,16 +14,6 @@ class ArticleController extends CommonController {
 		return $val;
 	}
 
-	public function viewPage() {
-		//article and index page is currently same
-		//TODO make own article page or merge manage article with index
-		
-		$data = $this->templateData();
-		$data["title"] = 'View | Article';
-		$data["content"] = $data["role"]."/article/view";
-		$this->view()->render('template/layout', $data, true);
-	}
-	
 	public function editPage() {
 		$data = $this->templateData();
 		$data['title'] = 'Edit | Article';
@@ -59,7 +49,7 @@ class ArticleController extends CommonController {
 	}
 	
 	public function fetchArticleList(){
-		$sql = 'SELECT article_id as k0, title as k1, created as k2, body as k3 FROM article ';
+		$sql = 'SELECT article_id as k0, title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, body as k3 FROM article ';
 		$sql .= 'ORDER BY article_id DESC LIMIT 3';
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);

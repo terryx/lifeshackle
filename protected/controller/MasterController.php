@@ -2,23 +2,6 @@
 
 class MasterController extends CommonController {
 
-	public function homepage(){
-		$data = $this->templateData();
-		$data['title'] = "Life Shackle | Master HomePage";
-		$data['content'] = $data['role'].'/homepage';
-		
-		$this->render('template/layout', $data, true);
-	}
-	
-	public function index() {
-		$data = $this->templateData();
-		$data['title'] = "Life Shackle | Master";
-		$data['content'] = $data['role'].'/index';
-
-		$this->render('template/layout', $data, true);
-		
-	}
-
 	public function saveUser() {
 		Doo::loadCore('helper/DooValidator');
 		$filter_user_id = $this->xss($_POST['user_id']);
