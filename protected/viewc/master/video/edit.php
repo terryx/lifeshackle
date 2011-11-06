@@ -1,45 +1,37 @@
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
-<section id="main-container" class="row">
-	<div id="main-content" class="span11">
-		<button class="btn info" onclick="clearForm()">New</button>
-		<div id="video-frame" class="span10"></div>
-		<div class="clear"></div>
-		<form id="manage-video-form" action="<?php echo $data['baseurl']; ?>video/save_video" method="post" class="form-stacked">
-			<input type="hidden" id="video_id" name="video_id" />
-			<input type="hidden" id="title" name="title" />
-			<input type="hidden" id="thumbnail" name="thumbnail" />
-			<div class="clearfix">
-				<label for="videolink">Video Link</label>
-				<div class="input">
-					<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" />
+<div class="content">
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div id="video-frame"></div>
+			<div class="clear"></div>
+			<form id="manage-video-form" action="<?php echo $data['baseurl']; ?>video/save_video" method="post" class="form-stacked">
+				<input type="hidden" id="video_id" name="video_id" />
+				<input type="hidden" id="title" name="title" />
+				<input type="hidden" id="thumbnail" name="thumbnail" />
+				<div class="clearfix">
+					<label for="videolink">Video Link</label>
+					<div class="input">
+						<input type="text" id="videolink" name="videolink" class="extend validate[required] span6" />
+					</div>
 				</div>
-			</div>
-		</form>
-	</div>
-
-	<div class="span5">
-		<div id="pagination">
-
-		</div>
-		<div id="search-container">
-			<form id="search-form">
-				<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
-				<button type="submit" id="search-button" name="search-button"></button>
 			</form>
 		</div>
-		<div id="search-result"></div>
+
+		<div id="side-content" class="span5">
+			<div id="pagination">
+
+			</div>
+			<div id="search-container">
+				<form id="search-form">
+					<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
+					<button type="submit" id="search-button" name="search-button"></button>
+				</form>
+			</div>
+			<div id="search-result"></div>
+			<button class="btn info" onclick="clearForm()">New</button>
+		</div>
 	</div>
-</section>
-<div id="footer"></div>
-<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery-ui.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.paginate.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.tablesorter.min.js?<?php echo $data['version']; ?>"></script>
+</div>
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript">
 	var cachePage = 1;
 	
@@ -113,7 +105,6 @@
 				var iframe = '<iframe width="545" height="349" src="http://www.youtube.com/embed/'+id+'?wmode=transparent" frameborder="0" allowfullscreen></iframe>';
 				
 				var str = '<input type="hidden" id="video_id" name="video_id" value="'+data.video_id+'"/>';
-				str += '<div class="row">';
 				str += '<div class="clearfix">';
 				str += '<label for="visible">Visible to public ?</label>';
 				str +=  is_visible(data.visible);
@@ -126,13 +117,10 @@
 				str += '<button class="btn primary" type="submit" id="submit" name="submit">Update</button>&nbsp;';
 				str += '<span id="deleteButton"><button type="button" class="btn danger" onclick="deleteVideo('+ data.video_id +');">Delete</button></span>';
 				str += '</div>';
-				str += '</div>';
 				$('#video-frame').append(iframe);
 				$('#manage-video-form').append(str);
-				//				$('iframe').load(function(){
 					
 				Common.end();
-				//				});
 			}
 
 		});
@@ -202,12 +190,6 @@
 		
 		countPage();
 	
-		//form validation
-		$('#manage-video-form').validationEngine({
-			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxCallback
-		});
-
 		$('#videolink').bind('change', function(){
 			loadIframe();
 			

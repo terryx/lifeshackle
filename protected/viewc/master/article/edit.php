@@ -1,54 +1,51 @@
 <div class="content">
-	<div class="page-header">
-			<button class="btn info" onclick="clearForm()">New</button><br />
-	</div>
 	<div class="row">
-	<div id="main-content" class="span11">
-		<form id="article-form" class="form-stacked" action="<?php echo $data['baseurl']; ?>article/save-article" method="post">
-			<fieldset>
-				<input type="hidden" id="article_id" name="article_id" />
-				<div class="clearfix">
-					<label for="title">Title</label>
-					<div class="input">
-						<input type="text" id="title" name="title" class="span8 validate[required]" />
+		<div id="main-content" class="span11">
+			<form id="article-form" class="form-stacked">
+				<fieldset>
+					<input type="hidden" id="article_id" name="article_id" />
+					<div class="clearfix">
+						<label for="title">Title</label>
+						<div class="input">
+							<input type="text" id="title" name="title" class="span8 validate[required]" />
+						</div>
 					</div>
-				</div>
-				<div class="clearfix">
-					<label for="txtcontent">Content</label>
-					<div class="input">
-						<textarea id="txtcontent" name="txtcontent" cols="60" rows="10"></textarea>
+					<div class="clearfix">
+						<label for="txtcontent">Content</label>
+						<div class="input">
+							<textarea id="txtcontent" name="txtcontent" cols="60" rows="10"></textarea>
+						</div>
 					</div>
-				</div>
-				<div class="clearfix">
-					<label for="tag">Tag</label>
-					<div class="input">
-						<input type="text" id="tag" name="tag" class="span8"/>
+					<div class="clearfix">
+						<label for="tag">Tag</label>
+						<div class="input">
+							<input type="text" id="tag" name="tag" class="span8"/>
+						</div>
 					</div>
-				</div>
-				<div class="actions">
-					<button type="submit" class="btn primary">Post</button>
-					<button class="btn" type="reset">Cancel</button>
-				</div>
-			</fieldset>
-		</form>
-	</div>
-
-	<div id="side-content" class="span5">
-		<div id="pagination">
-
-		</div>
-		<div id="search-container">
-			<form id="search-form">
-				<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
-				<button type="submit" id="search-button" name="search-button"></button>
+					<div class="actions">
+						<button type="submit" class="btn primary">Post</button>
+						<button class="btn" type="reset">Cancel</button>
+					</div>
+				</fieldset>
 			</form>
 		</div>
-		<div id="search-result"></div>
-	</div>
+
+		<div id="side-content" class="span5">
+			<div id="pagination">
+
+			</div>
+			<div id="search-container">
+				<form id="search-form">
+					<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
+					<button type="submit" id="search-button" name="search-button"></button>
+				</form>
+			</div>
+			<div id="search-result"></div>
+			<button class="btn info" onclick="clearForm()">New Form</button><br /><br />
+		</div>
 	</div>
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/min/jquery.validationEngine.js?<?php echo $data['version']; ?>"></script>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
 <script type="text/javascript">
 	$('#txtcontent').tinymce({
@@ -72,34 +69,28 @@
 
 <script type="text/javascript">
 	var cachePage = 1;
-	function ajaxCallback(status, form, json){
-		$('body').css('cursor', 'default');
-		
-		if(status === true) {
-			switch(json[0]){
-				case 'updated':
-					displayMessage('info', json[1] + ' has been updated');
-					break;
-				case 'created':
-					displayMessage('success', json[2] + ' has been created');
-					refreshForm(json[1]);
-					break;
-				default:
-					displayMessage('error', json[1]);
-			}
-			Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+cachePage, '#article-form');
-		}
-	}
-	
+
 	function deleteArticle(id){
 		$.delete_('<?php echo $data['baseurl']; ?>article/delete_article/'+id, function(data){
+			//declare class to be appended
+			var headerDiv = $('.header-message');
+			var errorDiv = $('.error-message');
+			
+			//declare message variable
+			var header = "";
+			var message = "";
+			
 			if(data){
-				$('#newForm').click();
+				clearForm();
 				Search.onload('<?php echo $data['baseurl']; ?>article/get_article_list', '#article-form');
 
 			}
 			else {
-				ajaxFail('Article could not be deleted');
+				header = "Delete Error";
+				message = "The page is not found.";
+				headerDiv.html(header);
+				errorDiv.html(message);
+				Common.navModal();
 			}
 		});
 	}
@@ -124,7 +115,7 @@
 
 				var str = '<button type="submit" class="btn primary">Post</button>&nbsp;';
 				str += '<button class="btn" type="reset">Cancel</button>&nbsp;';
-				str += '<button class="btn danger" onclick="onclick="deleteArticle('+ data.article_id +')">Delete</button>';
+				str += '<button class="btn danger" onclick="deleteArticle('+ data.article_id +')">Delete</button>';
 				Common.clearDiv('.actions');
 				$('.actions').append(str);
 				
@@ -173,13 +164,34 @@
 	}
 
 	$(function(){
-
 		countPage();
-		navModal();
-		//form validation
-		$('#article-form').validationEngine({
-			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxCallback
+		
+		$('#article-form').bind('submit', function(e){
+			e.preventDefault();
+			
+			$.ajax({
+				type : 'POST',
+				url : '<?php echo $data['baseurl']; ?>article/save-article',
+				data : $('#article-form').serialize(),
+				dataType: 'json',
+				beforeSend : function(){
+					$('.actions').append('<img src="<?php echo $data['baseurl']; ?>global/img/post-loader.gif" alt="" />');
+				},
+				statusCode : {
+					200 : function(data){
+						
+					},
+					201 : function(data){
+						refreshForm(data);
+					},
+					400 : function(data){
+						
+					},
+					404 : function(data){
+						
+					}
+				}
+			})
 		});
 
 	}); //end document ready

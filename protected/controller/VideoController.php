@@ -66,17 +66,9 @@ class VideoController extends CommonController {
 //----------------------------------------------------------------//
 //------------------------ admin section -------------------------//
 //----------------------------------------------------------------//
-	public function viewPage() {
-		$data = $this->templateData();
-		$data["title"] = 'Video | ' . ucfirst($data['role']) . ' View';
-		$data["content"] = $data["role"] . "/video/view";
-		$this->view()->render('template/layout', $data, true);
-	}
-
 	public function editPage() {
-		$data = $this->templateData();
-		$data["title"] = 'Video | ' . ucfirst($data['role']) . ' Edit';
-		$data["content"] = $data["role"] . "/video/edit";
+		$data = $this->templateData($this->checkRole() . '/video/edit');
+		$data["title"] = 'Edit | Video';
 		$this->view()->render('template/layout', $data, true);
 	}
 	

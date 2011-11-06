@@ -72,7 +72,8 @@ class CommonController extends DooController {
 		$data['nav'] = ($role !== null) ? 'template/nav-' . $role : 'template/nav-visitor';
 		
 		$data['title'] = ($content !== 'index') ? $content : 'Life Shackle';
-		$data['content'] = $role . DIRECTORY_SEPARATOR . $content;
+		$data['content'] = $content;
+//		$data['content'] = $role . DIRECTORY_SEPARATOR . $content;
 		
 		return $data;
 	}

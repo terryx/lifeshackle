@@ -15,9 +15,10 @@ class ArticleController extends CommonController {
 	}
 
 	public function editPage() {
-		$data = $this->templateData();
+		$data = $this->templateData($this->checkRole().'/article/edit');
+		
+		//overwrite some template array
 		$data['title'] = 'Edit | Article';
-		$data['content'] = $data['role'].'/article/edit';
 		$this->view()->render('template/layout', $data, true);
 	}
 
@@ -210,7 +211,7 @@ class ArticleController extends CommonController {
 			$a = new Article($article);
 			$new_id = $a->insert();
 
-			$this->toJSON(array('created', $new_id, $a->title), true);
+			$this->toJSON($new_id, true);
 			return 201;
 		}
 

@@ -42,12 +42,16 @@
 					src = data[i].k2
 					thumbnail = data[i].k3;
 
-					str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
+					str += '<li class="test"><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 				}
 
 				str += '</ul>';
 				Common.end();
-				$('#video').append(str);
+//				$('#video').append(str).slideDown(5000);
+				$('#video').slideDown(5000, function(){
+					$(this).append(str);
+				});
+//				$('.test').slideDown(5000);
 			}
 		});
 	}
