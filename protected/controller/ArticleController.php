@@ -176,8 +176,8 @@ class ArticleController extends CommonController {
 
 		$err = $v->validate($_POST, $rules);
 		if ($err) {
-			$this->toJSON($err, true);
-			return 400;
+			$this->toJSON(array($err), true);
+			return 200;
 		}
 
 		//set word length of body content
@@ -232,7 +232,7 @@ class ArticleController extends CommonController {
 			$a = new Article($article);
 			$a->update();
 			
-			$this->toJSON(array('updated', $a->title), true);
+			$this->toJSON(array('updated', $a->article_id), true);
 			return 200;
 		}
 

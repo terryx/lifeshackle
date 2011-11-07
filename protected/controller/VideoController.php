@@ -129,9 +129,14 @@ class VideoController extends CommonController {
 				Doo::loadModel('LatestUpdate');
 				$la = new LatestUpdate($latest_update_array);
 				$last_insert_id = $la->insert();
-
+				
+				$string = $_POST['title'];
+				$quote_style = ENT_NOQUOTES;
+				$charset = 'UTF-8';
+				
+				$title = html_entity_decode($string, $quote_style, $charset);
 				$video_array = array(
-					'title' => $_POST['title'],
+					'title' => $title,
 					'created' => strftime("%Y-%m-%d %H:%M:%S", time()),
 					'link' => $_POST['videolink'],
 					'thumbnail' => $_POST['thumbnail'],

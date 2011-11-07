@@ -69,20 +69,20 @@
 
 <script type="text/javascript">
 	var cachePage = 1;
+	//declare class to be appended
+	var headerDiv = $('.header-message');
+	var errorDiv = $('.error-message');
+			
+	//declare message variable
+	var header = "";
+	var message = "";
 
 	function deleteArticle(id){
 		$.delete_('{{baseurl}}article/delete_article/'+id, function(data){
-			//declare class to be appended
-			var headerDiv = $('.header-message');
-			var errorDiv = $('.error-message');
-			
-			//declare message variable
-			var header = "";
-			var message = "";
 			
 			if(data){
 				clearForm();
-				Search.onload('{{baseurl}}article/get_article_list', '#article-form');
+				Search.onload('{{baseurl}}article/admin-get-pagination/'+cachePage);
 
 			}
 			else {
@@ -115,7 +115,7 @@
 
 				var str = '<button type="submit" class="btn primary">Post</button>&nbsp;';
 				str += '<button class="btn" type="reset">Cancel</button>&nbsp;';
-				str += '<button class="btn danger" onclick="deleteArticle('+ data.article_id +')">Delete</button>';
+				str += '<button class="btn danger" type="button" onclick="deleteArticle('+ data.article_id +')">Delete</button>';
 				Common.clearDiv('.actions');
 				$('.actions').append(str);
 				
@@ -168,33 +168,36 @@
 		
 		$('#article-form').bind('submit', function(e){
 			e.preventDefault();
-			
+			var loader = '<img src="{{baseurl}}global/img/post-loader.gif" alt="" />';
 			$.ajax({
 				type : 'POST',
 				url : '{{baseurl}}article/save-article',
 				data : $('#article-form').serialize(),
 				dataType: 'json',
 				beforeSend : function(){
-					$('.actions').append('<img src="{{baseurl}}global/img/post-loader.gif" alt="" />');
+					$('.actions').append(loader);
 				},
 				statusCode : {
 					200 : function(data){
-						
+						if(data[0] === 'updated'){
+							refreshForm(data[1]);
+						} else {
+							header = "Post Error";
+							message = data[0];
+							headerDiv.html(header);
+							errorDiv.html(message);
+							Common.navModal();
+							$('.actions').children('img').remove();
+						}
 					},
 					201 : function(data){
 						refreshForm(data);
-					},
-					400 : function(data){
-						
-					},
-					404 : function(data){
-						
+						cachePage = 1; //latest post is always at 1st
+						Search.onload('{{baseurl}}article/admin-get-pagination/'+cachePage);
 					}
 				}
 			})
 		});
 
 	}); //end document ready
-
-
 </script>

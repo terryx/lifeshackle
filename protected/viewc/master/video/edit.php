@@ -158,7 +158,7 @@
 		$.get('<?php echo $data['baseurl']; ?>video/admin-count-page', function(data){
 			if(data){
 				paginate(data);
-				Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+cachePage, '#manage-video-form');
+				Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/1');
 			} else {
 				return false;
 			}

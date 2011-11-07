@@ -158,7 +158,7 @@
 		$.get('{{baseurl}}video/admin-count-page', function(data){
 			if(data){
 				paginate(data);
-				Search.onload('{{baseurl}}video/admin-get-pagination/'+cachePage, '#manage-video-form');
+				Search.onload('{{baseurl}}video/admin-get-pagination/1');
 			} else {
 				return false;
 			}
