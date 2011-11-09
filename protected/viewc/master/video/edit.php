@@ -140,20 +140,6 @@
 		return visible;
 	}
 
-	function ajaxCallback(status, form, json){
-		$('body').css('cursor', 'default');
-		if(status === true ) {
-			if(json === 200){
-				displayMessage('info', 'Video has updated');
-			}
-			if(json[0] === 201){
-				displayMessage('success', 'Video posted successfully');
-				refreshForm(json[1]);
-			}
-		}
-		Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/'+cachePage, '#manage-video-form');
-	}
-	
 	function countPage(){
 		$.get('<?php echo $data['baseurl']; ?>video/admin-count-page', function(data){
 			if(data){
@@ -192,7 +178,26 @@
 	
 		$('#videolink').bind('change', function(){
 			loadIframe();
+		});
+		
+		$('#manage-video-form').bind('submit', function(e){
+			e.preventDefault();
 			
+			$.ajax({
+				type : 'POST',
+				url : '<?php echo $data['baseurl']; ?>video/save_video',
+				data : $(this).serialize(),
+				dataType : 'json',
+				statusCode : {
+					200: function(){
+						displayMessage('info', 'Video updated');
+					},
+					201 : function(data){
+						refreshForm(data);
+						Search.onload('<?php echo $data['baseurl']; ?>video/admin-get-pagination/1');
+					}
+				}
+			});
 		});
 
 		

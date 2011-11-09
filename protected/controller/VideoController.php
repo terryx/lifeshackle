@@ -111,7 +111,7 @@ class VideoController extends CommonController {
 			$v = new Video($video_array);
 			if ($v->video_id = $_POST['video_id']) {
 				$v->update();
-				$this->toJSON(200, true);
+				return 200;
 			}
 			else {
 				$this->toJSON('Video could not be save.', true);
@@ -149,7 +149,7 @@ class VideoController extends CommonController {
 				$v = new Video($video_array);
 				$new_video_id = $v->insert();
 
-				$this->toJSON(array(201, $new_video_id), true);
+				$this->toJSON($new_video_id, true);
 				return 201;
 			}
 			else {
