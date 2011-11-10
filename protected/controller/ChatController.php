@@ -46,7 +46,7 @@ class ChatController extends CommonController {
 	}
 
 	public function saveChat() {
-		$content = $_POST['chat_content'];
+		$content = nl2br($_POST['chat_content']);
 		$user = $_POST['c_user'];
 		$email = $_POST['c_email'];
 
