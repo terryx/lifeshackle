@@ -15,10 +15,11 @@ class ChatController extends CommonController {
 	}
 
 	public function editPage() {
-		$data = $this->templateData();
-		$data["title"] = 'Chat';
-		$data["content"] = $data["role"] . "/chat/edit";
-
+		$data = $this->templateData($this->checkRole().'/chat/edit');
+		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
+		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
+		//overwrite some template array
+		$data['title'] = 'Edit | Chat';
 		$this->view()->render('template/layout', $data, true);
 	}
 

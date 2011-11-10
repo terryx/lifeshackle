@@ -42,7 +42,7 @@ $route['get']['/article/admin-count-page'] = array('ArticleController', 'adminCo
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
 //Chat
-$route['*']['/master/chat/edit'] = array('ChatController', 'editPage');
+$route['*']['/chat/edit'] = array('ChatController', 'editPage');
 $route['post']['/chat/save-user'] = array('ChatController', 'saveUser');
 $route['post']['/chat/save-chat'] = array('ChatController', 'saveChat');
 $route['get']['/chat/fetch-chat-list'] = array('ChatController', 'fetchChatList');
