@@ -262,6 +262,8 @@ span.jPag-snext-img{
 	min-height : 100px;
 	max-height : 500px;
 	overflow: auto;
+	word-wrap: break-word;
+
 }
 .chatpost {
 	margin-bottom: 7px;
