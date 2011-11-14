@@ -174,7 +174,7 @@
 					if(data){
 						for(var i = 0; i < data.length; i++){
 							str += '<div class="chatpost">';
-							str += '<a href="'+ data[i].k4 + '">'+ data[i].k3 + '</a>&nbsp;';
+							str += '<a href="mailto:'+ data[i].k4 + '">'+ data[i].k3 + '</a>&nbsp;';
 							str += '<span class="chat-time">' + data[i].k1 + '</span><br />';
 							str += data[i].k2;
 							str += '</div>';
