@@ -17,6 +17,10 @@ class HomeController extends CommonController {
 
 	public function profile() {
 		$data = $this->templateData(__FUNCTION__);
+		
+		if($data['role'] !== null){
+			$data['content'] =  $data['role'] . DIRECTORY_SEPARATOR . __FUNCTION__;
+		}
 		$this->render('template/layout', $data, true);
 	}
 

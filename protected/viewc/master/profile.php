@@ -1,7 +1,6 @@
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/master-nav.php"; ?>
-<section id="main-container" class="row">
-	<div id="main-content" class="span11">
-		<ul class="breadcrumb">
+<div class="content">
+		<div class="page-header">
+			<ul class="breadcrumb">
 			<li>My Profile
 				<span class="divider">/</span>
 			</li>
@@ -13,27 +12,34 @@
 				<a href="#" data-controls-modal="edit-picture-modal" data-backdrop="true" data-keyboard="true">Change pic</a>
 			</li>
 		</ul>
-		<section id="personal">
-			<h5>Personal Info</h5>
-			<div id="personal-info">
+	</div>
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div id="personal">
+				<h5>Personal Info</h5>
+				<div id="personal-info">
 
+				</div>
 			</div>
-		</section>
 
-		<section id="technical">
-			<h5>Technical Skills</h5>
-			<div id="technical-info">
+			<div id="technical">
+				<h5>Technical Skills</h5>
+				<div id="technical-info">
 
+				</div>
 			</div>
-		</section>
 
-		<section id="quote">
-			<h5>Favorite Quotes</h5>
-			<div id="quote-info">
+			<div id="quote">
+				<h5>Favorite Quotes</h5>
+				<div id="quote-info">
 
+				</div>
 			</div>
-		</section>
-
+		</div>
+		<div id="side-content" class="span5">
+			<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
+		</div>
+	</div>
 		<!-- personal info modal -->
 		<div id="edit-profile-modal" class="modal hide fade" style="width: 820px;left:35%">
 			<form id="edit-profile-form" method="post" action="<?php echo $data['baseurl']; ?>profile/save">
@@ -84,10 +90,6 @@
 			</div>
 		</div>
 	</div>
-	<div class="span5">
-		<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
-	</div>
-</section>
 
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>

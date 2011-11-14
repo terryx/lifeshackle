@@ -73,18 +73,9 @@ class CommonController extends DooController {
 		
 		$data['title'] = ($content !== 'index') ? $content : 'Life Shackle';
 		$data['content'] = $content;
-//		$data['content'] = $role . DIRECTORY_SEPARATOR . $content;
 		
 		return $data;
 	}
-	
-//	private function setData($content) {
-//		$data = $this->templateData();
-//		$data['module_chat'] = 'template/chat';
-//		$data['title'] = ($content !== 'index') ? $content : 'Life Shackle';
-//		$data['content'] = ($data['role'] !== null) ? $data['role'] . DIRECTORY_SEPARATOR . $content : $content;
-//		$this->render('template/layout', $data, true);
-//	}
 	
 	protected function checkRole() {
 		$role = null;

@@ -7,13 +7,13 @@
  */
 class ProfileController extends CommonController {
 
-	public function viewPage(){
-		$data = $this->templateData();
-		$data['title'] = "Terry Yuen";
-		$data['content'] = $data['role'] . '/profile';
-
-		$this->render('template/layout', $data, true);
-	}
+//	public function viewPage(){
+//		$data = $this->templateData();
+//		$data['title'] = "Terry Yuen";
+//		$data['content'] = $data['role'] . '/profile';
+//
+//		$this->render('template/layout', $data, true);
+//	}
 	
 	public function save() {
 

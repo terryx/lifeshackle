@@ -73,6 +73,9 @@ body {
 	font-weight: bold;
 	text-align: center;
 }
+.error-page {
+	background: url(../img/error-page.png) 50% 25% no-repeat #1173aa;
+}
 /*----------- pagination ------------*/
 #pagination {
 	clear:both;

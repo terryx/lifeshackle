@@ -1,6 +1,5 @@
-<!-- include '/template/master-nav' -->
-<section id="main-container" class="row">
-	<div id="main-content" class="span11">
+<div class="content">
+	<div class="page-header">
 		<ul class="breadcrumb">
 			<li>My Profile
 				<span class="divider">/</span>
@@ -13,81 +12,84 @@
 				<a href="#" data-controls-modal="edit-picture-modal" data-backdrop="true" data-keyboard="true">Change pic</a>
 			</li>
 		</ul>
-		<section id="personal">
-			<h5>Personal Info</h5>
-			<div id="personal-info">
+	</div>
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div id="personal">
+				<h5>Personal Info</h5>
+				<div id="personal-info">
 
-			</div>
-		</section>
-
-		<section id="technical">
-			<h5>Technical Skills</h5>
-			<div id="technical-info">
-
-			</div>
-		</section>
-
-		<section id="quote">
-			<h5>Favorite Quotes</h5>
-			<div id="quote-info">
-
-			</div>
-		</section>
-
-		<!-- personal info modal -->
-		<div id="edit-profile-modal" class="modal hide fade" style="width: 820px;left:35%">
-			<form id="edit-profile-form" method="post" action="{{baseurl}}profile/save">
-				<div class="modal-header">
-					<a href="#" class="close">&times;</a>
-					<h3>Edit Profile</h3>
 				</div>
-				<div class="modal-body">
-					<input type="hidden" id="profile_id" name="profile_id" value="" />
-					<div class="clearfix">
-						<label for="personal-content">Personal Info</label>
-						<div class="input">
-							<textarea id="personal-content" name="personal-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter personal detail here.."></textarea>
-						</div>
-					</div>
+			</div>
 
-					<div class="clearfix">
-						<label for="technical-content">Technical Skills</label>
-						<div class="input">
-							<textarea id="technical-content" name="technical-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter technical detail here.."></textarea>
-						</div>
-					</div>
+			<div id="technical">
+				<h5>Technical Skills</h5>
+				<div id="technical-info">
 
-					<div class="clearfix">
-						<label for="technical-content">Favorite Quotes</label>
-						<div class="input">
-							<textarea id="quote-content" name="quote-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter quote here.."></textarea>
-						</div>
-					</div>
 				</div>
-				<div class="modal-footer">
-					<a href="#" class="btn danger" onclick="$('#edit-profile-modal').modal('hide')">Cancel</a>
-					<button type="submit" class="btn primary">Confirm</button>
+			</div>
+
+			<div id="quote">
+				<h5>Favorite Quotes</h5>
+				<div id="quote-info">
+
 				</div>
-			</form>
+			</div>
 		</div>
-
-		<div id="edit-picture-modal" class="modal hide fade">
+		<div id="side-content" class="span5">
+			<img src="{{baseurl}}global/img/terry.jpg" alt="terry" /> 
+		</div>
+	</div>
+	<!-- personal info modal -->
+	<div id="edit-profile-modal" class="modal hide fade" style="width: 820px;left:35%">
+		<form id="edit-profile-form" method="post" action="{{baseurl}}profile/save">
 			<div class="modal-header">
 				<a href="#" class="close">&times;</a>
-				<h3>Change Picture</h3>
+				<h3>Edit Profile</h3>
 			</div>
 			<div class="modal-body">
+				<input type="hidden" id="profile_id" name="profile_id" value="" />
 				<div class="clearfix">
-					<iframe src="{{baseurl}}template/picture-form" style="width:500px;border:none">
-					</iframe>
+					<label for="personal-content">Personal Info</label>
+					<div class="input">
+						<textarea id="personal-content" name="personal-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter personal detail here.."></textarea>
+					</div>
 				</div>
+
+				<div class="clearfix">
+					<label for="technical-content">Technical Skills</label>
+					<div class="input">
+						<textarea id="technical-content" name="technical-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter technical detail here.."></textarea>
+					</div>
+				</div>
+
+				<div class="clearfix">
+					<label for="technical-content">Favorite Quotes</label>
+					<div class="input">
+						<textarea id="quote-content" name="quote-content" class="span9" rows="5" cols="70" wrap="hard" placeholder="Enter quote here.."></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn danger" onclick="$('#edit-profile-modal').modal('hide')">Cancel</a>
+				<button type="submit" class="btn primary">Confirm</button>
+			</div>
+		</form>
+	</div>
+
+	<div id="edit-picture-modal" class="modal hide fade">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>Change Picture</h3>
+		</div>
+		<div class="modal-body">
+			<div class="clearfix">
+				<iframe src="{{baseurl}}template/picture-form" style="width:500px;border:none">
+				</iframe>
 			</div>
 		</div>
 	</div>
-	<div class="span5">
-		<img src="{{baseurl}}global/img/terry.jpg" alt="terry" /> 
-	</div>
-</section>
+</div>
 
 <div id="footer"></div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
