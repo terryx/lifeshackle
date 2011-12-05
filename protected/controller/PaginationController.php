@@ -7,8 +7,6 @@
  */
 class PaginationController extends DooController {
 
-	protected $per_page = 20;
-
 	public function calculateExactPage($page_number) {
 		$page = 0;
 		//if page number is int then return the value

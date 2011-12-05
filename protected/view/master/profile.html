@@ -90,41 +90,37 @@
 		</div>
 	</div>
 </div>
-
-<div id="footer"></div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/twitter-bootstrap/bootstrap-all.js"></script>
-<script type="text/javascript" src="{{baseurl}}global/js/common.js?{{version}}"></script>
-<script type="text/javascript" src="{{baseurl}}global/min/jquery.validationEngine.js?{{version}}"></script>
+<!-- include '/template/footer' -->
 <script type="text/javascript">
 	$(function(){
 	
 		$('#edit-picture-modal').show();
 		//render all info here
 		getProfile();
-	
-		//form validation
-		$('#edit-profile-form').validationEngine({
-			ajaxFormValidation: true,
-			onAjaxFormComplete: ajaxCallback
+
+		var $form = $('#edit-profile-form');
+		$form.submit(function(e){
+			e.preventDefault();
+			
+			$.ajax({
+				type: 'POST',
+				url: $form.attr('action'),
+				data: $form.serialize(),
+				dataType: 'json',
+				success: function(data){
+					if(data){
+						$('#edit-profile-modal').modal('hide');
+						if(data !== 'failed'){
+							getProfile();
+						} else {
+							displayMessage('error', 'Page not found', '.modal-body', false);
+						}
+					}
+				}
+			});
 		});
 		
-
-	  
 	});
-	
-	function ajaxCallback(status, form, json){
-		if(status === true){
-			$('#edit-profile-modal').modal('hide');
-		
-			if(json !== 'failed'){
-				getProfile();
-			}
-		} else {
-			alert('Error in the server side !');
-		}
-	}
 	
 	function getProfile(){
 		$.get('{{baseurl}}profile/get', function(data){

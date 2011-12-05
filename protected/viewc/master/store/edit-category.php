@@ -1,0 +1,157 @@
+<div class="content">
+	<div class="row">
+		<div id="main-content" class="span11">
+			<div class="page-header center">
+				<h6>Store Item Category</h6>
+			</div>
+			<div id="store">
+				<form id="manage-store-category-form" method="post" action="<?php echo $data['baseurl']; ?>store/save-category">
+					<div class="clearfix">
+						<input type="hidden" id="category_id" name="category_id" value="" />
+						<label for="category">Category</label>
+						<div class="input">
+							<input type="text" id="category" name="category" />
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="description">Description</label>
+						<div class="input">
+							<textarea id="description" name="description" cols="60" rows="3"></textarea>
+						</div>
+					</div>
+					<div class="actions">
+						<button type="submit" class="btn primary" id="submit" name="submit">Add</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div id="side-content" class="span5">
+			<div id="pagination">
+
+			</div>
+			<div id="search-container">
+				<form id="search-form">
+					<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
+					<button type="submit" id="search-button" name="search-button"></button>
+				</form>
+			</div>
+			<div id="search-result"></div>
+			<button class="btn info" onclick="clearForm()">New</button>
+		</div>
+	</div>
+</div>
+<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
+<script>
+	var cachePage = 1;
+	
+	function searchOn(){
+		Search.onload('<?php echo $data['baseurl']; ?>store/admin-get-category-pagination/'+cachePage, '#manage-store-category-form');
+	}
+	
+	function countPage(){
+		$.get('<?php echo $data['baseurl']; ?>store/admin-count-category-page', function(data){
+			if(data){
+				paginate(data);
+				searchOn();
+			}
+		});
+	}
+
+	function paginate(count){
+		$("#pagination").paginate({
+			count 		: count,
+			start 		: 1,
+			//      display     : 3,
+			border					: true,
+			border_color			: '#fff',
+			text_color  			: '#fff',
+			background_color    	: 'black',
+			border_hover_color		: '#ccc',
+			text_hover_color  		: '#000',
+			background_hover_color	: '#fff',
+			images					: false,
+			mouse					: 'press',
+			onChange     			: function(page){
+				cachePage = page;
+				searchOn();
+			}
+		});
+	}
+</script>
+<script>
+	var headerDiv = $('.header-message');
+	var errorDiv = $('.error-message');
+			
+	//declare message variable
+	var header = "";
+	var message = "";
+	
+	function clearForm(){
+		$('#manage-store-category-form')[0].reset();
+		$('#category_id').val('');
+		var str = '<button type="submit" class="btn primary">Submit</button>&nbsp;';
+		str += '<button type="reset" class="btn">Cancel</button>';
+		Common.clearDiv('.actions');
+		$('.actions').append(str);
+	}
+	
+	$('#manage-store-category-form').bind('submit', function(e){
+		e.preventDefault();
+		
+		$.ajax({
+			type: 'POST',
+			url : $(this).attr('action'),
+			data: $(this).serialize(),
+			dataType: 'json',
+			success: function(data){
+				if(data[0]){
+					//NO USE refreshForm() to avoid send request to server to retrieve data again
+					$('#category_id').val(data[0]); 
+					searchOn();
+				}
+			}
+		});
+	});
+	
+	function refreshForm(id){
+		$.get('<?php echo $data['baseurl']; ?>store/get-one-category/'+id, function(data){
+			if(data){
+				
+				$('#category_id').val(data.category_id);
+				$('#category').val(data.category_name);
+				$('#description').val(data.description);
+				
+				var str = '<button type="submit" class="btn primary">Submit</button>&nbsp;';
+				str += '<button class="btn" type="reset">Cancel</button>&nbsp;';
+				str += '<button class="btn danger" type="button" onclick="deleteCategory('+ data.category_id +')">Delete</button>';
+				Common.clearDiv('.actions');
+				$('.actions').append(str);
+				
+			}
+		});
+	}
+	
+	function deleteCategory(id){
+		$.delete_('<?php echo $data['baseurl']; ?>store/delete-category/'+id, function(data){
+			
+			if(data){
+				clearForm();
+				searchOn();
+			}
+			else {
+				header = "Delete Error";
+				message = "The page is not found.";
+				headerDiv.html(header);
+				errorDiv.html(message);
+				Common.navModal();
+			}
+		});
+	}
+	
+	
+	$(function(){
+		countPage();
+	});
+	
+</script>

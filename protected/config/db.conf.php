@@ -45,4 +45,8 @@ $dbmap['Users']['has_many']['Article'] = array('foreign_key' => 'user_id');
 $dbmap['Article']['belongs_to']['LatestUpdate'] = array('foreign_key' => 'latest_id');
 $dbmap['LatestUpdate']['has_one']['Article'] = array('foreign_key' => 'latest_id');
 
+//Store
+$dbmap['Product']['belongs_to']['ProductCategory'] = array('foreign_key' => 'category_id');
+$dbmap['ProductCategory']['has_many']['Product'] = array('foreign_key' => 'category_id');
+
 ?>

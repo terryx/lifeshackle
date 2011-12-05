@@ -8,6 +8,7 @@ $route['*']['/master'] = array('HomeController', 'index');
 //home page public module view
 $route['*']['/article'] = array('HomeController', 'article');
 $route['*']['/profile'] = array('HomeController', 'profile');
+$route['*']['/store'] = array('HomeController', 'store');
 $route['*']['/video'] = array('HomeController', 'video');
 
 $route['*']['/picture'] = array('HomeController', 'picture');
@@ -23,8 +24,10 @@ $route['*']['/finance'] = array('FinanceController', 'index');
 $route['post']['/profile/save'] = array('ProfileController', 'save');
 $route['get']['/profile/get'] = array('ProfileController', 'get');
 $route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
+
 //iframe picture
 $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
+
 
 //Article
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
@@ -62,10 +65,23 @@ $route['get']['/picture/get_one_picture/:id'] = array('PictureController', 'getO
 $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getPictureGallery');
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
 
-//Status Update
-$route['*']['/master/status-update/edit'] = array('StatusUpdateController', 'editPage');
-$route['get']['/status-update/get-all'] = array('StatusUpdateController', 'getAll');
-$route['post']['/status-update/save'] = array('StatusUpdateController', 'save');
+//Store
+$route['*']['/store/edit'] = array('StoreController', 'editPage');
+$route['*']['/template/store-picture-form/:product_id'] = array('StoreController', 'storePictureForm');
+$route['*']['/store/edit-category'] = array('StoreController', 'editCategoryPage');
+$route['post']['/store/save-picture'] = array('StoreController', 'savePicture');
+$route['post']['/store/save-product'] = array('StoreController', 'saveProduct');
+$route['post']['/store/save-category'] = array('StoreController', 'saveCategory');
+$route['get']['/store/get-category'] = array('StoreController', 'getCategory');
+$route['get']['/store/fetch-store-item'] = array('StoreController', 'fetchStoreItem');
+$route['get']['/store/admin-count-page'] = array('StoreController', 'adminCountPage');
+$route['get']['/store/admin-get-pagination/:page'] = array('StoreController', 'adminGetPagination');
+$route['get']['/store/get-one-product/:id'] = array('StoreController', 'getOneProduct');
+$route['delete']['/store/delete-product/:id'] = array('StoreController', 'deleteProduct');
+$route['get']['/store/admin-get-category-pagination/:page'] = array('StoreController', 'adminGetCategoryPagination');
+$route['get']['/store/admin-count-category-page'] = array('StoreController', 'adminCountCategoryPage');
+$route['get']['/store/get-one-category/:id'] = array('StoreController', 'getOneCategory');
+$route['delete']['/store/delete-category/:id'] = array('StoreController', 'deleteCategory');
 
 //Video
 $route['*']['/video/view'] = array('VideoController', 'viewPage');

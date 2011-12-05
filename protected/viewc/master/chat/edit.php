@@ -4,9 +4,7 @@
 	</div>
 	<div class="row">
 		<div id="main-content" class="span10">
-			<div id="article">
-
-			</div>
+			<img src="<?php echo $data['baseurl']; ?>global/img/underconstruction19.jpg" alt="site maintenance" />
 		</div>
 		<div id="side-content" class="span6">
 			<div id="chat-container">

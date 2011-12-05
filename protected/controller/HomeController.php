@@ -23,6 +23,11 @@ class HomeController extends CommonController {
 		}
 		$this->render('template/layout', $data, true);
 	}
+	
+	public function store() {
+		$data = $this->templateData(__FUNCTION__);
+		$this->render('template/layout', $data, true);
+	}
 
 	public function video() {
 		$data = $this->templateData(__FUNCTION__);

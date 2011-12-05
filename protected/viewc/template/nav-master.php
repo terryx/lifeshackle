@@ -4,6 +4,7 @@
 			<a class="brand" href="<?php echo $data['baseurl']; ?>">Life's Shackle</a>
 			<ul class="nav">
 				<li><a href="<?php echo $data['baseurl']; ?>article">Article</a></li>
+				<li><a href="<?php echo $data['baseurl']; ?>store">Store</a></li>
 				<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
 			</ul>
 			<ul class="secondary-nav">
@@ -12,6 +13,8 @@
 					<ul class="dropdown-menu">
 						<li><a href="<?php echo $data['baseurl']; ?>article/edit">Article</a></li>
 						<li><a href="<?php echo $data['baseurl']; ?>chat/edit">Chat</a></li>
+						<li><a href="<?php echo $data['baseurl']; ?>store/edit">Store</a></li>
+						<li><a href="<?php echo $data['baseurl']; ?>store/edit-category">Store Category</a></li>
 						<li><a href="<?php echo $data['baseurl']; ?>video/edit">Video</a></li>
 					</ul>
 				</li>

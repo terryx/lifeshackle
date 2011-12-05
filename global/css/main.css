@@ -282,3 +282,8 @@ span.jPag-snext-img{
 	height: 48px;
 	position: absolute;
 }
+/*----------------- Store ------------------*/
+.store-img {
+	max-width: 210px;
+	max-height: 150px;
+}
