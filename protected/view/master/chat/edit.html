@@ -57,7 +57,7 @@
 	
 	function sendCommand(){
 		$('#chat-actions').html('');
-		$('#chat-content').removeAttr('disabled');
+		$('#chat-content').removeAttr('disabled').attr('placeholder', 'Enter message');
 		var str = '<button type="submit" class="btn primary">Send</button>&nbsp;';
 		str += '<button type="button" onclick="setUserInfo()" class="btn">Change name</button>&nbsp;';
 		str += '<button type="button" onclick="deleteChatPost()" class="btn danger">Delete</button>';

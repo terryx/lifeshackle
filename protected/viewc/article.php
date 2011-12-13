@@ -8,48 +8,47 @@
 
 			</div>
 		</div>
-		<div id="side-content" class="span5">
+<!--		<div id="side-content" class="span5">
 			<div id="archive">
 
 			</div>
-		</div>
+		</div>-->
 	</div>
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 
 <!--Article-->
 <script type="text/javascript">
-	function filterByArchive(date){
-		$.get("<?php echo $data['baseurl']; ?>article/filter-by-archive/"+date, function(data){
-			if(data){
-				var str = '';
-				Common.clearDiv("#main-content");
-				for(var i=0;i<data.length;i++){
-					str += '<div class="span10 i-content">';
-					str += '<h2>'+data[i].k1+'</h2>';
-					str += '<strong>'+data[i].k2+'</strong><br />';
-					str += data[i].k3;
-					str += '</div>';
-				}
-			}
-			$(str).appendTo('#article');
-
-		});
-	}
+//	function filterByArchive(date){
+//		$.get("<?php echo $data['baseurl']; ?>article/filter-by-archive/"+date, function(data){
+//			if(data){
+//				var str = '';
+//				Common.clearDiv("#main-content");
+//				for(var i=0;i<data.length;i++){
+//					str += '<div class="span10 i-content">';
+//					str += '<h2>'+data[i].k1+'</h2>';
+//					str += '<strong>'+data[i].k2+'</strong><br />';
+//					str += data[i].k3;
+//					str += '</div>';
+//				}
+//			}
+//			$(str).appendTo('#article');
+//		});
+//	}
   
-	function archive(){
-		$.get("<?php echo $data['baseurl']; ?>article/archive", function(data){
-			if(data){
-				var str = "<h3>Archive</h3>";
-				str += "<ul class='span4'>";
-				for(var i=0;i<data.length;i++){
-					str += "<li><div class='num' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k0+"</div><div class='date' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k1+"</div></li>";
-				}
-				str += "</ul>";
-				$("#archive").append(str);
-			}
-		});
-	}
+//	function archive(){
+//		$.get("<?php echo $data['baseurl']; ?>article/archive", function(data){
+//			if(data){
+//				var str = "<h3>Archive</h3>";
+//				str += "<ul class='span4'>";
+//				for(var i=0;i<data.length;i++){
+//					str += "<li><div class='num' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k0+"</div><div class='date' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k1+"</div></li>";
+//				}
+//				str += "</ul>";
+//				$("#archive").append(str);
+//			}
+//		});
+//	}
 	
 	$(window).bind('hashchange', function(){
 		getPagination();
@@ -120,7 +119,7 @@
 			},
 			complete: function(){
 				delete page;
-				$('#article').append(str).hide().slideDown(800, function(){
+				$('#article').append(str).hide().slideDown(1000, function(){
 					$(str).show();
 				});
 			}
@@ -156,8 +155,5 @@
 				getPagination();
 			}
 		});
-
-		archive();
-
 	});
 </script>
