@@ -14,7 +14,7 @@ class StatusUpdateBase extends DooModel{
     public $user_id;
 
     /**
-     * @var datetime
+     * @var int Max length is 11.
      */
     public $created;
 
@@ -23,9 +23,14 @@ class StatusUpdateBase extends DooModel{
      */
     public $message;
 
+    /**
+     * @var int Max length is 11.
+     */
+    public $latest_id;
+
     public $_table = 'status_update';
     public $_primarykey = 'status_update_id';
-    public $_fields = array('status_update_id','user_id','created','message');
+    public $_fields = array('status_update_id','user_id','created','message','latest_id');
 
     public function getVRules() {
         return array(
@@ -42,11 +47,18 @@ class StatusUpdateBase extends DooModel{
                 ),
 
                 'created' => array(
-                        array( 'datetime' ),
+                        array( 'integer' ),
+                        array( 'maxlength', 11 ),
                         array( 'notnull' ),
                 ),
 
                 'message' => array(
+                        array( 'notnull' ),
+                ),
+
+                'latest_id' => array(
+                        array( 'integer' ),
+                        array( 'maxlength', 11 ),
                         array( 'notnull' ),
                 )
             );

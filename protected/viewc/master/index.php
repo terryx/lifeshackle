@@ -1,236 +1,206 @@
 <div class="content">
 	<div class="row">
 		<div id="main-content" class="span11">
-			<div class="page-header">
-				<h6>Recent article</h6>
+			<div id="status-update">
+				<form id="status-update-form" class="form-stacked" method ="POST" action ="<?php echo $data['baseurl']; ?>status-update/save">
+					<div class ="clearfix">
+						<div class="input">
+							<textarea id="status-update-text" name="status_update_text" cols="70" rows="3" class="span10" placeholder="What's in your mind ?"></textarea >
+						</div>
+					</div >
+					<button type="submit" class ="btn primary d-hide">Post</button>
+				</form>
+				<div class="pagination">
+				</div>
+				<div id="status-update-container">
+
+				</div>
 			</div>
 			<div id="article">
 
 			</div>
 		</div>
-		<div id="side-content" class="span5">
-			<form id="chat-form" method="post">
-				<div class="clearfix">
-					<textarea id="chat-content" class="span5" disabled="disabled"></textarea>
-				</div>
-				<div id="chat-actions">
-
-				</div>
-			</form>
-			<div class="chatbox">
-
-			</div>
-		</div>
 	</div>
 </div>
 
-<!--Chat modal-->
-<div id="chat-modal" class="modal hide fade">
-	<div class="modal-header">
-		<a href="#" class="close">&times;</a>
-		<h3>Please tell me about yourself :)</h3>
-	</div>
-	<div class="modal-body">
-		<form id="user-form">
-			<div class="clearfix">
-				<label for="chatuser">Name</label>
-				<div class="input">
-					<input type="text" id="chatuser" name="chatuser" />
-				</div>
-			</div>
-			<div class="clearfix">
-				<label for="chatemail">Email</label>
-				<div class="input">
-					<input type="text" id="chatemail" name="chatemail" />
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<a href="#" id="submit-user-form" class="btn primary">Save</a>
-	</div>
-</div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 
-<!--Article-->
+<!--Status Update-->
 <script>
-	function fetchArticleList(){
-		$.ajax({
-			type : 'GET',
-			url : '<?php echo $data['baseurl']; ?>article/fetch-article-list',
-			statusCode : {
-				200 : function(data){
-					if(data){
-						var str = '';
-						for(var i = 0; i < data.length; i++){
-							str += '<div class="i-content">';
-							str += '<h2>'+data[i].k1+'</h2>';
-							str += '<strong>'+data[i].k2+'</strong><br />';
-							str += data[i].k3;
-							str += '</div>';
-						}
-						$(str).appendTo('#article');
-					}
-				},
-				404 : function(){
-					displayMessage('error', 'Page not found', '.modal-body', false);
-				}
-			}
-		})
-	}
-	
-	$(function(){
-		fetchArticleList();
+	$(window).bind('hashchange', function(){
+		getPagination();
 	});
 	
-</script>
-
-<!--Chat-->
-<script>
-	var c_user = '<?php echo $data['chatuser']; ?>';
-	var c_email = '<?php echo $data['chatemail']; ?>';
-	var last_id = 0;
-	
-	function sendCommand(){
-		$('#chat-actions').html('');
-		$('#chat-content').removeAttr('disabled');
-		var str = '<button type="submit" class="btn primary">Send</button>&nbsp;';
-		str += '<button type="button" onclick="setUserInfo()" class="btn">Change name</button>&nbsp;';
-		$('#chat-actions').append(str);
-	}
-	
-	function setUserInfo(){
-		$('#chat-modal').modal({
-			backdrop : true,
-			keyboard : true,
-			show 	 : true
-		});
-	}
-	
-	function checkCookie(){
-		if(c_user && c_email !== undefined){
-			sendCommand();
+	function timeHistory(string){
+		var now			= new Date().getTime(),
+		record		= parseInt((string), 10) * 1000,
+		diffTime	= now - record,
+		timeMsg     = '';
+   
+		var daysDifference  = Math.floor(diffTime / 1000 / 60 / 60 / 24);
+    
+		if (daysDifference > 7) {
+			var months = [
+				"January", "February", "March", "April",
+				"May", "June", "July", "August",
+				"September", "October", "November", "December"
+			];
+        
+			timeMsg = months[record.getMonth()] + ' ' + record.getDate() + ', ' + record.getFullYear();
+		} else if (daysDifference) {
+			timeMsg =  'about ' + daysDifference + ' days ago';
 		} else {
-			var str = '<button type="button" id="lets-chat" onclick="setUserInfo()" class="btn">Lets Chat</button>';
-			$('#chat-actions').append(str);
+			var hoursDifference = Math.floor(diffTime / 1000 / 60 / 60);
+
+			if (hoursDifference) {
+				timeMsg = 'about ' + hoursDifference + ' hours ago';
+			} else {
+				var minutesDifference = Math.floor(diffTime / 1000 / 60);
+
+				if (minutesDifference) {
+					timeMsg = 'about ' + minutesDifference + ' minutes ago';
+				} else {
+					var secondsDifference = Math.floor(diffTime / 1000);
+                
+					if (secondsDifference) {
+						timeMsg = 'about ' + secondsDifference + ' seconds ago';
+					} else {
+						timeMsg = 'few seconds ago';
+					}
+				}
+			}
 		}
+    
+		return timeMsg;
 	}
 	
-	function fetchChatList(){
+	function checkHashKey(){
+		var hashkey = window.location.hash;
+		if(hashkey !== ''){
+			hashkey = window.location.hash.replace('#', '');
+		} else {
+			hashkey = 1;
+		}
+		return parseInt(hashkey, 10);
+	}
+	
+	function getPagination(){
+		var page = checkHashKey();
+		var last = $('.pagination ul li:last-child').children('a').attr('href');
+		var str = '';
+		
+		//Clear all active pages
+		if($('.pagination ul li').is('.active')){
+			$('.pagination ul li').removeClass('active');
+		}
+		
+		//First page
+		if(page === 1){
+			$('.pagination ul li:nth-child(2)').addClass('active');
+			
+			$('.pagination ul li:first-child').addClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
+		//Last page
+		if(last === '#'+page){
+			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
+			
+			$('.pagination ul li:last-child').addClass('disabled');
+			$('.pagination ul li:first-child').removeClass('disabled');
+		}
+		
+		//Active pages
+		if(page !== 1 && last !== '#'+page){
+			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
+			
+			$('.pagination ul li:first-child').removeClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
 		$.ajax({
-			type : 'GET',
-			url : '<?php echo $data['baseurl']; ?>chat/fetch-chat-list',
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>status-update/get-pagination/'+page,
 			dataType: 'json',
-			statusCode : {
-				200 : function(data){
-					Common.clearDiv('.chatbox');
-					var str = '';
-					var email = '';
-					if(data){
-						for(var i = 0; i < data.length; i++){
-							str += '<div class="chatpost">';
-							str += '<a href="'+ data[i].k4 + '">'+ data[i].k3 + '</a>&nbsp;';
-							str += '<span class="chat-time">' + data[i].k1 + '</span><br />';
-							str += data[i].k2;
-							str += '</div>';
-						}
-						last_id = data.length;
-						$('.chatbox').append(str);
+			success: function(data){
+				if(data){
+					$('#status-update-container').html('');
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<div class="st-block">';
+						str += '<div class="st-content">';
+						str += data[i].k1;
+						str += '</div>';
+						str += '<div class="st-time">'+ timeHistory(data[i].k2) +'</div>';
+						str += '</div>';
 					}
+					$('#status-update-container').append(str).hide().slideDown(1500);
 				}
 			},
-			complete : function(){
-				setInterval(poolChat, 3000);
-			}
-		});
-	}
-	
-	function poolChat(){
-		$.ajax({
-			type : 'GET',
-			url : '<?php echo $data['baseurl']; ?>chat/pool-chat/'+last_id,
-			dataType : 'json',
-			statusCode : {
-				200 : function(data){
-					if(data){
-						var str = '';
-						last_id = data[1];
-						for(var i = 0; i < data[0].length; i++){
-							str += '<div class="chatpost">';
-							str += '<a href="'+ data[0][i].k4 +'">'+ data[0][i].k3 + '</a>&nbsp;';
-							str += '<span class="chat-time">' + data[0][i].k1 + '</span><br />';
-							str += data[0][i].k2;
-							str += '</div>';
-							$('.chatbox').prepend(str);
-						}
-					}
-				}
+			error: function(){
+				window.location = '<?php echo $data['baseurl']; ?>error';
 			},
-			complete : function(){
-				Common.removeDiv('.chat-loader');
+			complete: function(){
+				delete page;
+				
 			}
 		});
-	
 	}
 	
 	$(function(){
-		checkCookie();
-		
-		fetchChatList();
-	
-		$('#chat-form').submit(function(){
-			var str = '<div class="chat-loader"></div>'; 
-			//send chat
-			$.ajax({
-				type : 'POST',
-				url : '<?php echo $data['baseurl']; ?>chat/save-chat',
-				data : { c_user : c_user, c_email : c_email, chat_content : $('#chat-content').val() },
-				dataType : 'json',
-				beforeSend : function(){
-					$('.chatbox').prepend(str);
-				},
-				success : function(data){
-					if(data){
-						$('#chat-form')[0].reset();
-						if(data[0] === 'created'){
-							Common.removeDiv('.alert-message');
-						} else {
-							displayMessage('error', data[1], '#side-content');
-						}
-					}
-				},
-				complete : function(data){
-					poolChat();
+		//build pagination block
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>status-update/total-page',
+			dataType: 'json',
+			success: function(data){
+				var str			= '';
+				str += '<ul>';
+				str += '<li class="prev"><a href="#1">First</a></li>';
+					
+				for(var i=1, len=data; i<=len; i++){
+					str += '<li><a href="#'+i+'">'+i+'</a></li>';
 				}
-			});
-			
-			return false;
+				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
+				str += '</ul>';
+				$('.pagination').append(str);
+			},
+			error: function(){
+				console.log('Error part: initialize');
+			},
+			complete: function(){
+				getPagination();
+			}
 		});
 		
-		$('#submit-user-form').bind('click', function(e){
+		$('#status-update-form').bind('submit', function(e){
+			e.preventDefault();
+			var form = $(this);
 			
-			$.ajax({
+			var st = $.ajax({
 				type: 'POST',
-				url: '<?php echo $data['baseurl']; ?>chat/save-user',
-				data : {chatuser : $('#chatuser').val(), chatemail : $('#chatemail').val()},
-				dataType : 'json',
-				statusCode : {
-					200 : function(data){
-						if(data){
-							c_user = data[0];
-							c_email = data[1];
-							sendCommand();
-							$('#chat-modal').modal('hide');
-						}
-					},
-					400 : function(data){
-						displayMessage('error', eval(data.responseText), '.modal-body', false);
-					},
-					404 : function(){
-						displayMessage('error', 'Page not found', '.modal-body', false);
+				url: form.attr('action'),
+				data: form.serialize(),
+				dataType: 'json',
+				beforeSend: function(){
+					if($('#status-update-text').val() == ''){
+						return false;
 					}
+				},
+				success: function(data){
+					if(data){
+						if(data[0] === 'created'){
+							getPagination();
+						}
+					}
+				},
+				error: function(){
+					window.location = '<?php echo $data['baseurl']; ?>error';
+				},
+				complete: function(){
+					form[0].reset();
 				}
 			});
 		});
+		
 	});
 </script>

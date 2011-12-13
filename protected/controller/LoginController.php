@@ -3,9 +3,8 @@
 class LoginController extends CommonController {
 
 	public function index() {
-		$data = self::templateData();
+		$data = self::templateData('login');
 		$data['title'] = "Sign In";
-		$data['content'] = $data['role'] . 'login';
 
 		$this->render('template/layout', $data, true);
 	}
@@ -16,7 +15,7 @@ class LoginController extends CommonController {
 		setcookie('lfshackspwd', $cookie_pass, time() + 31536000, '/', $_SERVER['HTTP_HOST']);
 	}
 
-	public function login() {
+	public function processLogin() {
 		if (isset($_POST['username']) && isset($_POST['password'])) {
 			$username = trim(htmlentities($_POST['username']));
 			$password = trim(htmlentities($_POST['password']));
@@ -57,6 +56,7 @@ class LoginController extends CommonController {
 		}
 		else {
 			$this->toJSON("Connection error. Please try again.", true);
+			return 404;
 		}
 	}
 

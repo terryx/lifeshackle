@@ -49,4 +49,8 @@ $dbmap['LatestUpdate']['has_one']['Article'] = array('foreign_key' => 'latest_id
 $dbmap['Product']['belongs_to']['ProductCategory'] = array('foreign_key' => 'category_id');
 $dbmap['ProductCategory']['has_many']['Product'] = array('foreign_key' => 'category_id');
 
+//StatusUpdate
+$dbmap['StatusUpdate']['belongs_to']['LatestUpdate'] = array('foreign_key' => 'latest_id');
+$dbmap['LatestUpdate']['has_one']['StatusUpdate'] = array('foreign_key' => 'latest_id');
+
 ?>

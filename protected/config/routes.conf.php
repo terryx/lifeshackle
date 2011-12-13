@@ -13,12 +13,10 @@ $route['*']['/video'] = array('HomeController', 'video');
 
 $route['*']['/picture'] = array('HomeController', 'picture');
 
-$route['*']['/sign-in'] = array('LoginController', 'index');
-$route['*']['/quote'] = array('QuoteController', 'index');
-
-$route['post']['/login'] = array('LoginController', 'login');
+//Login
+$route['*']['/login'] = array('LoginController', 'index');
+$route['post']['/login/process-login'] = array('LoginController', 'processLogin');
 $route['*']['/logout'] = array('LoginController', 'logout');
-$route['*']['/finance'] = array('FinanceController', 'index');
 
 //Profile
 $route['post']['/profile/save'] = array('ProfileController', 'save');
@@ -64,6 +62,14 @@ $route['get']['/picture/get_picture_list'] = array('PictureController', 'getPict
 $route['get']['/picture/get_one_picture/:id'] = array('PictureController', 'getOnePicture');
 $route['get']['/picture/get_picture_gallery'] = array('PictureController', 'getPictureGallery');
 $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'deletePicture');
+
+//StatusUpdate
+$route['*']['/status-update/edit'] = array('StatusUpdateController', 'editPage');
+$route['*']['/status-update/get-all'] = array('StatusUpdateController', 'getAll');
+$route['*']['/status-update/save'] = array('StatusUpdateController', 'save');
+$route['get']['/status-update/total-page'] = array('StatusUpdateController', 'totalPage');
+$route['get']['/status-update/get-pagination/:page'] = array('StatusUpdateController', 'getPagination');
+//$route['get']['/status-update/check-status'] = array('StatusUpdateController', 'checkStatus');
 
 //Store
 $route['*']['/store/edit'] = array('StoreController', 'editPage');

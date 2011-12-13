@@ -8,12 +8,13 @@
 class PaginationController extends DooController {
 
 	public function calculateExactPage($page_number) {
-		$page = 0;
+		$page = explode(".", $page_number);
+		
 		//if page number is int then return the value
-		if (is_int($page_number)) {
+		if (sizeof($page) === 1) {
 			$page = $page_number;
 		}
-		else if ($page_number < 1) {
+		else if (sizeof($page) > 1 && $page_number < 1) {
 			$page = 1;
 		}
 		else {

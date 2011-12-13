@@ -1,15 +1,17 @@
 <div class="content">
 	<div class="row">
-		<div id="main-content" class="span10">
+		<div id="main-content" class="span11">
 			<div class="page-header">
 				<div id="pagination"></div>
 			</div>
 			<div id="article">
-				
+
 			</div>
 		</div>
-		<div id="archive" class="span4">
+		<div id="side-content" class="span5">
+			<div id="archive">
 
+			</div>
 		</div>
 	</div>
 </div>
