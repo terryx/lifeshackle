@@ -3,7 +3,7 @@
 class ArticleController extends CommonController {
 
 	//global setting per page for visitor and admin
-	public $per_page = 5;
+	public $per_page = 2;
 	public $admin_per_page = 10;
 
 	public function escape_val($val) {
@@ -57,7 +57,7 @@ class ArticleController extends CommonController {
 		return 200;
 	}
 
-	public function countPage() {
+	public function totalPage() {
 		$per_page = $this->per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();

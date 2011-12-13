@@ -1,8 +1,8 @@
 <div class="content">
 	<div class="row">
 		<div id="main-content" class="span11">
-			<div class="page-header">
-				<div id="pagination"></div>
+			<div class="pagination">
+
 			</div>
 			<div id="article">
 
@@ -50,105 +50,114 @@
 			}
 		});
 	}
+	
+	$(window).bind('hashchange', function(){
+		getPagination();
+	});
+	
+	function checkHashKey(){
+		var hashkey = window.location.hash;
+		if(hashkey !== ''){
+			hashkey = window.location.hash.replace('#', '');
+		} else {
+			hashkey = 1;
+		}
+		return parseInt(hashkey, 10);
+	}
 
-	function getPagination(page){
-		$.get('<?php echo $data['baseurl']; ?>article/get-pagination/'+page, function(data){
-			if(data){
-				Common.clearDiv('#article');
-				var str = '';
-				for(var i=0;i<data.length;i++){
-					str += '<div class="span10 i-content">';
-					str += '<h2>'+data[i].k1+'</h2>';
-					str += '<strong>'+data[i].k2+'</strong><br />';
-					str += data[i].k3;
-					str += '</div>';
+	function getPagination(){
+		var page = checkHashKey();
+		var last = $('.pagination ul li:last-child').children('a').attr('href');
+		var str = '';
+		
+		//Clear all active pages
+		if($('.pagination ul li').is('.active')){
+			$('.pagination ul li').removeClass('active');
+		}
+		
+		//First page
+		if(page === 1){
+			$('.pagination ul li:nth-child(2)').addClass('active');
+			
+			$('.pagination ul li:first-child').addClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
+		//Last page
+		if(last === '#'+page){
+			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
+			
+			$('.pagination ul li:last-child').addClass('disabled');
+			$('.pagination ul li:first-child').removeClass('disabled');
+		}
+		
+		//Active pages
+		if(page !== 1 && last !== '#'+page){
+			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
+			
+			$('.pagination ul li:first-child').removeClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>article/get-pagination/'+page,
+			dataType: 'json',
+			success: function(data){
+				if(data){
+					Common.clearDiv('#article');
+					for(var i=0;i<data.length;i++){
+						str += '<div class="span10 i-content">';
+						str += '<h2>'+data[i].k1+'</h2>';
+						str += '<strong>'+data[i].k2+'</strong><br />';
+						str += data[i].k3;
+						str += '</div>';
+					}
 				}
-				$(str).appendTo('#article');
-
+			},
+			error: function(){
+				window.location = '<?php echo $data['baseurl']; ?>error';
+			},
+			complete: function(){
+				delete page;
+				$('#article').append(str).hide().slideDown(800, function(){
+					$(str).show();
+				});
 			}
 		});
-	}
-	function countPage(){
-		$.get('<?php echo $data['baseurl']; ?>article/count-page', function(data){
-			if(data){
-				paginate(data);
-			} else {
-				return false;
-			}
-		});
-	}
-
-	function paginate(count){
-		$("#pagination").paginate({
-			count 		: count,
-			start 		: 1,
-			//      display     : 3,
-			border					: true,
-			border_color			: '#fff',
-			text_color  			: '#fff',
-			background_color    	: 'black',
-			border_hover_color		: '#ccc',
-			text_hover_color  		: '#000',
-			background_hover_color	: '#fff',
-			images					: false,
-			mouse					: 'press',
-			onChange     			: function(page){
-				getPagination(page);
-			}
-		});
-
 	}
 
 	$(function(){
-		countPage();
-		getPagination(1);
+		//build pagination block
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>article/total-page',
+			dataType: 'json',
+			beforeSend: function(){
+				Common.wait();
+			},
+			success: function(data){
+				var str			= '';
+				str += '<ul>';
+				str += '<li class="prev"><a href="#1">First</a></li>';
+					
+				for(var i=1, len=data; i<=len; i++){
+					str += '<li><a href="#'+i+'">'+i+'</a></li>';
+				}
+				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
+				str += '</ul>';
+				$('.pagination').append(str);
+			},
+			error: function(){
+				console.log('Error part: initialize');
+			},
+			complete: function(){
+				Common.end();
+				getPagination();
+			}
+		});
 
 		archive();
 
-	});
-</script>
-
-<!--Login-->
-<script>
-	//module login will use the nav modal
-	$('#login-form').bind('submit', function(e){
-		e.preventDefault();
-			
-		//declare class to be appended
-		var headerDiv = $('.header-message');
-		var errorDiv = $('.error-message');
-			
-		//declare message variable
-		var header = "";
-		var message = "";
-			
-		Common.clearDiv(headerDiv);
-		Common.clearDiv(errorDiv);
-			
-		$.ajax({
-			type : 'POST',
-			url : '<?php echo $data['baseurl']; ?>login',
-			data : {username : $('#username').val(), password : $('#password').val()},
-			dataType : 'json',
-			statusCode : {
-				200 : function(data){
-					window.location = data;
-				},
-				400 : function(){
-					header = "Login Error";
-					message = "Invalid combination of username/password";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				},
-				404 : function(){
-					header = "Login Error";
-					message = "The page is not found.";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				}
-			}
-		});
 	});
 </script>
