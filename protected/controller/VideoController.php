@@ -2,7 +2,7 @@
 
 class VideoController extends CommonController {
 
-	protected $per_page = 20;
+	protected $per_page = 24;
 	protected $admin_per_page = 10;
 
 	public function getVideoList() {
@@ -33,12 +33,12 @@ class VideoController extends CommonController {
 		}
 	}
 
-	public function countPage() {
+	public function totalPage(){
 		$per_page = $this->per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
-		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video ';
+		$sql = 'SELECT COUNT(video.video_id)/' . $per_page . ' as num_of_item FROM video ';
 		$sql .= 'WHERE video.visible = 1';
 
 		$rs = $this->db()->fetchAll($sql);
@@ -47,9 +47,9 @@ class VideoController extends CommonController {
 		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
-
+	
 	public function getPagination() {
-		if (intval($this->params['page']) < 1) {
+		if (!intval($this->params['page']) || $this->params['page'] < 1) {
 			return 404;
 		}
 		$per_page = $this->per_page;

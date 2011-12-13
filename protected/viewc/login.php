@@ -16,7 +16,7 @@
 					<div class="clearfix">
 						<label for="password">Password</label>
 						<div class="input">
-							<input type="text" id="password" name="password" />
+							<input type="password" id="password" name="password" />
 						</div>
 					</div>
 					<div class="input">

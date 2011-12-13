@@ -1,18 +1,12 @@
 <div class="content">
 	<div class="row">
-		<div id="main-content" class="span11">
-			<div class="page-header">
-				<div id="pagination">
+		<div id="main-content" class="span16">
+			<div class="pagination">
 
-				</div>
 			</div>
 			<div id="video">
 
 			</div>
-		</div>
-
-		<div id="side-content" class="span5">
-			
 		</div>
 	</div>
 </div>
@@ -21,118 +15,121 @@
 
 <!--Video-->
 <script>
+	$(window).bind('hashchange', function(){
+		getPagination();
+	});
+	
+	function checkHashKey(){
+		var hashkey = window.location.hash;
+		if(hashkey !== ''){
+			hashkey = window.location.hash.replace('#', '');
+		} else {
+			hashkey = 1;
+		}
+		return parseInt(hashkey, 10);
+	}
+	
+	function getPagination(){
+		var page = checkHashKey();
+		var last = $('.pagination ul li:last-child').children('a').attr('href');
+		var str = '';
+		
+		//Clear all active pages
+		if($('.pagination ul li').is('.active')){
+			$('.pagination ul li').removeClass('active');
+		}
+		
+		//First page
+		if(page === 1){
+			$('.pagination ul li:nth-child(2)').addClass('active');
+			
+			$('.pagination ul li:first-child').addClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
+		//Last page
+		if(last === '#'+page){
+			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
+			
+			$('.pagination ul li:last-child').addClass('disabled');
+			$('.pagination ul li:first-child').removeClass('disabled');
+		}
+		
+		//Active pages
+		if(page !== 1 && last !== '#'+page){
+			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
+			
+			$('.pagination ul li:first-child').removeClass('disabled');
+			$('.pagination ul li:last-child').removeClass('disabled');
+		}
+		
+		$.ajax({
+			type: 'GET',
+			url: '{{baseurl}}video/get-pagination/'+page,
+			dataType: 'json',
+			success: function(data){
+				if(data){
+					Common.clearDiv('#video');
+					var id, title, src, thumbnail;
+					str += '<ul class="media-grid">';
+					for(var i=0, len=data.length; i<len; i++){
+						id = data[i].k0;
+						title = data[i].k1;
+						src = data[i].k2
+						thumbnail = data[i].k3;
+
+						str += '<li class="test"><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
+					}
+					str += '</ul>';
+				}
+			},
+			error: function(){
+				window.location = '{{baseurl}}error';
+			},
+			complete: function(){
+				delete page;
+				$('#video').append(str).hide().slideDown(1000, function(){
+					$(str).show();
+				});
+			}
+		});
+	}
+	
 	function videoLinkId(url){
 		var id;
 		id = url.replace(/^[^v]+v.(.{11}).*/,"$1");
 		return id;
 	}
 
-	function getPagination(page){
-		$.get('{{baseurl}}video/get-pagination/'+page, function(data){
-			if(data){
-				Common.clearDiv('#video');
-				var id;
-				var title;
-				var src;
-				var thumbnail;
-				var str = '<ul class="media-grid">';
-				for(var i = 0; i<data.length; i++){
-					id = data[i].k0;
-					title = data[i].k1;
-					src = data[i].k2
-					thumbnail = data[i].k3;
-
-					str += '<li class="test"><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
-				}
-
-				str += '</ul>';
-				Common.end();
-//				$('#video').append(str).slideDown(5000);
-				$('#video').slideDown(5000, function(){
-					$(this).append(str);
-				});
-//				$('.test').slideDown(5000);
-			}
-		});
-	}
-	
-	function countPage(){
-		$.get('{{baseurl}}video/count-page', function(data){
-			if(data){
-				paginate(data);
-			}
-		});
-	}
-
-	function paginate(count){
-		$("#pagination").paginate({
-			count 		: count,
-			start 		: 1,
-			border					: true,
-			border_color			: '#fff',
-			text_color  			: '#fff',
-			background_color    	: 'black',
-			border_hover_color		: '#ccc',
-			text_hover_color  		: '#000',
-			background_hover_color	: '#fff',
-			images					: false,
-			mouse					: 'press',
-			onChange     			: function(page){
-				getPagination(page);
-			}
-		});
-	}
-	
 	$(function(){
-		//video settings
-		Common.wait();
-		countPage();
-		getPagination(1);
-		
-	});
-</script>
-
-<!--Login-->
-<script>
-	//module login will use the nav modal
-	$('#login-form').bind('submit', function(e){
-		e.preventDefault();
-			
-		//declare class to be appended
-		var headerDiv = $('.header-message');
-		var errorDiv = $('.error-message');
-			
-		//declare message variable
-		var header = "";
-		var message = "";
-			
-		Common.clearDiv(headerDiv);
-		Common.clearDiv(errorDiv);
-			
+		//build pagination block
 		$.ajax({
-			type : 'POST',
-			url : '{{baseurl}}login',
-			data : {username : $('#username').val(), password : $('#password').val()},
-			dataType : 'json',
-			statusCode : {
-				200 : function(data){
-					window.location = data;
-				},
-				400 : function(){
-					header = "Login Error";
-					message = "Invalid combination of username/password";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				},
-				404 : function(){
-					header = "Login Error";
-					message = "The page is not found.";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
+			type: 'GET',
+			url: '{{baseurl}}video/total-page',
+			dataType: 'json',
+			beforeSend: function(){
+				Common.wait();
+			},
+			success: function(data){
+				var str			= '';
+				str += '<ul>';
+				str += '<li class="prev"><a href="#1">First</a></li>';
+					
+				for(var i=1, len=data; i<=len; i++){
+					str += '<li><a href="#'+i+'">'+i+'</a></li>';
 				}
+				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
+				str += '</ul>';
+				$('.pagination').append(str);
+			},
+			error: function(){
+				console.log('Error part: initialize');
+			},
+			complete: function(){
+				Common.end();
+				getPagination();
 			}
 		});
+		
 	});
 </script>
