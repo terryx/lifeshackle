@@ -1,9 +1,10 @@
 <div class="content">
 	<div class="page-header">
-		<h6>Recent article</h6>
+		<h6>Contact Me</h6>
 	</div>
 	<div class="row">
 		<div id="main-content" class="span10">
+			<p>If you have any question for me, please use the chat box here thanks :)</p><br />
 			<img src="<?php echo $data['baseurl']; ?>global/img/underconstruction19.jpg" alt="site maintenance" />
 		</div>
 		<div id="side-content" class="span6">
@@ -50,6 +51,7 @@
 	</form>
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
+
 <script type="text/javascript">
 	var c_user = '<?php echo $data['chatuser']; ?>';
 	var c_email = '<?php echo $data['chatemail']; ?>';
@@ -60,7 +62,6 @@
 		$('#chat-content').removeAttr('disabled');
 		var str = '<button type="submit" class="btn primary">Send</button>&nbsp;';
 		str += '<button type="button" onclick="setUserInfo()" class="btn">Change name</button>&nbsp;';
-		str += '<button type="button" onclick="deleteChatPost()" class="btn danger">Delete</button>';
 		$('#chat-actions').append(str);
 	}
 	
@@ -172,27 +173,6 @@
 		})
 	}
 	
-	function deleteChatPost(){
-		var str = '<div class="chat-loader"></div>';
-		$.ajax({
-			type : 'GET',
-			url : '<?php echo $data['baseurl']; ?>chat/delete-chat-post',
-			beforeSend : function(){
-				$('.chatbox').prepend(str);
-			},
-			statusCode : {
-				200 : function(data){
-					displayMessage('success', 'Chat history is deleted', '#side-content');
-					Common.clearDiv('.chatbox');
-					last_id = 0;
-				},
-				400 : function(data){
-					displayMessage('error', 'Chat could not be deleted', '#side-content');
-				}
-			}
-		});
-	}
-
 	$(function(){
 	
 		checkCookie();

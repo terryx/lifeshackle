@@ -5,8 +5,6 @@ class HomeController extends CommonController {
 	
 	public function index() {
 		$data = $this->templateData(__FUNCTION__);
-		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
-		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
 		//direct user to master index
 		if($data['role'] !== null){
 			$data['content'] =  $data['role'] . DIRECTORY_SEPARATOR . __FUNCTION__;
@@ -36,6 +34,16 @@ class HomeController extends CommonController {
 
 	public function video() {
 		$data = $this->templateData(__FUNCTION__);
+		$this->render('template/layout', $data, true);
+	}
+	
+	public function contact(){
+		$data = $this->templateData(__FUNCTION__);
+		
+		//Chat module
+		$data['chatuser'] = isset($_COOKIE['lfshackschatuser']) ? $_COOKIE['lfshackschatuser'] : '';
+		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
+		
 		$this->render('template/layout', $data, true);
 	}
 }

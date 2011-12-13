@@ -23,6 +23,9 @@ $route['post']['/profile/save'] = array('ProfileController', 'save');
 $route['get']['/profile/get'] = array('ProfileController', 'get');
 $route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
 
+//Contact
+$route['*']['/contact'] = array('HomeController', 'contact');
+
 //iframe picture
 $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 

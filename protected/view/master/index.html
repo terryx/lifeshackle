@@ -16,9 +16,6 @@
 
 				</div>
 			</div>
-			<div id="article">
-
-			</div>
 		</div>
 	</div>
 </div>
@@ -125,6 +122,7 @@
 			success: function(data){
 				if(data){
 					$('#status-update-container').html('');
+					console.log(data.length);
 					for(var i=0, len=data.length; i<len; i++){
 						str += '<div class="st-block">';
 						str += '<div class="st-content">';
@@ -133,7 +131,6 @@
 						str += '<div class="st-time">'+ timeHistory(data[i].k2) +'</div>';
 						str += '</div>';
 					}
-					$('#status-update-container').append(str).hide().slideDown(1500);
 				}
 			},
 			error: function(){
@@ -141,7 +138,9 @@
 			},
 			complete: function(){
 				delete page;
-				
+				$(str).appendTo('#status-update-container').slideDown(1300, function(){
+					$(this).find('.st-block').show();
+				});
 			}
 		});
 	}

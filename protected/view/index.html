@@ -3,7 +3,7 @@
 		<div id="main-content" class="span11">
 			<div id="status-update">
 				<div class="pagination">
-					
+
 				</div>
 				<div id="status-update-container">
 
@@ -12,8 +12,8 @@
 		</div>
 		<div id="side-content" class="span5">
 			<div style="float:right">
-			<!-- Facebook Badge START --><a href="https://www.facebook.com/terryxlife" target="_TOP" style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;" title="Terry Yuen">Terry Yuen</a><br/><a href="https://www.facebook.com/terryxlife" target="_TOP" title="Terry Yuen"><img src="https://badge.facebook.com/badge/620130201.5435.1987480309.png" style="border: 0px;" /></a><!-- Facebook Badge END -->
-		</div>
+				<!-- Facebook Badge START --><a href="https://www.facebook.com/terryxlife" target="_TOP" style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;" title="Terry Yuen">Terry Yuen</a><br/><a href="https://www.facebook.com/terryxlife" target="_TOP" title="Terry Yuen"><img src="https://badge.facebook.com/badge/620130201.5435.1987480309.png" style="border: 0px;" /></a><!-- Facebook Badge END -->
+			</div>
 		</div>
 	</div>
 </div>
@@ -128,7 +128,6 @@
 						str += '<div class="st-time">'+ timeHistory(data[i].k2) +'</div>';
 						str += '</div>';
 					}
-					$('#status-update-container').append(str).hide().slideDown(1500);
 				}
 			},
 			error: function(){
@@ -136,7 +135,9 @@
 			},
 			complete: function(){
 				delete page;
-				
+				$(str).appendTo('#status-update-container').slideDown(1300, function(){
+					$(this).find('.st-block').show();
+				});
 			}
 		});
 	}
