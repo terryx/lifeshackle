@@ -283,6 +283,10 @@ span.jPag-snext-img{
 	font-size: 11px;
 	color: #a5a5a5;
 }
+.st-admin {
+	text-align: right;
+	padding-bottom: 2px;
+}
 #status-update-form {
 	padding-top: 20px;
 }

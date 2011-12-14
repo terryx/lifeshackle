@@ -3,7 +3,7 @@
 class StatusUpdateController extends CommonController {
 
 	private $per_page = 5;
-	
+
 	public function escape_val($val) {
 
 		if (get_magic_quotes_gpc()) {
@@ -11,7 +11,7 @@ class StatusUpdateController extends CommonController {
 		}
 		return $val;
 	}
-	
+
 	public function editPage() {
 		$data = $this->templateData($this->checkRole() . '/status-update/edit');
 		$data['title'] = 'Edit | Status Update';
@@ -19,7 +19,7 @@ class StatusUpdateController extends CommonController {
 		$this->view()->render('template/layout', $data, true);
 	}
 
-	public function totalPage(){
+	public function totalPage() {
 		$per_page = $this->per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
@@ -32,7 +32,7 @@ class StatusUpdateController extends CommonController {
 		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
-	
+
 	public function getPagination() {
 
 		if (!intval($this->params['page']) || $this->params['page'] < 1) {
@@ -42,7 +42,7 @@ class StatusUpdateController extends CommonController {
 		$per_page = $this->per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
-		
+
 		$sql = "SELECT status_update.status_update_id as k0, status_update.message as k1, status_update.created as k2 FROM status_update ";
 		$sql .= "ORDER BY status_update.status_update_id DESC LIMIT " . $offset . ", " . $per_page;
 		$rs = $this->db()->fetchAll($sql);
@@ -116,6 +116,38 @@ class StatusUpdateController extends CommonController {
 		//id is empty
 		else {
 			return;
+		}
+	}
+
+	public function deleteOne() {
+		$id = $this->params['id'];
+
+		if (intval($id) > 0) {
+			Doo::loadModel('StatusUpdate');
+			$st = new StatusUpdate;
+			$st->status_update_id = $id;
+			$st_rs = $st->getOne();
+
+			if ($st_rs->latest_id) {
+				Doo::loadModel('LatestUpdate');
+				$lu = new LatestUpdate;
+				$lu->latest_id = $st_rs->latest_id;
+				$lu_rs = $lu->getOne();
+
+				$lu_rs->beginTransaction();
+				try {
+					$st_rs->delete();
+					$lu_rs->delete();
+					$lu_rs->commit();
+					$this->toJSON(array('deleted'), true);
+					return 200;
+				} catch (PDOException $e) {
+					$lu_rs->rollBack();
+					return 400;
+				}
+			}
+		} else {
+			return 400;
 		}
 	}
 

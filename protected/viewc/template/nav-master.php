@@ -6,6 +6,8 @@
 				<li><a href="<?php echo $data['baseurl']; ?>article">Article</a></li>
 				<li><a href="<?php echo $data['baseurl']; ?>store">Store</a></li>
 				<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
+				<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
+				<li><a href="<?php echo $data['baseurl']; ?>contact">Contact me</a></li>
 			</ul>
 			<ul class="secondary-nav">
 				<li class="dropdown">
@@ -22,7 +24,6 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">Settings</a>
 					<ul class="dropdown-menu">
-						<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
 						<li><a href="<?php echo $data['baseurl']; ?>logout">Sign out</a></li>
 					</ul>
 				</li>

@@ -17,27 +17,59 @@
 				</div>
 			</div>
 		</div>
-		<!--				<div id="side-content" class="span5">
-							<div id="pagination">
-				
-							</div>
-							<div id="search-container">
-								<form id="search-form">
-									<input type="text" id="search" name="search" placeholder="Search" onkeyup="Search.filter();" class="span5" />
-									<button type="submit" id="search-button" name="search-button"></button>
-								</form>
-							</div>
-							<div id="search-result"></div>
-						</div>-->
 	</div>
 </div>
+
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
-<script src="<?php echo $data['baseurl']; ?>global/plugin/timeago/timeago.js" type="text/javascript"></script>
+
+<!--Status Update-->
 <script>
-	
 	$(window).bind('hashchange', function(){
 		getPagination();
 	});
+	
+	function timeHistory(string){
+		var now			= new Date().getTime(),
+		record		= parseInt((string), 10) * 1000,
+		diffTime	= now - record,
+		timeMsg     = '';
+   
+		var daysDifference  = Math.floor(diffTime / 1000 / 60 / 60 / 24);
+    
+		if (daysDifference > 7) {
+			var months = [
+				"January", "February", "March", "April",
+				"May", "June", "July", "August",
+				"September", "October", "November", "December"
+			];
+        
+			timeMsg = months[record.getMonth()] + ' ' + record.getDate() + ', ' + record.getFullYear();
+		} else if (daysDifference) {
+			timeMsg =  'about ' + daysDifference + ' days ago';
+		} else {
+			var hoursDifference = Math.floor(diffTime / 1000 / 60 / 60);
+
+			if (hoursDifference) {
+				timeMsg = 'about ' + hoursDifference + ' hours ago';
+			} else {
+				var minutesDifference = Math.floor(diffTime / 1000 / 60);
+
+				if (minutesDifference) {
+					timeMsg = 'about ' + minutesDifference + ' minutes ago';
+				} else {
+					var secondsDifference = Math.floor(diffTime / 1000);
+                
+					if (secondsDifference) {
+						timeMsg = 'about ' + secondsDifference + ' seconds ago';
+					} else {
+						timeMsg = 'few seconds ago';
+					}
+				}
+			}
+		}
+    
+		return timeMsg;
+	}
 	
 	function checkHashKey(){
 		var hashkey = window.location.hash;
@@ -95,10 +127,10 @@
 						str += '<div class="st-content">';
 						str += data[i].k1;
 						str += '</div>';
-						str += '<div class="st-time" title="'+ data[i].k2 +'">'+ data[i].k2 +'</div>';
+						str += '<div class="st-time">'+ timeHistory(data[i].k2) +'</div>';
+						str += '<div class="st-admin"><button class="btn delete-st" id="del'+ data[i].k0 +'">Delete</button></div>';
 						str += '</div>';
 					}
-					$('#status-update-container').append(str).hide().slideDown(1500);
 				}
 			},
 			error: function(){
@@ -106,7 +138,39 @@
 			},
 			complete: function(){
 				delete page;
-				$(".st-time").timeago();
+				$(str).appendTo('#status-update-container').slideDown(1300, function(){
+					$(this).find('.st-block').show();
+				});
+				
+				var st = $('.delete-st').bind('click', function(){
+					var id = $(this).attr('id').replace('del', '');
+						id = parseInt(id);
+					$.ajax({
+						type: 'GET',
+						url: '<?php echo $data['baseurl']; ?>status-update/delete/'+ id,
+						dataType: 'json',
+						beforeSend: function(){
+							if(id < 1 || id === undefined){
+								return false;
+							}
+						},
+						success: function(data){
+							if(data[0] === 'deleted'){
+								getPagination();
+							}
+						},
+						complete: function(){
+							$(st).unbind();
+						}
+					})
+					
+				});
+//				$('.st-block').hover(function(){
+//					$(this).children('.st-admin').show();
+//				},
+//				function(){
+//					$(this).children('.st-admin').hide();
+//				})
 			}
 		});
 	}
@@ -146,9 +210,16 @@
 				url: form.attr('action'),
 				data: form.serialize(),
 				dataType: 'json',
+				beforeSend: function(){
+					if($('#status-update-text').val() == ''){
+						return false;
+					}
+				},
 				success: function(data){
-					if(data[0] === 'created'){
-						getPagination(1);
+					if(data){
+						if(data[0] === 'created'){
+							getPagination();
+						}
 					}
 				},
 				error: function(){
@@ -156,11 +227,9 @@
 				},
 				complete: function(){
 					form[0].reset();
-					window.location.hash = id;
 				}
 			});
 		});
 		
 	});
-	
 </script>
