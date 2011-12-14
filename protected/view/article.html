@@ -8,48 +8,12 @@
 
 			</div>
 		</div>
-<!--		<div id="side-content" class="span5">
-			<div id="archive">
-
-			</div>
-		</div>-->
 	</div>
 </div>
 <!-- include '/template/footer' -->
 
 <!--Article-->
 <script type="text/javascript">
-//	function filterByArchive(date){
-//		$.get("{{baseurl}}article/filter-by-archive/"+date, function(data){
-//			if(data){
-//				var str = '';
-//				Common.clearDiv("#main-content");
-//				for(var i=0;i<data.length;i++){
-//					str += '<div class="span10 i-content">';
-//					str += '<h2>'+data[i].k1+'</h2>';
-//					str += '<strong>'+data[i].k2+'</strong><br />';
-//					str += data[i].k3;
-//					str += '</div>';
-//				}
-//			}
-//			$(str).appendTo('#article');
-//		});
-//	}
-  
-//	function archive(){
-//		$.get("{{baseurl}}article/archive", function(data){
-//			if(data){
-//				var str = "<h3>Archive</h3>";
-//				str += "<ul class='span4'>";
-//				for(var i=0;i<data.length;i++){
-//					str += "<li><div class='num' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k0+"</div><div class='date' onclick='filterByArchive(\""+data[i].k1+"\")'>"+data[i].k1+"</div></li>";
-//				}
-//				str += "</ul>";
-//				$("#archive").append(str);
-//			}
-//		});
-//	}
-	
 	$(window).bind('hashchange', function(){
 		getPagination();
 	});
@@ -156,4 +120,16 @@
 			}
 		});
 	});
+</script>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try{
+var pageTracker = _gat._getTracker("UA-27701779-1");
+pageTracker._trackPageview();
+} catch(err) {}
 </script>

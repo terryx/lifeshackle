@@ -70,47 +70,14 @@
 	}
 </script>
 
-<!--Login-->
-<script>
-	//module login will use the nav modal
-	$('#login-form').bind('submit', function(e){
-		e.preventDefault();
-			
-		//declare class to be appended
-		var headerDiv = $('.header-message');
-		var errorDiv = $('.error-message');
-			
-		//declare message variable
-		var header = "";
-		var message = "";
-			
-		Common.clearDiv(headerDiv);
-		Common.clearDiv(errorDiv);
-			
-		$.ajax({
-			type : 'POST',
-			url : '{{baseurl}}login',
-			data : {username : $('#username').val(), password : $('#password').val()},
-			dataType : 'json',
-			statusCode : {
-				200 : function(data){
-					window.location = data;
-				},
-				400 : function(){
-					header = "Login Error";
-					message = "Invalid combination of username/password";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				},
-				404 : function(){
-					header = "Login Error";
-					message = "The page is not found.";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				}
-			}
-		});
-	});
+<!-- Google Analytics -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try{
+var pageTracker = _gat._getTracker("UA-27701779-1");
+pageTracker._trackPageview();
+} catch(err) {}
 </script>

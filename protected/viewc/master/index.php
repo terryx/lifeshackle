@@ -135,7 +135,7 @@
 			},
 			complete: function(){
 				delete page;
-				$(str).appendTo('#status-update-container').slideDown(1000, function(){
+				$(str).appendTo('#status-update-container').slideDown(800, function(){
 					$(this).find('.st-block').show();
 				});
 			}
