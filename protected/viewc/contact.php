@@ -174,7 +174,7 @@
 	}
 	
 	$(function(){
-	
+		
 		checkCookie();
 	
 		fetchChatList();

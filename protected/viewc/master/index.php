@@ -2,19 +2,17 @@
 	<div class="row">
 		<div id="main-content" class="span11">
 			<div id="status-update">
-				<form id="status-update-form" class="form-stacked" method ="POST" action ="<?php echo $data['baseurl']; ?>status-update/save">
-					<div class ="clearfix">
-						<div class="input">
-							<textarea id="status-update-text" name="status_update_text" cols="70" rows="3" class="span10" placeholder="What's in your mind ?"></textarea >
-						</div>
-					</div >
-					<button type="submit" class ="btn primary d-hide">Post</button>
-				</form>
 				<div class="pagination">
+
 				</div>
 				<div id="status-update-container">
 
 				</div>
+			</div>
+		</div>
+		<div id="side-content" class="span5">
+			<div style="float:right">
+				<!-- Facebook Badge START --><a href="https://www.facebook.com/terryxlife" target="_TOP" style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;" title="Terry Yuen">Terry Yuen</a><br/><a href="https://www.facebook.com/terryxlife" target="_TOP" title="Terry Yuen"><img src="https://badge.facebook.com/badge/620130201.5435.1987480309.png" style="border: 0px;" /></a><!-- Facebook Badge END -->
 			</div>
 		</div>
 	</div>
@@ -122,7 +120,6 @@
 			success: function(data){
 				if(data){
 					$('#status-update-container').html('');
-					console.log(data.length);
 					for(var i=0, len=data.length; i<len; i++){
 						str += '<div class="st-block">';
 						str += '<div class="st-content">';
@@ -138,7 +135,7 @@
 			},
 			complete: function(){
 				delete page;
-				$(str).appendTo('#status-update-container').slideDown(1300, function(){
+				$(str).appendTo('#status-update-container').slideDown(1000, function(){
 					$(this).find('.st-block').show();
 				});
 			}
@@ -171,35 +168,7 @@
 			}
 		});
 		
-		$('#status-update-form').bind('submit', function(e){
-			e.preventDefault();
-			var form = $(this);
-			
-			var st = $.ajax({
-				type: 'POST',
-				url: form.attr('action'),
-				data: form.serialize(),
-				dataType: 'json',
-				beforeSend: function(){
-					if($('#status-update-text').val() == ''){
-						return false;
-					}
-				},
-				success: function(data){
-					if(data){
-						if(data[0] === 'created'){
-							getPagination();
-						}
-					}
-				},
-				error: function(){
-					window.location = '<?php echo $data['baseurl']; ?>error';
-				},
-				complete: function(){
-					form[0].reset();
-				}
-			});
-		});
-		
 	});
 </script>
+
+<!-- Mini profile -->

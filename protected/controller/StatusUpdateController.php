@@ -4,6 +4,14 @@ class StatusUpdateController extends CommonController {
 
 	private $per_page = 5;
 	
+	public function escape_val($val) {
+
+		if (get_magic_quotes_gpc()) {
+			$val = stripcslashes($val);
+		}
+		return $val;
+	}
+	
 	public function editPage() {
 		$data = $this->templateData($this->checkRole() . '/status-update/edit');
 		$data['title'] = 'Edit | Status Update';
@@ -25,12 +33,6 @@ class StatusUpdateController extends CommonController {
 		$this->toJSON($page, true);
 	}
 	
-//	public function checkStatus(){
-//		$sql = 'SELECT COUNT(status_update_id) as k1 FROM status_update ';
-//		$rs = $this->db()->fetchAll($sql);
-//		$this->toJSON($rs, true);
-//	}
-	
 	public function getPagination() {
 
 		if (!intval($this->params['page']) || $this->params['page'] < 1) {
@@ -49,6 +51,7 @@ class StatusUpdateController extends CommonController {
 
 	public function save() {
 		if (!empty($_POST['status_update_text'])) {
+			$content = nl2br($_POST['status_update_text']);
 			//insert
 			if (empty($_POST['status_update_id'])) {
 				Doo::loadModel('LatestUpdate');
@@ -60,7 +63,7 @@ class StatusUpdateController extends CommonController {
 				$s = new StatusUpdate;
 				$s->user_id = $_SESSION['user']['id'];
 				$s->created = time();
-				$s->message = $_POST['status_update_text'];
+				$s->message = $this->escape_val($content);
 				$s->latest_id = $lu_id;
 				$new_id = $s->insert();
 
