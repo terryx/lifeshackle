@@ -15,15 +15,21 @@ class HomeController extends CommonController {
 
 	public function article() {
 		$data = $this->templateData(__FUNCTION__);
+		
 		$this->render('template/layout', $data, true);
 	}
 
 	public function profile() {
 		$data = $this->templateData(__FUNCTION__);
 		
-		if($data['role'] !== null){
-			$data['content'] =  $data['role'] . DIRECTORY_SEPARATOR . __FUNCTION__;
-		}
+		Doo::loadController('ProfileController');
+		$profile = new ProfileController();
+		
+		$data['profile_content'] = $profile->fetchContent();
+		$profile_picture = $profile->getCurrent();
+		$data['profile_img_link'] = $profile_picture[0];
+		$data['profile_img_src'] = $profile_picture[1];
+		
 		$this->render('template/layout', $data, true);
 	}
 	

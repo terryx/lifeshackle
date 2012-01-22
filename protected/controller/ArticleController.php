@@ -4,7 +4,8 @@ class ArticleController extends CommonController {
 
 	//global setting per page for visitor and admin
 	public $per_page = 2;
-	public $admin_per_page = 10;
+	public $admin_per_page = 3;
+	private $file_path = 'global/file/';
 
 	public function escape_val($val) {
 
@@ -15,25 +16,71 @@ class ArticleController extends CommonController {
 	}
 
 	public function editPage() {
-		$data = $this->templateData($this->checkRole().'/article/edit');
-		
+		$data = $this->templateData($this->checkRole() . '/article/edit');
+
 		//overwrite some template array
 		$data['title'] = 'Edit | Article';
 		$this->view()->render('template/layout', $data, true);
 	}
 
-	public function getArticleList() {
-		$rs = $this->db()->find('Article', array('select' =>
-			'article_id as k0, title as k1, created as k2, visible as k3',
-			'desc' => 'created'));
+	public function fetchArticle() {
+		if (!$this->params['number'] || intval($this->params['number']) < 1) {
+			return 404;
+		}
+
+		$number = $this->params['number'];
+		
+		$sql = array(
+			'limit' => $number,
+			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
+			'where' => 'article.visible = 1',
+			'desc' => 'article.article_id'
+		);
+		$rs = Doo::db()->find('Article', $sql);
+
+		//read txt file
+		foreach ($rs as $id) {
+			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
+			$id->k5 = $file;
+		}
 		$this->toJSON($rs, true, true);
 	}
+
+	public function archive(){
+		$sql = "SELECT FROM_UNIXTIME(article.created, '%M %Y') as k1";
+		$sql .= " FROM article GROUP BY k1";
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+	
+	public function archiveDateFilter(){
+		$date = urldecode($this->params['date']);
+
+		if (empty($date)) {
+			return 404;
+		}
+
+		$sql = array(
+			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
+			'where' => 'FROM_UNIXTIME(article.created, "%M %Y") = ? AND visible = 1',
+			'desc' => 'article.article_id',
+			'param' => array($date)
+		);
+		$rs = Doo::db()->find('Article', $sql);
+		
+		foreach ($rs as $id) {
+			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
+			$id->k5 = $file; 
+		}
+		$this->toJSON($rs, true, true);
+	}
+
+	//------------------------------------//
 
 	public function getOneArticle() {
 		if (!$this->params['id'] || intval($this->params['id']) < 1) {
 			return 404;
-		}
-		else {
+		} else {
 			Doo::loadModel('Article');
 			$a = new Article();
 			$a->article_id = $this->params['id'];
@@ -41,15 +88,14 @@ class ArticleController extends CommonController {
 
 			if ($rs) {
 				$this->toJSON($rs, true, true);
-			}
-			else {
+			} else {
 				$this->toJSON('Article not found', true);
 				return 400;
 			}
 		}
 	}
-	
-	public function fetchArticleList(){
+
+	public function fetchArticleList() {
 		$sql = 'SELECT article_id as k0, title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, body as k3 FROM article ';
 		$sql .= 'ORDER BY article_id DESC LIMIT 3';
 		$rs = $this->db()->fetchAll($sql);
@@ -57,8 +103,11 @@ class ArticleController extends CommonController {
 		return 200;
 	}
 
-	public function totalPage() {
-		$per_page = $this->per_page;
+	public function setPagination() {
+		if (intval($this->params['set']) < 1) {
+			return 404;
+		}
+		$per_page = $this->params['set'];
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -72,6 +121,27 @@ class ArticleController extends CommonController {
 		$this->toJSON($page, true);
 	}
 
+	public function getPublicArticleList() {
+		if (intval($this->params['page']) < 1) {
+			return 404;
+		}
+		$per_page = $this->per_page;
+		$current_page = $this->params['page'];
+		$offset = ($current_page - 1) * $per_page;
+
+//		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+//		$sql .= 'article.body as k3, article.tag as k4 FROM article';
+//		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
+		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
+		$sql .= ' WHERE article.visible = 1';
+		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($rs, true);
+	}
+
 	public function getPagination() {
 		if (intval($this->params['page']) < 1) {
 			return 404;
@@ -79,46 +149,24 @@ class ArticleController extends CommonController {
 		$per_page = $this->per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
-		$role = $this->checkRole();
 
-		if ($role) {
-			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-			$sql .= 'article.body as k3, article.tag as k4 FROM article';
-			$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-		}
-		else {
-			$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-			$sql .= 'article.body as k3, article.tag as k4 FROM article';
-			$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-		}
+//		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
+//		$sql .= 'article.body as k3, article.tag as k4 FROM article';
+//		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+
+		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
+		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
+		$sql .= ' WHERE article.visible = 1';
+		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
 
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
-	}
 
-	public function archive() {
-		$sql = "SELECT COUNT(article.article_id) as k0, DATE_FORMAT(created, '%M %Y') as k1";
-		$sql .= " FROM article GROUP BY DATE_FORMAT(article.created, '%M %Y') ORDER BY article.article_id DESC";
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
+		$file = file_get_contents($this->file_path . 'test.txt');
 
-	public function filterbyArchive() {
-		$date = str_replace("%20", " ", $this->params['date']);
 
-		Doo::loadModel("Article");
-
-//		$a = new Article;
-//		$opt['select'] = "article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4";
-//		$opt["where"] = "article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
-//		$opt['desc'] = 'article.article_id';
-//		$rs = $a->relate("Users", $opt);
-		$sql = "SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, '%D %M %Y') as k2, article.body as k3, article.tag as k4 FROM article";
-		$sql .= " WHERE article.visible = 1 AND DATE_FORMAT(article.created, '%M %Y') = '$date'";
-		$sql .= " ORDER BY article.article_id DESC";
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
+//		$rs = $this->db()->fetchAll($sql);
+		$this->toJSON($file, true);
 	}
 
 	/*
@@ -126,9 +174,13 @@ class ArticleController extends CommonController {
 	 * 
 	 */
 
+	public function adminSetPagination() {
+		if (intval($this->params['set']) < 1) {
+			return 404;
+		}
 
-	public function adminCountPage() {
-		$per_page = $this->admin_per_page;
+		//how many sets per one page
+		$per_page = $this->params['set'];
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -148,96 +200,88 @@ class ArticleController extends CommonController {
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
 
-		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-		$sql .= 'article.body as k3, article.tag as k4 FROM article';
-		$sql .=' ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
+		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
+		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
+		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
 
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}
 
 	public function saveArticle() {
-		Doo::loadCore('helper/DooValidator');
+		$id = $_POST['article_id'];
+		$title = $this->xss($_POST['title']);
 
-		//check if user exist before proceed
-		if (!$_SESSION['user']['username']) {
-			$this->toJSON('Only authorized personel can access this page', true);
-			return 404;
+		//check is content empty
+		$txtcontent = $_POST['txtcontent'];
+		if (empty($txtcontent)) {
+			$this->toJSON(array('failed', 'Content is empty'), true);
+			return 200;
 		}
 
-		//do server side validation
-		$rules = array(
-			'title' => array('required', 'Title must not empty'),
-			'txtcontent' => array('required', 'Content must not empty')
+		$tag = $this->xss($_POST['tag']);
+
+		if (intval($_POST['article_id']) > 0) {
+			$this->updateArticle($id, $txtcontent, $title, $tag);
+		} else {
+			$this->createArticle($txtcontent, $title, $tag);
+		}
+
+		exit;
+	}
+
+	private function createArticle($txtcontent, $title='', $tag='') {
+
+		//insert latest id
+		$latest_update_array = array(
+			'type' => 'article'
 		);
 
-		$v = new DooValidator();
-		$v->checkMode = DooValidator::CHECK_SKIP;
+		Doo::loadModel('LatestUpdate');
+		$la = new LatestUpdate($latest_update_array);
+		$last_insert_id = $la->insert();
 
-		$err = $v->validate($_POST, $rules);
-		if ($err) {
-			$this->toJSON(array($err), true);
-			return 200;
-		}
+		$now = time();
+		$article = array(
+			'title' => $title,
+			'created' => $now,
+			'tag' => $tag,
+			'visible' => 1,
+			'latest_id' => $last_insert_id
+		);
 
-		//set word length of body content
-		$txtcontent = wordwrap($_POST['txtcontent'], 90, '\n');
+		Doo::loadModel('Article');
+		$a = new Article($article);
 
-		/*
-		 * 	create a new article if id is not defined
-		 */
-		if (empty($_POST['article_id'])) {
-
-			//insert latest id
-			$latest_update_array = array(
-				'type' => 'article'
-			);
-
-			Doo::loadModel('LatestUpdate');
-			$la = new LatestUpdate($latest_update_array);
-			$last_insert_id = $la->insert();
-
-			$article = array(
-				'title' => $this->xss($_POST['title']),
-				'created' => strftime("%Y-%m-%d %H:%M:%S", time()),
-				'body' => $this->escape_val($txtcontent),
-				'tag' => $this->xss($_POST['tag']),
-				'visible' => 1,
-				'user_id' => $_SESSION['user']['id'],
-				'latest_id' => $last_insert_id
-			);
-
-			Doo::loadModel('Article');
-			$a = new Article($article);
+		$a->beginTransaction();
+		try {
 			$new_id = $a->insert();
-
-			$this->toJSON($new_id, true);
+			$filename = 'article_' . $new_id . '.txt';
+			$output = file_put_contents($this->file_path . $filename, $txtcontent);
+			$this->toJSON(array('created', $new_id, $title), true);
 			return 201;
+		} catch (PDOException $e) {
+			$a->rollBack();
+			return 500;
 		}
+		exit;
+	}
 
-		////////////////////////////////////////
-		// edit article with existing post id //
-		////////////////////////////////////////
+	private function updateArticle($id, $txtcontent, $title='', $tag='') {
 
-		if (!empty($_POST['article_id']) && intval($_POST['article_id']) > 0) {
-			$article = array(
-				'article_id' => $this->xss($_POST['article_id']),
-				'title' => $this->xss($_POST['title']),
-				'body' => $this->escape_val($txtcontent),
-				'tag' => $this->xss($_POST['tag']),
-				'visible' => 1,
-				'user_id' => $_SESSION['user']['id'],
-			);
-			Doo::loadModel('Article');
-			$a = new Article($article);
-			$a->update();
-			
-			$this->toJSON(array('updated', $a->article_id), true);
-			return 200;
-		}
+		$article = array(
+			'article_id' => $id,
+			'title' => $title,
+			'last_edited' => time(),
+			'tag' => $tag,
+			'visible' => 1,
+		);
+		Doo::loadModel('Article');
+		$a = new Article($article);
+		$a->update();
 
-		//throw error page if non condition matched
-		return 404;
+		$this->toJSON(array('updated', $a->article_id), true);
+		return 200;
 	}
 
 	public function deleteArticle() {
@@ -268,8 +312,7 @@ class ArticleController extends CommonController {
 				$a->rollBack();
 				return 500;
 			}
-		}
-		else {
+		} else {
 			return 404;
 		}
 	}

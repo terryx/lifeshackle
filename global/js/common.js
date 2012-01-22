@@ -112,6 +112,50 @@ function displayMessage(type, msg, div, close){
 	}	
 }
 
+function timeHistory(string){
+		var now		= new Date().getTime(),
+		intTime		= parseInt((string), 10) * 1000,
+		record		= new Date(intTime),
+		diffTime	= now - record,
+		timeMsg     = '';
+		
+		var daysDifference  = Math.floor(diffTime / 1000 / 60 / 60 / 24);
+		
+		if (daysDifference > 7) {
+			var months = [
+				"January", "February", "March", "April",
+				"May", "June", "July", "August",
+				"September", "October", "November", "December"
+			];
+        
+			timeMsg = months[record.getMonth()] + ' ' + record.getDate() + ', ' + record.getFullYear();
+		} else if (daysDifference) {
+			timeMsg =  daysDifference + ' days ago';
+		} else {
+			var hoursDifference = Math.floor(diffTime / 1000 / 60 / 60);
+
+			if (hoursDifference) {
+				timeMsg = hoursDifference + ' hours ago';
+			} else {
+				var minutesDifference = Math.floor(diffTime / 1000 / 60);
+
+				if (minutesDifference) {
+					timeMsg = minutesDifference + ' minutes ago';
+				} else {
+					var secondsDifference = Math.floor(diffTime / 1000);
+                
+					if (secondsDifference) {
+						timeMsg = secondsDifference + ' seconds ago';
+					} else {
+						timeMsg = 'few seconds ago';
+					}
+				}
+			}
+		}
+    
+		return timeMsg;
+	}
+
 $(function(){
 	Common.load();
 	//	MenuSetting.create();

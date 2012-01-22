@@ -19,6 +19,7 @@
 						<li><a href="<?php echo $data['baseurl']; ?>store/edit">Store</a></li>
 						<li><a href="<?php echo $data['baseurl']; ?>store/edit-category">Store Category</a></li>
 						<li><a href="<?php echo $data['baseurl']; ?>video/edit">Video</a></li>
+						<li><a href="<?php echo $data['baseurl']; ?>profile/edit">Profile</a></li>
 					</ul>
 				</li>
 				<li class="dropdown">

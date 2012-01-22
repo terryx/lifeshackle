@@ -78,7 +78,7 @@
 						src = data[i].k2
 						thumbnail = data[i].k3;
 
-						str += '<li class="test"><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
+						str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 					}
 					str += '</ul>';
 				}
@@ -132,4 +132,16 @@
 		});
 		
 	});
+</script>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try{
+var pageTracker = _gat._getTracker("UA-27701779-1");
+pageTracker._trackPageview();
+} catch(err) {}
 </script>

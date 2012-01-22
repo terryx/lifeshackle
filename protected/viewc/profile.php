@@ -4,29 +4,19 @@
 	</div>
 	<div class="row">
 		<div id="main-content" class="span11">
-			<div id="personal">
-				<h5>Personal Info</h5>
-				<div id="personal-info">
-
-				</div>
-			</div>
-
-			<div id="technical">
-				<h5>Technical Skills</h5>
-				<div id="technical-info">
-
-				</div>
-			</div>
-
-			<div id="quote">
-				<h5>Favorite Quotes</h5>
-				<div id="quote-info">
-
-				</div>
-			</div>
+			<?php echo $data['profile_content']; ?>
 		</div>
 		<div id="side-content" class="span5">
-			<img src="<?php echo $data['baseurl']; ?>global/img/terry.jpg" alt="terry" /> 
+			<ul class="media-grid">
+				<li>
+					<a href="<?php echo $data['profile_img_link']; ?>">
+					<img src="<?php echo $data['profile_img_src']; ?>" alt="" />
+					</a>
+				</li>
+			</ul>
+			<ul class="media-grid">
+				
+			</ul>
 		</div>
 	</div>
 </div>
@@ -36,81 +26,23 @@
 <script type="text/javascript">
 	$(function(){
 	
-		//render all info here
-		getProfile();
+		$.ajax({
+			
+		});
 		
 	});
 	
-	function getProfile(){
-		$.get('<?php echo $data['baseurl']; ?>profile/get', function(data){
-			if(data){
-				//insert data to personal div
-				Common.clearDiv('#personal-info');
-				var str0 = '<div class="span10 bottom-padding">';
-				str0 += data.personal;
-				str0 += '</div>';
-				$('#personal-info').append(str0);
-					
-				//insert data to technical div
-				Common.clearDiv('#technical-info');
-				var str1 = '<div class="span10 bottom-padding">';
-				str1 += data.technical;
-				str1 += '</div>';
-				$('#technical-info').append(str1);
-				
-				//insert data to quote div
-				Common.clearDiv('#quote-info');
-				var str2 = '<div class="span10">';
-				str2 += data.quote;
-				str2 += '</div>';
-				$('#quote-info').append(str2);
-				
-			}
-		});
-	}
+	
 </script>
 
-<!--Login-->
-<script>
-	//module login will use the nav modal
-	$('#login-form').bind('submit', function(e){
-		e.preventDefault();
-			
-		//declare class to be appended
-		var headerDiv = $('.header-message');
-		var errorDiv = $('.error-message');
-			
-		//declare message variable
-		var header = "";
-		var message = "";
-			
-		Common.clearDiv(headerDiv);
-		Common.clearDiv(errorDiv);
-			
-		$.ajax({
-			type : 'POST',
-			url : '<?php echo $data['baseurl']; ?>login',
-			data : {username : $('#username').val(), password : $('#password').val()},
-			dataType : 'json',
-			statusCode : {
-				200 : function(data){
-					window.location = data;
-				},
-				400 : function(){
-					header = "Login Error";
-					message = "Invalid combination of username/password";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				},
-				404 : function(){
-					header = "Login Error";
-					message = "The page is not found.";
-					headerDiv.html(header);
-					errorDiv.html(message);
-					Common.navModal();
-				}
-			}
-		});
-	});
+<!-- Google Analytics -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try{
+var pageTracker = _gat._getTracker("UA-27701779-1");
+pageTracker._trackPageview();
+} catch(err) {}
 </script>

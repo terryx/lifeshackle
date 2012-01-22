@@ -1,129 +1,119 @@
 <div class="content">
 	<div class="row">
 		<div id="main-content" class="span11">
-			<div class="pagination">
-
-			</div>
 			<div id="article">
 
 			</div>
+
+		</div>
+		<div id="side-content" class="span5">
+			<div id="archive">
+			</div>
+			<div class="archive-expansion"></div>
 		</div>
 	</div>
 </div>
 <!-- include '/template/footer' -->
-
-<!--Article-->
-<script type="text/javascript">
-	$(window).bind('hashchange', function(){
-		getPagination();
-	});
-	
-	function checkHashKey(){
-		var hashkey = window.location.hash;
-		if(hashkey !== ''){
-			hashkey = window.location.hash.replace('#', '');
-		} else {
-			hashkey = 1;
-		}
-		return parseInt(hashkey, 10);
-	}
-
-	function getPagination(){
-		var page = checkHashKey();
-		var last = $('.pagination ul li:last-child').children('a').attr('href');
-		var str = '';
-		
-		//Clear all active pages
-		if($('.pagination ul li').is('.active')){
-			$('.pagination ul li').removeClass('active');
-		}
-		
-		//First page
-		if(page === 1){
-			$('.pagination ul li:nth-child(2)').addClass('active');
-			
-			$('.pagination ul li:first-child').addClass('disabled');
-			$('.pagination ul li:last-child').removeClass('disabled');
-		}
-		
-		//Last page
-		if(last === '#'+page){
-			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
-			
-			$('.pagination ul li:last-child').addClass('disabled');
-			$('.pagination ul li:first-child').removeClass('disabled');
-		}
-		
-		//Active pages
-		if(page !== 1 && last !== '#'+page){
-			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
-			
-			$('.pagination ul li:first-child').removeClass('disabled');
-			$('.pagination ul li:last-child').removeClass('disabled');
-		}
-		
+<!--<h2>final test creation</h2><div class="created" />Created on 2012-01-11 17:45:26</div>-->
+<script>
+	function fetchArticle(number){
 		$.ajax({
 			type: 'GET',
-			url: '{{baseurl}}article/get-pagination/'+page,
+			url: '{{baseurl}}article/fetch-article/'+number,
+			success: function(data){
+				if(data){
+					var str = '';
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<h2>'+ data[i].k1 +'</h2>';
+						str += '<div class="a-date">';
+						
+						if(data[i].k3 === '0'){
+							str += 'Created on ' + timeHistory(data[i].k2);
+						} else {
+							str += 'Last edited on ' + timeHistory(data[i].k3);
+						}
+						
+						str += '</div>'
+						str += data[i].k5;
+						str += '<hr />';
+					}
+					$('#article').append(str);
+					
+					archive();
+				}
+			}
+		});
+	}
+	
+	function archive(){
+		$.ajax({
+			type: 'GET',
+			url: '{{baseurl}}article/archive',
 			dataType: 'json',
 			success: function(data){
 				if(data){
-					Common.clearDiv('#article');
-					for(var i=0;i<data.length;i++){
-						str += '<div class="span10 i-content">';
-						str += '<h2>'+data[i].k1+'</h2>';
-						str += '<strong>'+data[i].k2+'</strong><br />';
-						str += data[i].k3;
-						str += '</div>';
+					var str = '<div id="archive-tb">';
+					str += '<h3>Archive</h3>';
+					str += '<ul>';
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<li data-id="'+ data[i].k1 +'">'+ data[i].k1 +'</li>';
 					}
+					str += '</ul>';
+					str += '</div>';
+					
+					$('#archive').append(str);
 				}
 			},
-			error: function(){
-				window.location = '{{baseurl}}error';
-			},
 			complete: function(){
-				delete page;
-				$('#article').append(str).hide().slideDown(1000, function(){
-					$(str).show();
+				$('#archive-tb ul li').bind('click', function(){
+					var date = $(this).data('id');
+					
+					$.ajax({
+						type: 'GET',
+						url: '{{baseurl}}article/archive-date-filter/'+date,
+						dataType: 'json',
+						beforeSend: function(){
+							Common.wait();
+						},
+						success: function(data){
+							if(data){
+								var str = '';
+								for(var i=0, len=data.length; i<len; i++){
+									str += '<h2>'+ data[i].k1 +'</h2>';
+									str += '<div class="a-date">';
+						
+									if(data[i].k3 === '0'){
+										str += 'Created on ' + timeHistory(data[i].k2);
+									} else {
+										str += 'Last edited on ' + timeHistory(data[i].k3);
+									}
+						
+									str += '</div>'
+									str += data[i].k5;
+									str += '<hr />';
+								}
+								$('#article')
+									.html('')
+									.append(str);
+							}
+						},
+						complete: function(){
+							Common.end();
+						}
+					})
 				});
 			}
 		});
 	}
-
-	$(function(){
-		//build pagination block
-		$.ajax({
-			type: 'GET',
-			url: '{{baseurl}}article/total-page',
-			dataType: 'json',
-			beforeSend: function(){
-				Common.wait();
-			},
-			success: function(data){
-				var str			= '';
-				str += '<ul>';
-				str += '<li class="prev"><a href="#1">First</a></li>';
-					
-				for(var i=1, len=data; i<=len; i++){
-					str += '<li><a href="#'+i+'">'+i+'</a></li>';
-				}
-				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
-				str += '</ul>';
-				$('.pagination').append(str);
-			},
-			error: function(){
-				console.log('Error part: initialize');
-			},
-			complete: function(){
-				Common.end();
-				getPagination();
-			}
-		});
-	});
 </script>
 
+<script>
+	$(function(){
+		fetchArticle(5);
+	});
+</script>
 <!-- Google Analytics -->
-<script type="text/javascript">
+<!--<script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
@@ -132,4 +122,4 @@ try{
 var pageTracker = _gat._getTracker("UA-27701779-1");
 pageTracker._trackPageview();
 } catch(err) {}
-</script>
+</script>-->

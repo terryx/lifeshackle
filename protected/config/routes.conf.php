@@ -20,8 +20,12 @@ $route['*']['/logout'] = array('LoginController', 'logout');
 
 //Profile
 $route['post']['/profile/save'] = array('ProfileController', 'save');
-$route['get']['/profile/get'] = array('ProfileController', 'get');
-$route['post']['/profile/save-pic'] = array('ProfileController', 'savePic');
+$route['*']['/profile/edit'] = array('ProfileController', 'editPage');
+$route['*']['/profile/upload-picture-page'] = array('ProfileController', 'uploadPicturePage');
+$route['post']['/profile/upload-picture'] = array('ProfileController', 'uploadPicture');
+$route['get']['/profile/fetch-picture'] = array('ProfileController', 'fetchPicture');
+$route['get']['/profile/delete-picture/:id'] = array('ProfileController', 'deletePicture');
+$route['get']['/profile/set-current-picture/:id'] = array('ProfileController', 'setCurrent');
 
 //Contact
 $route['*']['/contact'] = array('HomeController', 'contact');
@@ -32,16 +36,18 @@ $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 //Article
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
-$route['*']['/article/fetch-article-list'] = array('ArticleController', 'fetchArticleList');
+$route['get']['/article/fetch-article/:number'] = array('ArticleController', 'fetchArticle');
+$route['get']['/article/archive'] = array('ArticleController', 'archive');
+$route['*']['/article/archive-date-filter/:date'] = array('ArticleController', 'archiveDateFilter');
+
 $route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
 $route['get']['/article/get_article_list'] = array('ArticleController', 'getArticleList');
 $route['get']['/article/get_one_article/:id'] = array('ArticleController', 'getOneArticle');
 $route['delete']['/article/delete_article/:id'] = array('ArticleController', 'deleteArticle');
-$route['get']['/article/total-page'] = array('ArticleController', 'totalPage');
+$route['get']['/article/set-pagination/:set'] = array('ArticleController', 'setPagination');
 $route['get']['/article/get-pagination/:page'] = array('ArticleController', 'getPagination');
-$route['get']['/article/archive'] = array('ArticleController', 'archive');
 $route['get']['/article/filter-by-archive/:date'] = array('ArticleController', 'filterByArchive');
-$route['get']['/article/admin-count-page'] = array('ArticleController', 'adminCountPage');
+$route['get']['/article/admin-set-pagination/:set'] = array('ArticleController', 'adminSetPagination');
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
 //Chat
@@ -70,7 +76,7 @@ $route['delete']['/picture/delete_picture/:id'] = array('PictureController', 'de
 $route['*']['/status-update/edit'] = array('StatusUpdateController', 'editPage');
 $route['*']['/status-update/get-all'] = array('StatusUpdateController', 'getAll');
 $route['*']['/status-update/save'] = array('StatusUpdateController', 'save');
-$route['get']['/status-update/total-page'] = array('StatusUpdateController', 'totalPage');
+$route['get']['/status-update/set-pagination/:set'] = array('StatusUpdateController', 'setPagination');
 $route['get']['/status-update/get-pagination/:page'] = array('StatusUpdateController', 'getPagination');
 $route['get']['/status-update/delete/:id'] = array('StatusUpdateController', 'deleteOne');
 //$route['get']['/status-update/check-status'] = array('StatusUpdateController', 'checkStatus');

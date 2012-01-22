@@ -1,9 +1,9 @@
 <div class="content">
 	<div class="row">
 		<div id="main-content" class="span11">
-			<form id="article-form" class="form-stacked">
+			<form id="article-form" class="form-stacked" method="post" action="<?php echo $data['baseurl']; ?>article/save-article">
 				<fieldset>
-					<input type="hidden" id="article_id" name="article_id" />
+					<input type="hidden" id="article_id" name="article_id" value="" />
 					<div class="clearfix">
 						<label for="title">Title</label>
 						<div class="input">
@@ -11,7 +11,6 @@
 						</div>
 					</div>
 					<div class="clearfix">
-						<label for="txtcontent">Content</label>
 						<div class="input">
 							<textarea id="txtcontent" name="txtcontent" cols="60" rows="10"></textarea>
 						</div>
@@ -23,7 +22,7 @@
 						</div>
 					</div>
 					<div class="actions">
-						<button type="submit" class="btn primary">Post</button>
+						<button type="submit" class="btn primary">Save</button>
 						<button class="btn" type="reset">Cancel</button>
 					</div>
 				</fieldset>
@@ -31,8 +30,11 @@
 		</div>
 
 		<div id="side-content" class="span5">
-			<div id="pagination">
+			<div class="pagination">
 
+			</div>
+			<div id="article-container">
+				
 			</div>
 			<div id="search-container">
 				<form id="search-form">
@@ -63,141 +65,226 @@
 		theme_advanced_toolbar_align : "left",
 		theme_advanced_statusbar_location : "bottom",
 		theme_advanced_resizing : true
-
 	});
 </script>
 
-<script type="text/javascript">
-	var cachePage = 1;
-	//declare class to be appended
-	var headerDiv = $('.header-message');
-	var errorDiv = $('.error-message');
-			
-	//declare message variable
-	var header = "";
-	var message = "";
-
-	function deleteArticle(id){
-		$.delete_('<?php echo $data['baseurl']; ?>article/delete_article/'+id, function(data){
-			
-			if(data){
-				clearForm();
-				Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+cachePage);
-
-			}
-			else {
-				header = "Delete Error";
-				message = "The page is not found.";
-				headerDiv.html(header);
-				errorDiv.html(message);
-				Common.navModal();
-			}
-		});
-	}
+<!-- Pagination -->
+<script>
 	
-	function clearForm(){
-		$('#article-form')[0].reset();
-		$('#article_id').val('');
-		var str = '<button type="submit" class="btn primary">Post</button>&nbsp;';
-		str += '<button type="reset" class="btn">Cancel</button>';
-		Common.clearDiv('.actions');
-		$('.actions').append(str);
+	$(window).bind('hashchange', function(){
+		getPagination();
+	});
+
+	function findPrevPage(total, set){
+		var setcontent = $('.set-content'); //div class called set-content
+		
+		var str = '';
+		
+		//find last page from current set
+		var firstTitle = $("li[title^='page']:first").attr('title').replace('page', '');
+		var firstpage = parseInt(firstTitle, 10);
+		
+		//make next set of page
+		var prevpage = firstpage - 1;
+		var prevset = firstpage - set;
+		
+		//set minimum clickable page to 1
+		if(prevset === 0){
+			prevset = 1;
+		}
+		
+		//avoid negative page value
+		if(prevpage > 0){
+			setcontent.html('');
+	
+			for(var i=prevset, len=prevpage; i<=len; i++){
+				str += '<li title="page'+i+'"><a href="#'+i+'">'+i+'</a></li>';
+				
+			}
+			setcontent.append(str);
+			window.location.hash = '#'+prevpage;
+		}
 		
 	}
 	
-	function refreshForm(id){
-		$.get('<?php echo $data['baseurl']; ?>article/get_one_article/'+id, function(data){
-			if(data){
-				$('#article_id').val(data.article_id);
-				$('#title').val(data.title);
-				$('#txtcontent').val(data.body);
-				$('#tag').val(data.tag);
+	function findNextPage(total, set){
+		var setcontent = $('.set-content'); //div class called set-content
+		var str = '';
+		
+		//find last page from current set
+		var lastTitle = $("li[title^='page']:last").attr('title').replace('page', '');
+		var lastpage = parseInt(lastTitle, 10);
+		
+		//make next set of page
+		var nextpage = lastpage + 1;
+		var nextset = nextpage + set;
+		
+		//avoid empty entire page content
+		if(nextpage <= total){
+			setcontent.html('');
+		
+			for(var i=nextpage, len=nextset; i<len && i<=total; i++){
+				str += '<li title="page'+i+'"><a href="#'+i+'">'+i+'</a></li>';
+			}
+			setcontent.append(str);
+			
+			window.location.hash = '#'+nextpage;
+		}
+	}
+	
+	function setActivePage(page){
+		if($("li[class=active]")){
+			$("li[class=active]").removeClass('active');
+		}
+		$("li[title=page"+page+"]").addClass('active');
+	}
 
-				var str = '<button type="submit" class="btn primary">Post</button>&nbsp;';
-				str += '<button class="btn" type="reset">Cancel</button>&nbsp;';
-				str += '<button class="btn danger" type="button" onclick="deleteArticle('+ data.article_id +')">Delete</button>';
-				Common.clearDiv('.actions');
-				$('.actions').append(str);
+	function makePagination(total, set){
+		total = parseInt(total);
+		set = parseInt(set);
+		var str = '<ul>';
+		
+		if(total > 1){
+			str += '<li class="prev"><a data-name="prev-page">Prev</a></li>';
+			str += '<span class="set-content">';
+			var page = checkHashKey();
+			
+			if(page > 1){
+				//var currentset = Math.floor(total / page);
+				//var prevpage = (currentset - 1) * set;
 				
-			}
-		});
-	}
-	
-	function countPage(){
-		$.get('<?php echo $data['baseurl']; ?>article/admin-count-page', function(data){
-			if(data){
-				paginate(data);
-				Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/1', '#article-form');
+				for(var i=1, len=set; i<=len && i>=1 && page>=1 && page<=total; i++, page++){
+					str += '<li title="page'+page+'"><a href="#'+page+'">'+page+'</a></li>';
+				}
 			} else {
-				return false;
+				for(var i=1, len=set; i<=len; i++){
+					str += '<li title="page'+i+'"><a href="#'+i+'">'+i+'</a></li>';
+				}
 			}
-		});
+			str += '</span>';
+			str += '<li class="next"><a data-name="next-page">Next</a></li>';
+		}
+		str += '</ul>';
+		
+		var done = $('.pagination').append(str);
+		if(done){
+			$('.prev').bind('click', function(){
+				findPrevPage(total, set);
+			});
+			
+			$('.next').bind('click', function(){
+				findNextPage(total, set);
+			});
+		}
 	}
-
-	function paginate(count){
-		$("#pagination").paginate({
-			count 		: count,
-			start 		: 1,
-			//      display     : 3,
-			border					: true,
-			border_color			: '#fff',
-			text_color  			: '#fff',
-			background_color    	: 'black',
-			border_hover_color		: '#ccc',
-			text_hover_color  		: '#000',
-			background_hover_color	: '#fff',
-			images					: false,
-			mouse					: 'press',
-			onChange     			: function(page){
-				cachePage = page;
-				Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+page);
+	
+	function setPagination(set){
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>article/admin-set-pagination/'+ set,
+			dataType: 'json',
+			success: function(data){
+				if(data){
+					makePagination(data, set);
+				}
+			},
+			complete: function(){
+				getPagination();
 			}
 		});
 	}
 	
-	function navModal(){
-		$('#nav-modal').modal({
-			backdrop : true,
-			keyboard : true,
-			show 	 : true
-		});
-	}
+	function getPagination(page){
+		page = (page === undefined) ? checkHashKey() : page;
+		
+		setActivePage(page);
 
+		var str = '';
+		
+		if(page >= 1){
+			$.ajax({
+				type: 'GET',
+				url: '<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+page,
+				dataType: 'json',
+				success: function(data){
+					if(data){
+						$('#article-container').html('');
+						for(var i=0, len=data.length; i<len; i++){
+							str += '<div class="st-block">';
+							str += '<div class="st-content">';
+							str += data[i].k1;
+							str += '</div>';
+							str += '<div class="st-time">'+ timeHistory(data[i].k2) +'</div>';
+							str += '</div>';
+						}
+					}
+				},
+				error: function(){
+					window.location = '<?php echo $data['baseurl']; ?>error';
+				},
+				complete: function(){
+					delete page;
+					$(str).appendTo('#article-container').slideDown(800, function(){
+						$(this).find('.st-block').show();
+					});
+				}
+			});
+		}
+	}
+	
+	function checkHashKey(){
+		var hash = window.location.hash,
+		hashstring = hash.replace('#', ''),
+		page;
+		
+		switch(hashstring){
+			case '':
+				page = 1;
+				break;
+			case 'next':
+				page = 'next';
+				break;
+			case 'prev':
+				page = 'prev';
+				break;
+			default:
+				page = parseInt(hashstring, 10);
+		}
+		return page;
+	}
+	
+</script>
+<script>
 	$(function(){
-		countPage();
+		setPagination(3);
 		
 		$('#article-form').bind('submit', function(e){
 			e.preventDefault();
-			var loader = '<img src="<?php echo $data['baseurl']; ?>global/img/post-loader.gif" alt="" />';
+			var $this = $(this);
+			
 			$.ajax({
-				type : 'POST',
-				url : '<?php echo $data['baseurl']; ?>article/save-article',
-				data : $('#article-form').serialize(),
+				type: 'POST',
+				url: $this.attr('action'),
+				data: $this.serialize(),
 				dataType: 'json',
-				beforeSend : function(){
-					$('.actions').append(loader);
-				},
-				statusCode : {
-					200 : function(data){
-						if(data[0] === 'updated'){
-							refreshForm(data[1]);
-						} else {
-							header = "Post Error";
-							message = data[0];
-							headerDiv.html(header);
-							errorDiv.html(message);
-							Common.navModal();
-							$('.actions').children('img').remove();
+				success: function(data){
+					if(data){
+						switch(data[0]){
+							case 'created':
+								displayMessage('success', data[2] + ' has been created', '.actions');
+								$('#article_id').val(data[1]);
+								break;
+							case 'updated':
+								displayMessage('info', data[2] + ' is updated', '.actions');
+								$('#article_id').val(data[1]);
+								break;
+							default:
+								displayMessage('error', data[1], '.actions');
 						}
-					},
-					201 : function(data){
-						refreshForm(data);
-						cachePage = 1; //latest post is always at 1st
-						Search.onload('<?php echo $data['baseurl']; ?>article/admin-get-pagination/'+cachePage);
 					}
 				}
-			})
+			});
 		});
-
-	}); //end document ready
+	});
 </script>
+

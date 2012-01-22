@@ -14,14 +14,14 @@ class ArticleBase extends DooModel{
     public $title;
 
     /**
-     * @var datetime
+     * @var int Max length is 11.
      */
     public $created;
 
     /**
-     * @var text
+     * @var int Max length is 11.
      */
-    public $body;
+    public $last_edited;
 
     /**
      * @var text
@@ -36,16 +36,11 @@ class ArticleBase extends DooModel{
     /**
      * @var int Max length is 11.
      */
-    public $user_id;
-
-    /**
-     * @var int Max length is 11.
-     */
     public $latest_id;
 
     public $_table = 'article';
     public $_primarykey = 'article_id';
-    public $_fields = array('article_id','title','created','body','tag','visible','user_id','latest_id');
+    public $_fields = array('article_id','title','created','last_edited','tag','visible','latest_id');
 
     public function getVRules() {
         return array(
@@ -61,11 +56,14 @@ class ArticleBase extends DooModel{
                 ),
 
                 'created' => array(
-                        array( 'datetime' ),
+                        array( 'integer' ),
+                        array( 'maxlength', 11 ),
                         array( 'notnull' ),
                 ),
 
-                'body' => array(
+                'last_edited' => array(
+                        array( 'integer' ),
+                        array( 'maxlength', 11 ),
                         array( 'notnull' ),
                 ),
 
@@ -76,12 +74,6 @@ class ArticleBase extends DooModel{
                 'visible' => array(
                         array( 'integer' ),
                         array( 'maxlength', 4 ),
-                        array( 'notnull' ),
-                ),
-
-                'user_id' => array(
-                        array( 'integer' ),
-                        array( 'maxlength', 11 ),
                         array( 'notnull' ),
                 ),
 

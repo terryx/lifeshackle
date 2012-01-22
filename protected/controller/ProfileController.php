@@ -6,113 +6,171 @@
  * @author terryx
  */
 class ProfileController extends CommonController {
-
-//	public function viewPage(){
-//		$data = $this->templateData();
-//		$data['title'] = "Terry Yuen";
-//		$data['content'] = $data['role'] . '/profile';
-//
-//		$this->render('template/layout', $data, true);
-//	}
 	
-	public function save() {
-
-		if (isset($_SESSION['user']['id'])) {
-
-			$personal = $_POST['personal-content'];
-			$technical = $_POST['technical-content'];
-			$quote = $_POST['quote-content'];
-
-			if (empty($_POST['profile_id'])) {
-				$user_detail = array(
-					'user_id' => $_SESSION['user']['id'],
-					'personal' => nl2br($personal),
-					'technical' => nl2br($technical),
-					'quote' => nl2br($quote),
-				);
-
-				Doo::loadModel('Profile');
-				$ud = new Profile($user_detail);
-				$ud->insert();
-
-				$this->toJSON('created', true);
-			}
-			else if (!empty($_POST['profile_id'])) {
-				$user_detail = array(
-					'profile_id' => $this->xss($_POST['profile_id']),
-					'user_id' => $_SESSION['user']['id'],
-					'personal' => nl2br($personal),
-					'technical' => nl2br($technical),
-					'quote' => nl2br($quote),
-				);
-
-				Doo::loadModel('Profile');
-				$ud = new Profile($user_detail);
-				$ud->update();
-
-				$this->toJSON('updated', true);
-			}
+	private $file = 'global/file/profile.txt';
+	
+	protected function getPictureId($id){
+		Doo::loadModel('ProfilePicture');
+		$pc = new ProfilePicture;
+		$pc->picture_id = $id;
+		$rs = $pc->getOne();
+		return $rs;
+	}
+	
+	public function editPage() {
+		$data = $this->templateData($this->checkRole() . '/profile/edit');
+		$data['title'] = 'Edit | Profile';
+		
+		$file = $this->fetchContent();
+		$data['profile_content'] = (isset($file)) ? $file : '';
+		
+		$this->view()->render('template/layout', $data, true);
+	}
+	
+	public function setCurrent(){
+		Doo::loadModel('ProfilePicture');
+		$current_picture = new ProfilePicture;
+		
+		$current_picture->is_current = 'yes';
+		$current = $current_picture->getOne();
+		
+		if($current){
+			$current->is_current = 'no';
+			$current->update();
 		}
-		else {
-			$this->toJSON('failed', true);
+		
+		$pc = new ProfilePicture;
+		$pc->picture_id =  $this->params['id'];
+		$rs = $pc->getOne();
+		
+		if($rs){
+			$pc->is_current = 'yes';
+			$pc->update();
+			$this->toJSON(array('updated'), true);
 		}
+		return 200;
+	}
+	
+	public function getCurrent(){
+		Doo::loadModel('ProfilePicture');
+		$current = new ProfilePicture;
+		$current->is_current = 'yes';
+		$rs = $current->getOne();
+		if($rs){
+			$original = 'global/uploaded_pic/' . $rs->original;
+			$resized = 'global/resized_pic/' . $rs->resized;
+		} else {
+			$original = 'global/uploaded_pic/terry.jpg';
+			$resized = 'global/uploaded_pic/terry.jpg';
+		}
+		
+		return array($original, $resized);
+	}
+	
+	public function fetchContent(){
+		$output = file_get_contents($this->file);
+		return $output;
 	}
 
-	public function get() {
-
-		Doo::loadModel('Profile');
-		$p = new Profile;
-		$rs = $p->getOne();
-
-		$this->toJSON($rs, true);
-		exit;
-	}
-
-	public function savePic() {
-		if (isset($_SESSION['user']['id'])) {
-
-			Doo::loadHelper('DooGdImage');
-
-			$ext = array('jpg', 'jpeg', 'gif', 'png', 'bmp', 'tiff');
-			
-			$gd = new DooGdImage('global/uploaded_pic/', 'global/resized_pic/');
-			
-			if ($gd->checkImageExtension('filename', $ext)) {
-				$new_name = 'life_img_' . date('Ymdhis');
-				$uploadImg = $gd->uploadImage('filename', $new_name);
-
-				$gd->generatedQuality = 85;
-				$gd->generatedType = 'jpg';
-
-				$gd->thumbSuffix = '_shac';
-				$resized_name = $gd->createThumb($uploadImg, 250, 300);
-
-				Doo::loadModel('Profile');
-
-				$picture_array = array(
-					'profile_id' => 2,
-					'picture' => $uploadImg,
-				);
-				$p = new Picture($picture_array);
-				$p->update();
-
-				echo "File uploaded successfully";
-			}
-			else {
-				echo "File uploaded failed";
-			}
+	public function save(){
+		$_SESSION['user']['id'] = ($_SESSION['user']['id'] === null) ?  $this->toJSON('failed', true) : false;
+		
+		$content = $_POST['txtcontent'];
+		
+		$output = file_put_contents($this->file, $content);
+		if($output){
+			$this->toJSON(array('saved'), true);
+		} else {
+			$this->toJSON(array('failed'), true);
 		}
-		else {
-			echo "Please login";
-		}
+		return 200;
 	}
-
-	public function picForm() {
+	
+	public function uploadPicturePage($message = '') {
+		$role = $this->checkRole();
+		$data['message'] = $message;
 		$data['baseurl'] = Doo::conf()->APP_URL;
+		$data['version'] = Doo::conf()->version;
 
-		$this->render('template/picture-form', $data, true);
+		$data['title'] = 'Upload picture | Profile';
+
+		$this->view()->render($role . '/profile/upload-picture', $data, true);
 	}
 
-}
+	public function deletePicture() {
+		Doo::loadModel('ProfilePicture');
+		$pc = new ProfilePicture;
+		$pc->picture_id = $this->params['id'];
+		$rs = $pc->getOne();
 
+		$original = 'global/uploaded_pic/' . $rs->original;
+		$resized = 'global/resized_pic/' . $rs->resized;
+
+		if (file_exists($original)) {
+			unlink($original);
+		}
+
+		if (file_exists($resized)) {
+			unlink($resized);
+		}
+
+		$rs->beginTransaction();
+		try {
+			$rs->delete();
+			$rs->commit();
+			$this->toJSON(array('deleted'), true);
+		} catch (PDOException $e) {
+			$rs->rollBack();
+			$this->toJSON(array('failed'), true);
+		}
+	}
+
+	public function uploadPicture() {
+		Doo::loadHelper('DooGdImage');
+		$ext = array('jpg', 'jpeg', 'gif', 'png', 'bmp', 'tiff');
+		$gd = new DooGdImage('global/uploaded_pic/', 'global/resized_pic/');
+		if ($gd->checkImageExtension('upload_file', $ext)) {
+
+			$imageType = explode('/', $_FILES['upload_file']['type']);
+			$originalType = ($imageType[1] === 'jpeg') ? 'jpg' : $imageType[1];
+
+			$new_name = 'profile_' . time();
+			$uploadImg = $gd->uploadImage('upload_file', $new_name);
+
+			$gd->generatedQuality = 85;
+			$gd->generatedType = 'jpg';
+			$gd->thumbSuffix = '_thumb';
+			$gd->createThumb($uploadImg, 200, 250);
+
+			$original = $new_name . '.' . $originalType;
+			$resized = $new_name . $gd->thumbSuffix . '.' . $gd->generatedType;
+			Doo::loadModel('ProfilePicture');
+
+			$picture_array = array(
+				'original' => $original,
+				'resized' => $resized,
+				'visible' => 'yes',
+				'caption' => $_POST['caption']
+			);
+			$p = new ProfilePicture($picture_array);
+			$last_insert_id = $p->insert();
+			$this->uploadPicturePage('<div class="input success">Upload sucessfully</div>');
+		} else {
+			$this->uploadPicturePage('<div class="input fail">Upload failed</div>');
+		}
+	}
+
+	public function fetchPicture() {
+		$sql = "SELECT profile_picture.picture_id, profile_picture.original, profile_picture.resized, profile_picture.visible, profile_picture.caption, profile_picture.is_current ";
+		$sql .= "FROM profile_picture ORDER BY profile_picture.picture_id DESC";
+
+		$rs = $this->db()->fetchAll($sql);
+		if ($rs) {
+			$this->toJSON($rs, true);
+			return 200;
+		} else {
+			return 200;
+		}
+	}
+}
 ?>

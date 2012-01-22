@@ -2,8 +2,8 @@
 
 class StatusUpdateController extends CommonController {
 
-	private $per_page = 5;
-
+	private  $per_page = 5;
+	
 	public function escape_val($val) {
 
 		if (get_magic_quotes_gpc()) {
@@ -19,8 +19,9 @@ class StatusUpdateController extends CommonController {
 		$this->view()->render('template/layout', $data, true);
 	}
 
-	public function totalPage() {
-		$per_page = $this->per_page;
+	public function setPagination() {
+		$per_page = $this->per_page ;
+		
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -34,11 +35,10 @@ class StatusUpdateController extends CommonController {
 	}
 
 	public function getPagination() {
-
 		if (!intval($this->params['page']) || $this->params['page'] < 1) {
 			return 404;
 		}
-
+		
 		$per_page = $this->per_page;
 		$current_page = $this->params['page'];
 		$offset = ($current_page - 1) * $per_page;
