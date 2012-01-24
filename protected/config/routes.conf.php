@@ -36,17 +36,12 @@ $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 //Article
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
-$route['get']['/article/fetch-article/:number'] = array('ArticleController', 'fetchArticle');
+$route['get']['/article/fetch-article'] = array('ArticleController', 'fetchArticle');
+$route['get']['/article/fetch-one-article/:id'] = array('ArticleController', 'fetchOneArticle');
 $route['get']['/article/archive'] = array('ArticleController', 'archive');
 $route['*']['/article/archive-date-filter/:date'] = array('ArticleController', 'archiveDateFilter');
-
+$route['get']['/article/delete-one-article/:id'] = array('ArticleController', 'deleteOneArticle');
 $route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
-$route['get']['/article/get_article_list'] = array('ArticleController', 'getArticleList');
-$route['get']['/article/get_one_article/:id'] = array('ArticleController', 'getOneArticle');
-$route['delete']['/article/delete_article/:id'] = array('ArticleController', 'deleteArticle');
-$route['get']['/article/set-pagination/:set'] = array('ArticleController', 'setPagination');
-$route['get']['/article/get-pagination/:page'] = array('ArticleController', 'getPagination');
-$route['get']['/article/filter-by-archive/:date'] = array('ArticleController', 'filterByArchive');
 $route['get']['/article/admin-set-pagination/:set'] = array('ArticleController', 'adminSetPagination');
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 

@@ -121,9 +121,12 @@ class CommonController extends DooController {
 		exit;
 	}
 	
-	protected function status_code_200(){
-		header("Status: 200");
-		exit;
+	public function escape_val($val) {
+
+		if (get_magic_quotes_gpc()) {
+			$val = stripcslashes($val);
+		}
+		return $val;
 	}
 
 }

@@ -14,12 +14,11 @@
 	</div>
 </div>
 <!-- include '/template/footer' -->
-<!--<h2>final test creation</h2><div class="created" />Created on 2012-01-11 17:45:26</div>-->
 <script>
-	function fetchArticle(number){
+	function fetchArticle(){
 		$.ajax({
 			type: 'GET',
-			url: '{{baseurl}}article/fetch-article/'+number,
+			url: '{{baseurl}}article/fetch-article',
 			success: function(data){
 				if(data){
 					var str = '';
@@ -27,10 +26,10 @@
 						str += '<h2>'+ data[i].k1 +'</h2>';
 						str += '<div class="a-date">';
 						
-						if(data[i].k3 === '0'){
-							str += 'Created on ' + timeHistory(data[i].k2);
-						} else {
+						if(data[i].k3 !== '0'){
 							str += 'Last edited on ' + timeHistory(data[i].k3);
+						} else {
+							str += 'Created on ' + timeHistory(data[i].k2);
 						}
 						
 						str += '</div>'
@@ -73,6 +72,7 @@
 						url: '{{baseurl}}article/archive-date-filter/'+date,
 						dataType: 'json',
 						beforeSend: function(){
+							$('#article').html('')
 							Common.wait();
 						},
 						success: function(data){
@@ -92,13 +92,11 @@
 									str += data[i].k5;
 									str += '<hr />';
 								}
+								Common.end();
 								$('#article')
-									.html('')
-									.append(str);
+								.html('')
+								.append(str);
 							}
-						},
-						complete: function(){
-							Common.end();
 						}
 					})
 				});
@@ -109,11 +107,11 @@
 
 <script>
 	$(function(){
-		fetchArticle(5);
+		fetchArticle();
 	});
 </script>
 <!-- Google Analytics -->
-<!--<script type="text/javascript">
+<script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
@@ -122,4 +120,4 @@ try{
 var pageTracker = _gat._getTracker("UA-27701779-1");
 pageTracker._trackPageview();
 } catch(err) {}
-</script>-->
+</script>

@@ -26,9 +26,6 @@
 		getPagination();
 	});
 	
-	
-	
-	
 	function findPrevPage(total, set){
 		var setcontent = $('.set-content'); //div class called set-content
 		

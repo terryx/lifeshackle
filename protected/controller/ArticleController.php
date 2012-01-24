@@ -4,16 +4,8 @@ class ArticleController extends CommonController {
 
 	//global setting per page for visitor and admin
 	public $per_page = 2;
-	public $admin_per_page = 3;
+	public $admin_per_page = 10;
 	private $file_path = 'global/file/';
-
-	public function escape_val($val) {
-
-		if (get_magic_quotes_gpc()) {
-			$val = stripcslashes($val);
-		}
-		return $val;
-	}
 
 	public function editPage() {
 		$data = $this->templateData($this->checkRole() . '/article/edit');
@@ -24,14 +16,9 @@ class ArticleController extends CommonController {
 	}
 
 	public function fetchArticle() {
-		if (!$this->params['number'] || intval($this->params['number']) < 1) {
-			return 404;
-		}
 
-		$number = $this->params['number'];
-		
 		$sql = array(
-			'limit' => $number,
+			'limit' => '5',
 			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
 			'where' => 'article.visible = 1',
 			'desc' => 'article.article_id'
@@ -46,14 +33,35 @@ class ArticleController extends CommonController {
 		$this->toJSON($rs, true, true);
 	}
 
-	public function archive(){
+	public function fetchOneArticle() {
+		$id = intval($this->params['id']);
+
+		if (!$id) {
+			return 404;
+		}
+
+		Doo::loadModel('Article');
+		$a = new Article();
+		$a->article_id = $id;
+		$options = array(
+			'select' => 'article_id as k0, title as k1, created as k2, last_edited as k3, tag as k4, visible as k5'
+		);
+		$rs = $a->getOne($options);
+		if ($rs) {
+			$file = file_get_contents($this->file_path . 'article_' . $rs->k0 . '.txt');
+			$rs->k6 = $file;
+			$this->toJSON($rs, true, true);
+		}
+	}
+
+	public function archive() {
 		$sql = "SELECT FROM_UNIXTIME(article.created, '%M %Y') as k1";
 		$sql .= " FROM article GROUP BY k1";
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}
-	
-	public function archiveDateFilter(){
+
+	public function archiveDateFilter() {
 		$date = urldecode($this->params['date']);
 
 		if (empty($date)) {
@@ -67,107 +75,15 @@ class ArticleController extends CommonController {
 			'param' => array($date)
 		);
 		$rs = Doo::db()->find('Article', $sql);
-		
+
 		foreach ($rs as $id) {
 			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
-			$id->k5 = $file; 
+			$id->k5 = $file;
 		}
 		$this->toJSON($rs, true, true);
 	}
 
 	//------------------------------------//
-
-	public function getOneArticle() {
-		if (!$this->params['id'] || intval($this->params['id']) < 1) {
-			return 404;
-		} else {
-			Doo::loadModel('Article');
-			$a = new Article();
-			$a->article_id = $this->params['id'];
-			$rs = $a->getOne();
-
-			if ($rs) {
-				$this->toJSON($rs, true, true);
-			} else {
-				$this->toJSON('Article not found', true);
-				return 400;
-			}
-		}
-	}
-
-	public function fetchArticleList() {
-		$sql = 'SELECT article_id as k0, title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, body as k3 FROM article ';
-		$sql .= 'ORDER BY article_id DESC LIMIT 3';
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-		return 200;
-	}
-
-	public function setPagination() {
-		if (intval($this->params['set']) < 1) {
-			return 404;
-		}
-		$per_page = $this->params['set'];
-		Doo::loadController('PaginationController');
-		$pagination = new PaginationController();
-
-		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-		$sql .= 'WHERE article.visible = 1';
-
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = doubleval($rs[0]['num_of_item']);
-
-		$page = $pagination->calculateExactPage($page_number);
-		$this->toJSON($page, true);
-	}
-
-	public function getPublicArticleList() {
-		if (intval($this->params['page']) < 1) {
-			return 404;
-		}
-		$per_page = $this->per_page;
-		$current_page = $this->params['page'];
-		$offset = ($current_page - 1) * $per_page;
-
-//		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-//		$sql .= 'article.body as k3, article.tag as k4 FROM article';
-//		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
-		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
-		$sql .= ' WHERE article.visible = 1';
-		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-
-	public function getPagination() {
-		if (intval($this->params['page']) < 1) {
-			return 404;
-		}
-		$per_page = $this->per_page;
-		$current_page = $this->params['page'];
-		$offset = ($current_page - 1) * $per_page;
-
-//		$sql = 'SELECT article.article_id as k0, article.title as k1, DATE_FORMAT(article.created, "%D %M %Y") as k2, ';
-//		$sql .= 'article.body as k3, article.tag as k4 FROM article';
-//		$sql .=' WHERE article.visible = 1 ORDER BY article.created DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
-		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
-		$sql .= ' WHERE article.visible = 1';
-		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-
-		$file = file_get_contents($this->file_path . 'test.txt');
-
-
-//		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($file, true);
-	}
 
 	/*
 	 *  Master section
@@ -180,7 +96,7 @@ class ArticleController extends CommonController {
 		}
 
 		//how many sets per one page
-		$per_page = $this->params['set'];
+		$per_page = intval($this->params['set']);
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
@@ -201,7 +117,7 @@ class ArticleController extends CommonController {
 		$offset = ($current_page - 1) * $per_page;
 
 		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
-		$sql .= 'article.last_edited as k3, article.tag as k4 FROM article';
+		$sql .= 'article.last_edited as k3 FROM article';
 		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
 
 		$rs = $this->db()->fetchAll($sql);
@@ -257,7 +173,7 @@ class ArticleController extends CommonController {
 		try {
 			$new_id = $a->insert();
 			$filename = 'article_' . $new_id . '.txt';
-			$output = file_put_contents($this->file_path . $filename, $txtcontent);
+			$output = file_put_contents($this->file_path . $filename, $this->escape_val($txtcontent));
 			$this->toJSON(array('created', $new_id, $title), true);
 			return 201;
 		} catch (PDOException $e) {
@@ -278,21 +194,33 @@ class ArticleController extends CommonController {
 		);
 		Doo::loadModel('Article');
 		$a = new Article($article);
-		$a->update();
-
-		$this->toJSON(array('updated', $a->article_id), true);
-		return 200;
+		try {
+			$a->update();
+			$filename = 'article_' . $id . '.txt';
+			$output = $output = file_put_contents($this->file_path . $filename, $this->escape_val($txtcontent));
+			$this->toJSON(array('updated', $id, $title), true);
+			return 200;
+		} catch (PDOException $e) {
+			$a->rollBack();
+			return 500;
+		}
+		exit;
 	}
 
-	public function deleteArticle() {
+	public function deleteOneArticle() {
+		$id = intval($this->params['id']);
 
 		//get article
 		$a = $this->db()->find('Article', array(
 			'limit' => 1,
 			'where' => 'article.article_id = ?',
-			'param' => array(intval($this->params['id']))
+			'param' => array($id)
 				));
-
+		
+		if($a){
+			$title = $a->title;
+		}
+		
 		if ($a->count()) {
 			//get latest id
 			$la = $this->db()->find('LatestUpdate', array(
@@ -300,14 +228,16 @@ class ArticleController extends CommonController {
 				'where' => 'latest_update.latest_id = ?',
 				'param' => array($a->latest_id)
 					));
+			$filename = 'article_' . $id . '.txt';
 
 			$a->beginTransaction();
 			$la->beginTransaction();
 			try {
 				$a->delete();
 				$la->delete();
+				$file = unlink($this->file_path . $filename);
 				$a->commit();
-				$this->toJSON(array('deleted'), true);
+				$this->toJSON(array('deleted', $title), true);
 			} catch (PDOException $e) {
 				$a->rollBack();
 				return 500;
@@ -315,6 +245,7 @@ class ArticleController extends CommonController {
 		} else {
 			return 404;
 		}
+		exit;
 	}
 
 }

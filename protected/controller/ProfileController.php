@@ -75,7 +75,7 @@ class ProfileController extends CommonController {
 	public function save(){
 		$_SESSION['user']['id'] = ($_SESSION['user']['id'] === null) ?  $this->toJSON('failed', true) : false;
 		
-		$content = $_POST['txtcontent'];
+		$content = $this->escape_val($_POST['txtcontent']);
 		
 		$output = file_put_contents($this->file, $content);
 		if($output){

@@ -68,5 +68,10 @@ li:hover span.zoom-in{visibility:visible;}
 #article{padding-top:20px;}
 #article>hr{padding-bottom:30px;}
 .a-date{font-style:italic;padding-bottom:10px;color:#bfbfbf;}
-#archive-tb td{cursor:pointer;}
+#archive-tb li{cursor:pointer;}
+#archive-tb li:hover{font-weight:bold;}
 .archive-expansion{position:absolute;font-size:20px;display:none;}
+.ar-block{margin:3px 0;padding:5px;border:1px solid #EEEEEE;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;display:none;cursor:pointer;}
+.ar-content:hover{background-color:#c7eefe;font-weight:bold;}
+.ar-content{padding:10px;-webkit-border-radius:4px;-moz-border-radius:4px;}
+.ar-time{text-align:right;font-size:11px;color:#a5a5a5;}
