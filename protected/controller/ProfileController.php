@@ -132,7 +132,7 @@ class ProfileController extends CommonController {
 		if ($gd->checkImageExtension('upload_file', $ext)) {
 
 			$imageType = explode('/', $_FILES['upload_file']['type']);
-			$originalType = ($imageType[1] === 'jpeg') ? 'jpg' : $imageType[1];
+			$originalType = $imageType[1];
 
 			$new_name = 'profile_' . time();
 			$uploadImg = $gd->uploadImage('upload_file', $new_name);

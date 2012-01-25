@@ -9,8 +9,8 @@
 		<div id="side-content" class="span5">
 			<ul class="media-grid">
 				<li>
-					<a href="<?php echo $data['profile_img_link']; ?>">
-					<img src="<?php echo $data['profile_img_src']; ?>" alt="" />
+					<a href="<?php echo $data['baseurl']; ?><?php echo $data['profile_img_link']; ?>">
+					<img src="<?php echo $data['baseurl']; ?><?php echo $data['profile_img_src']; ?>" alt="" />
 					</a>
 				</li>
 			</ul>
