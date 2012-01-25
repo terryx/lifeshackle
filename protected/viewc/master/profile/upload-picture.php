@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><?php echo $data['title']; ?></title>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noodp,noydir" />
+		<link rel="shortcut icon" href="<?php echo $data['baseurl']; ?>global/img/x.png" />
+		<link rel="stylesheet" href="<?php echo $data['baseurl']; ?>global/css/twitter.bootstrap.1.3.0.css" media="screen" />
+		<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js"></script>
+		<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/twitter-bootstrap/bootstrap-all.js"></script>
+		<style>
+			.success {
+				padding-bottom: 5px;
+				color: green;
+			}
+			.fail {
+				padding-bottom: 5px;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container" style="margin-left:-20px;padding-top: 30px;">
+			<form id="upload-picture-form" method="post" enctype="multipart/form-data" action="<?php echo $data['baseurl']; ?>profile/upload-picture">
+				<div class="clearfix">
+					<?php echo $data['message']; ?>
+					<label for="upload_file">File</label>
+					<div class="input">
+						<input type="file" id="upload_file" name="upload_file" />
+					</div>
+				</div>
+				<div class="clearfix">
+					<label for="caption">Caption</label>
+					<div class="input">
+						<input type="text" id="caption" name="caption" />
+					</div>
+				</div>
+				<div class="actions">
+					<button type="submit" class="btn primary">Upload</button>
+					<button type="button" class="btn closewindow">Close window</button>
+				</div>
+			</form>
+		</div>
+		<script>
+			$('.closewindow').bind('click', function(){
+				window.close();
+			});
+		</script>
+
+	</body>
+</html>
