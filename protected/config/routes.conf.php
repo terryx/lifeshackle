@@ -74,7 +74,6 @@ $route['*']['/status-update/save'] = array('StatusUpdateController', 'save');
 $route['get']['/status-update/set-pagination/:set'] = array('StatusUpdateController', 'setPagination');
 $route['get']['/status-update/get-pagination/:page'] = array('StatusUpdateController', 'getPagination');
 $route['get']['/status-update/delete/:id'] = array('StatusUpdateController', 'deleteOne');
-//$route['get']['/status-update/check-status'] = array('StatusUpdateController', 'checkStatus');
 
 //Store
 $route['*']['/store/edit'] = array('StoreController', 'editPage');
