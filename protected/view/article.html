@@ -19,6 +19,9 @@
 		$.ajax({
 			type: 'GET',
 			url: '{{baseurl}}article/fetch-article',
+			beforeSend: function(){
+				Common.wait();	
+			},
 			success: function(data){
 				if(data){
 					var str = '';
@@ -36,6 +39,7 @@
 						str += data[i].k5;
 						str += '<hr />';
 					}
+					Common.end();
 					$('#article').append(str);
 					
 					archive();
@@ -103,9 +107,7 @@
 			}
 		});
 	}
-</script>
-
-<script>
+	
 	$(function(){
 		fetchArticle();
 	});

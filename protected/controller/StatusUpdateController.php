@@ -133,16 +133,18 @@ class StatusUpdateController extends CommonController {
 				$lu = new LatestUpdate;
 				$lu->latest_id = $st_rs->latest_id;
 				$lu_rs = $lu->getOne();
-
-				$lu_rs->beginTransaction();
+				if($lu_rs){
+					$lu_rs->delete();
+				}
+				
+				$st_rs->beginTransaction();
 				try {
 					$st_rs->delete();
-					$lu_rs->delete();
-					$lu_rs->commit();
+					$st_rs->commit();
 					$this->toJSON(array('deleted'), true);
 					return 200;
 				} catch (PDOException $e) {
-					$lu_rs->rollBack();
+					$st_rs->rollBack();
 					return 400;
 				}
 			}

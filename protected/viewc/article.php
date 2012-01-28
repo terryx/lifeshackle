@@ -15,10 +15,99 @@
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script>
-	function fetchArticle(){$.ajax({type:"GET",url:"<?php echo $data['baseurl']; ?>article/fetch-article",success:function(c){if(c){var d="";for(var b=0,a=c.length;b<a;b++){d+="<h2>"+c[b].k1+"</h2>";d+='<div class="a-date">';if(c[b].k3!=="0"){d+="Last edited on "+timeHistory(c[b].k3)}else{d+="Created on "+timeHistory(c[b].k2)}d+="</div>";d+=c[b].k5;d+="<hr />"}$("#article").append(d);archive()}}})}function archive(){$.ajax({type:"GET",url:"<?php echo $data['baseurl']; ?>article/archive",dataType:"json",success:function(c){if(c){var d='<div id="archive-tb">';d+="<h3>Archive</h3>";d+="<ul>";for(var b=0,a=c.length;b<a;b++){d+='<li data-id="'+c[b].k1+'">'+c[b].k1+"</li>"}d+="</ul>";d+="</div>";$("#archive").append(d)}},complete:function(){$("#archive-tb ul li").bind("click",function(){var a=$(this).data("id");$.ajax({type:"GET",url:"<?php echo $data['baseurl']; ?>article/archive-date-filter/"+a,dataType:"json",beforeSend:function(){$("#article").html("");Common.wait()},success:function(d){if(d){var e="";for(var c=0,b=d.length;c<b;c++){e+="<h2>"+d[c].k1+"</h2>";e+='<div class="a-date">';if(d[c].k3==="0"){e+="Created on "+timeHistory(d[c].k2)}else{e+="Last edited on "+timeHistory(d[c].k3)}e+="</div>";e+=d[c].k5;e+="<hr />"}Common.end();$("#article").html("").append(e)}}})})}})};
-</script>
-
-<script>
+	function fetchArticle(){
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>article/fetch-article',
+			beforeSend: function(){
+				Common.wait();	
+			},
+			success: function(data){
+				if(data){
+					var str = '';
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<h2>'+ data[i].k1 +'</h2>';
+						str += '<div class="a-date">';
+						
+						if(data[i].k3 !== '0'){
+							str += 'Last edited on ' + timeHistory(data[i].k3);
+						} else {
+							str += 'Created on ' + timeHistory(data[i].k2);
+						}
+						
+						str += '</div>'
+						str += data[i].k5;
+						str += '<hr />';
+					}
+					Common.end();
+					$('#article').append(str);
+					
+					archive();
+				}
+			}
+		});
+	}
+	
+	function archive(){
+		$.ajax({
+			type: 'GET',
+			url: '<?php echo $data['baseurl']; ?>article/archive',
+			dataType: 'json',
+			success: function(data){
+				if(data){
+					var str = '<div id="archive-tb">';
+					str += '<h3>Archive</h3>';
+					str += '<ul>';
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<li data-id="'+ data[i].k1 +'">'+ data[i].k1 +'</li>';
+					}
+					str += '</ul>';
+					str += '</div>';
+					
+					$('#archive').append(str);
+				}
+			},
+			complete: function(){
+				$('#archive-tb ul li').bind('click', function(){
+					var date = $(this).data('id');
+					
+					$.ajax({
+						type: 'GET',
+						url: '<?php echo $data['baseurl']; ?>article/archive-date-filter/'+date,
+						dataType: 'json',
+						beforeSend: function(){
+							$('#article').html('')
+							Common.wait();
+						},
+						success: function(data){
+							if(data){
+								var str = '';
+								for(var i=0, len=data.length; i<len; i++){
+									str += '<h2>'+ data[i].k1 +'</h2>';
+									str += '<div class="a-date">';
+						
+									if(data[i].k3 === '0'){
+										str += 'Created on ' + timeHistory(data[i].k2);
+									} else {
+										str += 'Last edited on ' + timeHistory(data[i].k3);
+									}
+						
+									str += '</div>'
+									str += data[i].k5;
+									str += '<hr />';
+								}
+								Common.end();
+								$('#article')
+								.html('')
+								.append(str);
+							}
+						}
+					})
+				});
+			}
+		});
+	}
+	
 	$(function(){
 		fetchArticle();
 	});

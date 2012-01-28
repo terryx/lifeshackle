@@ -232,5 +232,25 @@
 	$(function(){
 		setPagination(5);
 		
+		
+		$('#status-update-form').bind('submit', function(e){
+			e.preventDefault();
+			var form = $(this);
+			
+			$.ajax({
+				type: 'POST',
+				url: form.attr('action'),
+				dataType: 'json',
+				data: form.serialize(),
+				success: function(data){
+					if(data){
+						if(data[0] === 'created'){
+							getPagination();
+						}
+					}
+				}
+			});
+		});
+		
 	});
 </script>
