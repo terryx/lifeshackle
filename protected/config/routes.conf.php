@@ -45,6 +45,17 @@ $route['post']['/article/save-article'] = array('ArticleController', 'saveArticl
 $route['get']['/article/admin-set-pagination/:set'] = array('ArticleController', 'adminSetPagination');
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
+//Video
+$route['*']['/video/view'] = array('VideoController', 'viewPage');
+$route['*']['/video/edit'] = array('VideoController', 'editPage');
+$route['get']['/video/admin-set-pagination/:set'] = array('VideoController', 'adminSetPagination');
+$route['get']['/video/admin-get-pagination/:page'] = array('VideoController', 'adminGetPagination');
+$route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
+$route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');
+$route['get']['/video/get_one_video/:id'] = array('VideoController', 'getOneVideo');
+$route['delete']['/video/delete_video/:id'] = array('VideoController', 'deleteVideo');
+$route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
+
 //Chat
 $route['*']['/chat/edit'] = array('ChatController', 'editPage');
 $route['post']['/chat/save-user'] = array('ChatController', 'saveUser');
@@ -92,18 +103,6 @@ $route['get']['/store/admin-get-category-pagination/:page'] = array('StoreContro
 $route['get']['/store/admin-count-category-page'] = array('StoreController', 'adminCountCategoryPage');
 $route['get']['/store/get-one-category/:id'] = array('StoreController', 'getOneCategory');
 $route['delete']['/store/delete-category/:id'] = array('StoreController', 'deleteCategory');
-
-//Video
-$route['*']['/video/view'] = array('VideoController', 'viewPage');
-$route['*']['/video/edit'] = array('VideoController', 'editPage');
-$route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
-$route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');
-$route['get']['/video/get_one_video/:id'] = array('VideoController', 'getOneVideo');
-$route['delete']['/video/delete_video/:id'] = array('VideoController', 'deleteVideo');
-$route['get']['/video/total-page'] = array('VideoController', 'totalPage');
-$route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
-$route['get']['/video/admin-count-page'] = array('VideoController', 'adminCountPage');
-$route['get']['/video/admin-get-pagination/:page'] = array('VideoController', 'adminGetPagination');
 
 //Validation
 $route['*']['/validate/check_username'] = array('ValidateController', 'checkUsername');

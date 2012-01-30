@@ -11,10 +11,8 @@
 			</div>
 		</div>
 		<div id="side-content" class="span5">
-			<div style="float:right">
-				<!-- Facebook Badge START --><a href="https://www.facebook.com/terryxlife" target="_TOP" style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;" title="Terry Yuen">Terry Yuen</a><br/><a href="https://www.facebook.com/terryxlife" target="_TOP" title="Terry Yuen"><img src="https://badge.facebook.com/badge/620130201.5435.1987480309.png" style="border: 0px;" /></a><br/><a href="http://www.facebook.com/badges/" target="_TOP" style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;"></a><!-- Facebook Badge END -->
-			</div>
-			<iframe width="250" height="157" src="http://www.youtube.com/embed/videoseries?list=PL38771D7D35A5BB42&amp;hl=en_US" frameborder="0" allowfullscreen></iframe>
+			<h5>My playlist</h5>
+			<iframe width="280" height="172" src="http://www.youtube.com/embed/videoseries?list=PL38771D7D35A5BB42&amp;hl=en_US" frameborder="0" allowfullscreen></iframe>
 		</div>
 	</div>
 </div>

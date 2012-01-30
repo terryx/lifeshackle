@@ -72,20 +72,25 @@ class VideoController extends CommonController {
 		$this->view()->render('template/layout', $data, true);
 	}
 	
-	public function adminCountPage() {
-		$per_page = $this->admin_per_page;
+	public function adminSetPagination(){
+		if (intval($this->params['set']) < 1) {
+			return 404;
+		}
+
+		//how many sets per one page
+		$per_page = intval($this->params['set']);
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
 
-		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video ';
-
+		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video';
 		$rs = $this->db()->fetchAll($sql);
+		
 		$page_number = doubleval($rs[0]['num_of_item']);
 
 		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
-
+	
 	public function adminGetPagination() {
 		if (intval($this->params['page']) < 1) {
 			return 404;

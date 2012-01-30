@@ -14,26 +14,10 @@
 					</a>
 				</li>
 			</ul>
-			<ul class="media-grid">
-				
-			</ul>
 		</div>
 	</div>
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
-
-<!--Profile-->
-<script type="text/javascript">
-	$(function(){
-	
-		$.ajax({
-			
-		});
-		
-	});
-	
-	
-</script>
 
 <!-- Google Analytics -->
 <script type="text/javascript">
