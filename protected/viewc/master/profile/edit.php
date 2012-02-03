@@ -40,17 +40,20 @@
 		script_url : '<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/tiny_mce_gzip.php',
 
 		theme : "advanced",
-		plugins : "advimage,advlink,emotions,inlinepopups,preview,media,print,contextmenu,paste,fullscreen,noneditable,nonbreaking",
+		plugins : "advimage,advlink,emotions,inlinepopups,preview,media,print,contextmenu,paste,fullscreen,noneditable,nonbreaking,fullpage",
 		dialog_type : "modal",
 		content_css : "<?php echo $data['baseurl']; ?>global/css/editor.css",
+		gecko_spellcheck : true,
+
 		// Theme options
+		theme_advanced_resizing : true,
+		theme_advanced_source_editor_width : 2000,
 		theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
 		theme_advanced_buttons2 : "image,media,emotions,|,bullist,numlist,|,blockquote,|,undo,redo,|,anchor,cleanup,code,|,forecolor,backcolor,|,hr,removeformat,|,charmap,|,print,|,fullscreen,|,preview",
-		theme_advanced_buttons3 : '',
+		theme_advanced_buttons3 : 'fullpage',
 		theme_advanced_toolbar_location : "top",
 		theme_advanced_toolbar_align : "left",
-		theme_advanced_statusbar_location : "bottom",
-		theme_advanced_resizing : true
+		theme_advanced_statusbar_location : "bottom"
 
 	});
 </script>

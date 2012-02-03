@@ -81,6 +81,7 @@
 						str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
 					}
 					str += '</ul>';
+					$('#video').append(str);
 				}
 			},
 			error: function(){
@@ -88,9 +89,6 @@
 			},
 			complete: function(){
 				delete page;
-				$('#video').append(str).hide().slideDown(1000, function(){
-					$(str).show();
-				});
 			}
 		});
 	}

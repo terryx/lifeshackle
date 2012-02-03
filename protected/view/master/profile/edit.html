@@ -146,7 +146,11 @@
 				data: { profile_id: $('#profile_id').val(), txtcontent : $('#txtcontent').val() },
 				dataType: 'json',
 				success: function(data){
-					console.log(data);
+					if(data[0] === 'saved'){
+						displayMessage('info', data[2] + ' is updated', '.actions');
+					} else {
+						displayMessage('error', 'Profile cannot be save for some reason', '.actions');
+					}
 				}
 				
 			});

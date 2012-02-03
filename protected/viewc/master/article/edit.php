@@ -34,7 +34,7 @@
 			<div class="pagination">
 
 			</div>
-			<div id="article-container">
+			<div id="pagination-container">
 
 			</div>
 			<div id="search-container">
@@ -50,6 +50,8 @@
 </div>
 <?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
 <script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/jquery.tinymce.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/pagination.js"></script>
+
 <script type="text/javascript">
 	$('#txtcontent').tinymce({
 		script_url : '<?php echo $data['baseurl']; ?>global/plugin/tiny_mce/tiny_mce_gzip.php',
@@ -68,9 +70,8 @@
 		theme_advanced_resizing : true
 	});
 </script>
-
 <!-- Pagination -->
-<script>
+<!--<script>
 	
 	$(window).bind('hashchange', function(){
 		getPagination();
@@ -260,8 +261,7 @@ function checkHashKey(){
 	}
 	return page;
 }
-	
-</script>
+</script>-->
 <script>
 function clearForm(){
 	$('#article_id').val('');
@@ -320,13 +320,20 @@ function deleteOneArticle(id){
 			}
 		},
 		complete: function(){
-			getPagination();
+			customGetPagination();
 		}
 	})
 }
 	
 $(function(){
-	setPagination(10);
+//	setPagination(10);
+	
+	Pagination({
+			set		: 5, 
+			start	: '<?php echo $data['baseurl']; ?>article/admin-set-pagination/',
+			get		: '<?php echo $data['baseurl']; ?>article/admin-get-pagination/',
+			custom	: true
+		});
 		
 	$('#article-form').bind('submit', function(e){
 		e.preventDefault();
@@ -354,7 +361,7 @@ $(function(){
 				}
 			},
 			complete: function(){
-				getPagination();
+				customGetPagination();
 			}
 		});
 	});

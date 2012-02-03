@@ -1,5 +1,5 @@
 <!--<style type="text/css">@import url(<?php echo $data['baseurl']; ?>global/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css);</style>-->
-<div class="content">
+<!--<div class="content">
 	<div class="row">
 		<div id="main-content" class="span11">
 			<div class="store-picture center">
@@ -77,10 +77,10 @@
 		</div>
 	</div>
 </div>
-<?php include Doo::conf()->SITE_PATH .  Doo::conf()->PROTECTED_FOLDER . "viewc/template/footer.php"; ?>
+ include '/template/footer' 
 
-<!--<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plupload/js/plupload.full.js"></script>
-<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>-->
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plupload/js/plupload.full.js"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
 
 <script type="text/javascript">
 	var cachePage = 1;
@@ -244,4 +244,5 @@
 		countPage();
 		
 	})
-</script>
+</script>-->
+

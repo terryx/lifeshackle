@@ -88,9 +88,7 @@
 			},
 			complete: function(){
 				delete page;
-				$('#video').append(str).hide().slideDown(1000, function(){
-					$(str).show();
-				});
+				$('#video').append(str);
 			}
 		});
 	}
