@@ -32,6 +32,62 @@ var Common = {
 		});
 	}
 }
+var Loader = {
+	init: function init(){
+		var panel = $('.main-panel');
+		var loader = $('#loader');
+		var str = '<div id="loader"></div>';
+		
+		return {
+			panel: panel, 
+			loader: loader,
+			str: str
+		};
+	},
+	show: function show(){
+		var init = this.init();
+		init.panel.append(init.str);
+	},
+	remove: function remove(){
+		var init = this.init();
+		
+		if(undefined !== init.panel){
+			init.loader.remove();
+		}
+	}
+}
+
+var Alert = {
+	message : function(content, type){
+		var $alertBlock = $('.alert-block');
+		$alertBlock = (($alertBlock).html() === '') ? renderMessage() : $alertBlock.html('');
+		
+		function renderMessage(){
+			switch(type){
+				case 'alert':
+					type = 'alert';
+					break;
+				case 'info':
+					type = 'alert alert-info';
+					break;
+				case 'success':
+					type = 'alert alert-success';
+					break;
+				case 'error':
+					type = 'alert alert-error';
+					break;
+				case 'danger':
+					type = 'alert alert-danger';
+					break;
+				default:
+					type = 'alert alert-error';
+					break;
+			}
+			$alertBlock.prepend('<div class="'+ type +'"><a class="close" data-dismiss="alert" href="#">&times;</a>'+ content +'</div>');
+		}
+	}
+}
+
 var Search = {
 	onload : function(ajaxCall, form){
 		$('#search-result').html('');
@@ -113,48 +169,48 @@ function displayMessage(type, msg, div, close){
 }
 
 function timeHistory(string){
-		var now		= new Date().getTime(),
-		intTime		= parseInt((string), 10) * 1000,
-		record		= new Date(intTime),
-		diffTime	= now - record,
-		timeMsg     = '';
+	var now		= new Date().getTime(),
+	intTime		= parseInt((string), 10) * 1000,
+	record		= new Date(intTime),
+	diffTime	= now - record,
+	timeMsg     = '';
 		
-		var daysDifference  = Math.floor(diffTime / 1000 / 60 / 60 / 24);
+	var daysDifference  = Math.floor(diffTime / 1000 / 60 / 60 / 24);
 		
-		if (daysDifference > 7) {
-			var months = [
-				"January", "February", "March", "April",
-				"May", "June", "July", "August",
-				"September", "October", "November", "December"
-			];
+	if (daysDifference > 7) {
+		var months = [
+		"January", "February", "March", "April",
+		"May", "June", "July", "August",
+		"September", "October", "November", "December"
+		];
         
-			timeMsg = months[record.getMonth()] + ' ' + record.getDate() + ', ' + record.getFullYear();
-		} else if (daysDifference) {
-			timeMsg =  daysDifference + ' days ago';
+		timeMsg = months[record.getMonth()] + ' ' + record.getDate() + ', ' + record.getFullYear();
+	} else if (daysDifference) {
+		timeMsg =  daysDifference + ' days ago';
+	} else {
+		var hoursDifference = Math.floor(diffTime / 1000 / 60 / 60);
+
+		if (hoursDifference) {
+			timeMsg = hoursDifference + ' hours ago';
 		} else {
-			var hoursDifference = Math.floor(diffTime / 1000 / 60 / 60);
+			var minutesDifference = Math.floor(diffTime / 1000 / 60);
 
-			if (hoursDifference) {
-				timeMsg = hoursDifference + ' hours ago';
+			if (minutesDifference) {
+				timeMsg = minutesDifference + ' minutes ago';
 			} else {
-				var minutesDifference = Math.floor(diffTime / 1000 / 60);
-
-				if (minutesDifference) {
-					timeMsg = minutesDifference + ' minutes ago';
-				} else {
-					var secondsDifference = Math.floor(diffTime / 1000);
+				var secondsDifference = Math.floor(diffTime / 1000);
                 
-					if (secondsDifference) {
-						timeMsg = secondsDifference + ' seconds ago';
-					} else {
-						timeMsg = 'few seconds ago';
-					}
+				if (secondsDifference) {
+					timeMsg = secondsDifference + ' seconds ago';
+				} else {
+					timeMsg = 'few seconds ago';
 				}
 			}
 		}
-    
-		return timeMsg;
 	}
+    
+	return timeMsg;
+}
 
 $(function(){
 	Common.load();
@@ -170,23 +226,4 @@ $(function(){
 		}
 	});
 
-	// POSITION STATIC TWIPSIES
-	$(window).bind( 'load resize', function () {
-		  
-		$('body > .topbar').scrollSpy();
-		
-		$(".twipsies a").each(function () {
-			$(this)
-			.twipsy({
-				live: false
-				, 
-				placement: $(this).attr('title')
-				, 
-				trigger: 'manual'
-				, 
-				offset: 2
-			})
-			.twipsy('show');
-		});
-	});
 });

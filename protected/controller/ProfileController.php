@@ -5,7 +5,31 @@
  *
  * @author terryx
  */
-class ProfileController extends CommonController {
+class ProfileController extends SessionController {
+//	public function profile() {
+//		$data = $this->templateData(__FUNCTION__);
+//		
+//		Doo::loadController('ProfileController');
+//		$profile = new ProfileController();
+//		
+//		$data['profile_content'] = $profile->fetchContent();
+//		$profile_picture = $profile->getCurrent();
+//		$data['profile_img_link'] = $profile_picture[0];
+//		$data['profile_img_src'] = $profile_picture[1];
+//		
+//		$this->render('template/layout', $data, true);
+//	}
+	
+	public function profile(){
+		$this->render('profile');
+	}
+	
+	public function get(){
+		$content = file_get_contents($this->file);
+		$picture = $this->getCurrent();
+		
+		$this->toJSON(array($content, $picture), true, true);
+	}
 	
 	private $file = 'global/file/profile.txt';
 	
@@ -67,11 +91,6 @@ class ProfileController extends CommonController {
 		return array($original, $resized);
 	}
 	
-	public function fetchContent(){
-		$output = file_get_contents($this->file);
-		return $output;
-	}
-
 	public function save(){
 		$_SESSION['user']['id'] = ($_SESSION['user']['id'] === null) ?  $this->toJSON('failed', true) : false;
 		
@@ -129,11 +148,17 @@ class ProfileController extends CommonController {
 		Doo::loadHelper('DooGdImage');
 		$ext = array('jpg', 'jpeg', 'gif', 'png', 'bmp', 'tiff');
 		$gd = new DooGdImage('global/uploaded_pic/', 'global/resized_pic/');
+		
 		if ($gd->checkImageExtension('upload_file', $ext)) {
-
-			$imageType = explode('/', $_FILES['upload_file']['type']);
-			$originalType = $imageType[1];
-
+			
+			//Check image extension, avoid using $_FILES['upload_file']['type'] because conflict with jpeg and jpg
+			$imageType = explode('.', $_FILES['upload_file']['name']);
+			if(sizeof($imageType) > 2){
+				$originalType = $imageType[sizeof($imageType)];
+			} else {
+				$originalType = $imageType[1];
+			}
+			
 			$new_name = 'profile_' . time();
 			$uploadImg = $gd->uploadImage('upload_file', $new_name);
 

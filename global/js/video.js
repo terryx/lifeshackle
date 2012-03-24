@@ -1,98 +1,140 @@
-function videoLinkId(url){
-	var id;
-	id = url.replace(/^[^v]+v.(.{11}).*/,"$1");
-	return id;
-}
-
-function setVideo(id, src){
-	
-		var url_id	= videoLinkId(src);
-		var modal	= 'modal-video-'+id; 
-	
-		var str = '';
-		str += '<div id="'+ modal +'" class="modal hide fade">';
-//		str += '<div class="modal-header">';
-//		str += '<a href="#" class="close">&times;</a>';
-//		str += '<h3></h3>';
-//		str += '</div>';
-		str += '<div class="modal-body">';
-		str += '<iframe width="420" height="315" src="http://www.youtube.com/embed/'+ url_id +'" frameborder="0" allowfullscreen></iframe>';
-		str += '</div>';
-		str += '<div class="modal-footer">';
-		str += '<a href="#" class="close">&times;</a>';
-		str += '</div>';
-		str += '</div>';
-		$('#main-content').append(str);
+var Video = {
+	start: function start(){
+		var self = this;
 		
-		renderModal(modal);
-}
-
-function renderModal(modal){
-	$('#'+ modal).modal({
-		show : true,
-		backdrop : true,
-		keyboard : true
-	});
-}
-
-function getPagination(page){
-	$.get('video/get-pagination/'+page, function(data){
-		if(data){
-			Common.clearDiv('#main-content');
-			var id;
-			var title;
-			var src;
-			var thumbnail;
+		$.ajax({
+			type: 'GET',
+			url: '/video',
+			beforeSend: function(){
+//				$main.html('');
+//				Loader.show();
+			},
+			success: function(data){
+//				Loader.remove();
+				$main.html('');
+				$main.append(data);
+			},
+			complete: function(){
+				self.get();
+			}
+		});
+	},
+	get: function get(){
+		var self = this, $content = $('#video-panel');
+		
+		self.countTotal(function(total){
+			self.pagination(total);
 			
-			var str = '<ul class="media-grid">';
-			for(var i = 0; i<data.length; i++){
-				id = data[i].k0;
-				title = data[i].k1;
-				src = data[i].k2
-				thumbnail = data[i].k3;
-				
-				str += '<li><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" title="'+ title +'" onclick="setVideo(\''+ id +'\', \'' + src +'\')" /></li>';
+		});
+	},
+	countTotal: function countTotal(callback){
+		$.ajax({
+			type: 'GET',
+			url: '/video/count-total',
+			success: function(data){
+				if(data){
+					callback(data);
+				}
+			}
+		});
+	},
+	pagination: function pagination(total){
+		var self = this;
+		
+		var str = '';
+		str += '<div class="pagination">';
+		str += '<ul>';
+		str += '<li data-id="prev-video"><a href="#">Prev</a></li>'; 
+		for(var i=1; i<=total; i++){
+			if(i===1){
+				str += '<li class="active"><a href="#">'+ i +'</a></li>';
+			} else{
+				str += '<li><a href="#">'+ i +'</a></li>';
+			}
+		}
+		str += '<li data-id="next-video"><a href="#">Next</a></li>';
+		str += '</ul>';
+		str += '</div>';
+		
+		$('#video-pager').append(str);
+		
+		self.getPagination(1);
+		self.onChange();
+	},
+	getPagination: function getPagination(page){
+		var str = '', $panel = $('#video-panel');
+		
+		$.ajax({
+			type: 'GET',
+			url: '/video/get-pagination/' + page,
+			beforeSend: function(){
+				$panel.html('');
+				Loader.show();
+			},
+			success: function(data){
+				if(data){
+					str += '<ul class="thumbnails">';
+					for(var i=0, len=data.length; i<len; i++){
+						str += '<li class="span2">';	
+						str += '<a href="'+ data[i].k2 +'" class="thumbnail" target="_blank">';
+						str += '<img src="'+ data[i].k3+'" alt="">'
+						str += '</a>';
+						str += '</li>';
+					}
+					str += '</ul>';
+					
+					Loader.remove();
+					$panel.append(str);
+				}
+			}
+		});
+	},
+	onChange: function onChange(){
+		var page, $active, activeId, self = this;
+		
+		$('.pagination ul').children('li').bind('click', function(e){
+			page = $(e.target).html();
+			
+			$active = $('.pagination ul').children('li.active');
+			activeId = $('.pagination ul').children('li.active').children('a').html();
+			activeId = parseInt(activeId);
+			
+			switch(page){
+				case 'Prev':
+					page = prev(activeId);
+					break;
+				case 'Next':
+					page = next(activeId);
+					break;
+				default:
+					$active.removeClass('active');
+					$(this).addClass('active');
 			}
 			
-			str += '</ul>';
-			$('#main-content').append(str);
-		//setVideo(id, title, src);
+			self.getPagination(page);
 			
-		}
-	});
-	
+			function prev(activeId){
+				var page = activeId - 1;
+				if(page !== 0){
+					$active.removeClass('active');
+					$active.prev().addClass('active');
+				} else {
+					page = 1;
+				}
+				return page;
+			}
+			
+			function next(activeId){
+				var page = activeId + 1;
+				var totalpage = $('.pagination ul').children('li').length - 2;
+				if(page <= totalpage){
+					$active.next().addClass('active');
+					$active.removeClass('active');
+				} else {
+					page = totalpage;
+				}
+				return page;
+			}
+		});
+	}
 }
-function countPage(){
-	$.get('video/count-page', function(data){
-		if(data){
-			paginate(data);
-		}
-	});
-}
-
-function paginate(count){
-	$("#pagination").paginate({
-		count 		: count,
-		start 		: 1,
-		//      display     : 3,
-		border					: true,
-		border_color			: '#fff',
-		text_color  			: '#fff',
-		background_color    	: 'black',
-		border_hover_color		: '#ccc',
-		text_hover_color  		: '#000',
-		background_hover_color	: '#fff',
-		images					: false,
-		mouse					: 'press',
-		onChange     			: function(page){
-			getPagination(page);
-		}
-	});
-
-}
-
-$(function(){
-	countPage();
-	getPagination(1);
-	
-});//end document ready

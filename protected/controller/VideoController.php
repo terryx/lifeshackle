@@ -1,39 +1,16 @@
 <?php
 
-class VideoController extends CommonController {
+class VideoController extends SessionController {
 
-	protected $per_page = 24;
+	protected $per_page = 20;
 	protected $admin_per_page = 10;
 
-	public function getVideoList() {
-		$rs = $this->db()->find('Video', array(
-			'select' => 'video_id as k0, title as k1',
-			'desc' => 'video_id'
-				));
-		$this->toJSON($rs, true, true);
+	public function video() {
+
+		$this->render('video');
 	}
 
-	public function getOneVideo() {
-		if (!$this->params['id'] || intval($this->params['id']) < 1) {
-			return 404;
-		}
-		else {
-			Doo::loadModel('Video');
-			$a = new Video();
-			$a->video_id = $this->params['id'];
-			$rs = $a->getOne();
-
-			if ($rs) {
-				$this->toJSON($rs, true, true);
-			}
-			else {
-				$this->toJSON('Video not found', true);
-				return 400;
-			}
-		}
-	}
-
-	public function totalPage(){
+	public function countTotal() {
 		$per_page = $this->per_page;
 		Doo::loadController('PaginationController');
 		$pagination = new PaginationController();
@@ -62,6 +39,39 @@ class VideoController extends CommonController {
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}
+	
+
+	public function getVideoList() {
+		$rs = $this->db()->find('Video', array(
+			'select' => 'video_id as k0, title as k1',
+			'desc' => 'video_id'
+				));
+		$this->toJSON($rs, true, true);
+	}
+
+	public function getOneVideo() {
+		if (!$this->params['id'] || intval($this->params['id']) < 1) {
+			return 404;
+		} else {
+			Doo::loadModel('Video');
+			$a = new Video();
+			$a->video_id = $this->params['id'];
+			$rs = $a->getOne();
+
+			if ($rs) {
+				$this->toJSON($rs, true, true);
+			} else {
+				$this->toJSON('Video not found', true);
+				return 400;
+			}
+		}
+	}
+
+	public function fetchVideos() {
+		$per_page = $this->per_page;
+		Doo::loadController('PaginationController');
+	}
+
 
 //----------------------------------------------------------------//
 //------------------------ admin section -------------------------//
@@ -71,8 +81,8 @@ class VideoController extends CommonController {
 		$data["title"] = 'Edit | Video';
 		$this->view()->render('template/layout', $data, true);
 	}
-	
-	public function adminSetPagination(){
+
+	public function adminSetPagination() {
 		if (intval($this->params['set']) < 1) {
 			return 404;
 		}
@@ -84,13 +94,13 @@ class VideoController extends CommonController {
 
 		$sql = 'SELECT COUNT(video_id)/' . $per_page . ' as num_of_item FROM video';
 		$rs = $this->db()->fetchAll($sql);
-		
+
 		$page_number = doubleval($rs[0]['num_of_item']);
 
 		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
-	
+
 	public function adminGetPagination() {
 		if (intval($this->params['page']) < 1) {
 			return 404;
@@ -117,12 +127,10 @@ class VideoController extends CommonController {
 			if ($v->video_id = $_POST['video_id']) {
 				$v->update();
 				return 200;
-			}
-			else {
+			} else {
 				$this->toJSON('Video could not be save.', true);
 			}
-		}
-		elseif (empty($_POST['video_id'])) {
+		} elseif (empty($_POST['video_id'])) {
 			// upload video
 			if ($_POST['title'] && $_POST['videolink']) {
 
@@ -134,11 +142,11 @@ class VideoController extends CommonController {
 				Doo::loadModel('LatestUpdate');
 				$la = new LatestUpdate($latest_update_array);
 				$last_insert_id = $la->insert();
-				
+
 				$string = $_POST['title'];
 				$quote_style = ENT_NOQUOTES;
 				$charset = 'UTF-8';
-				
+
 				$title = html_entity_decode($string, $quote_style, $charset);
 				$video_array = array(
 					'title' => $title,
@@ -156,8 +164,7 @@ class VideoController extends CommonController {
 
 				$this->toJSON($new_video_id, true);
 				return 201;
-			}
-			else {
+			} else {
 				$this->toJSON('Video could not be save.', true);
 			}
 		}
@@ -170,7 +177,7 @@ class VideoController extends CommonController {
 			'where' => 'video.video_id = ?',
 			'param' => array(intval($this->params['id']))
 				));
-		
+
 		if ($v->count()) {
 			//get latest id
 //			$la = $this->db()->find('LatestUpdate', array(
@@ -190,8 +197,7 @@ class VideoController extends CommonController {
 				$v->rollBack();
 				return 400;
 			}
-		}
-		else {
+		} else {
 			return 404;
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 
-class ArticleController extends CommonController {
+class ArticleController extends SessionController {
 
 	//global setting per page for visitor and admin
 	public $per_page = 2;
@@ -13,6 +13,28 @@ class ArticleController extends CommonController {
 		//overwrite some template array
 		$data['title'] = 'Edit | Article';
 		$this->view()->render('template/layout', $data, true);
+	}
+	
+	public function getArticle(){
+		$filter = $this->params['date'];
+		if (empty($filter)) {
+			return 404;
+		}
+
+		$sql = array(
+			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
+			'where' => 'FROM_UNIXTIME(article.created, "%b-%Y") = ? AND visible = 1',
+			'desc' => 'article.article_id',
+			'param' => array($filter)
+		);
+		$rs = Doo::db()->find('Article', $sql);
+
+		foreach ($rs as $id) {
+			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
+			$id->k5 = $file;
+		}
+		$this->toJSON($rs, true, true);
+		
 	}
 
 	public function fetchArticle() {

@@ -6,19 +6,19 @@ $route['*']['/index'] = array('HomeController', 'index');
 $route['*']['/master'] = array('HomeController', 'index');
 
 //home page public module view
-$route['*']['/article'] = array('HomeController', 'article');
-$route['*']['/profile'] = array('HomeController', 'profile');
 $route['*']['/store'] = array('HomeController', 'store');
-$route['*']['/video'] = array('HomeController', 'video');
 
 $route['*']['/picture'] = array('HomeController', 'picture');
 
 //Login
-$route['*']['/login'] = array('LoginController', 'index');
+$route['*']['/login'] = array('HomeController', 'login');
 $route['post']['/login/process-login'] = array('LoginController', 'processLogin');
 $route['*']['/logout'] = array('LoginController', 'logout');
 
 //Profile
+$route['*']['/profile'] = array('ProfileController', 'profile');
+$route['get']['/profile/get'] = array('ProfileController', 'get');
+
 $route['post']['/profile/save'] = array('ProfileController', 'save');
 $route['*']['/profile/edit'] = array('ProfileController', 'editPage');
 $route['*']['/profile/upload-picture-page'] = array('ProfileController', 'uploadPicturePage');
@@ -35,6 +35,9 @@ $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 
 //Article
+$route['*']['/article'] = array('HomeController', 'article');
+$route['get']['/get-article/:date'] = array('ArticleController', 'getArticle');
+
 $route['*']['/article/edit'] = array('ArticleController', 'editPage');
 $route['get']['/article/fetch-article'] = array('ArticleController', 'fetchArticle');
 $route['get']['/article/fetch-one-article/:id'] = array('ArticleController', 'fetchOneArticle');
@@ -46,15 +49,22 @@ $route['get']['/article/admin-set-pagination/:set'] = array('ArticleController',
 $route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
 //Video
+$route['*']['/video'] = array('VideoController', 'video');
+$route['get']['/video/count-total'] = array('VideoController', 'countTotal');
+
+
 $route['*']['/video/view'] = array('VideoController', 'viewPage');
 $route['*']['/video/edit'] = array('VideoController', 'editPage');
+$route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
+
 $route['get']['/video/admin-set-pagination/:set'] = array('VideoController', 'adminSetPagination');
 $route['get']['/video/admin-get-pagination/:page'] = array('VideoController', 'adminGetPagination');
 $route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
 $route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');
 $route['get']['/video/get_one_video/:id'] = array('VideoController', 'getOneVideo');
 $route['delete']['/video/delete_video/:id'] = array('VideoController', 'deleteVideo');
-$route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
+
+$route['get']['/video/fetch-videos/:page'] = array('VideoController', 'fetchVideos');
 
 //Chat
 $route['*']['/chat/edit'] = array('ChatController', 'editPage');

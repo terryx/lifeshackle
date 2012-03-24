@@ -1,0 +1,1 @@
+"use strict";var Paginate=function(b){10};

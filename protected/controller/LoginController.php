@@ -1,13 +1,6 @@
 <?php
 
-class LoginController extends CommonController {
-
-	public function index() {
-		$data = self::templateData('login');
-		$data['title'] = "Sign In";
-
-		$this->render('template/layout', $data, true);
-	}
+class LoginController extends SessionController {
 
 	//set auto login cookie for 1 year
 	protected function setRememberMe($cookie_user, $cookie_pass) {
@@ -37,10 +30,10 @@ class LoginController extends CommonController {
 						'status' => $rs->status,
 						'is_logged_in' => true
 					);
-
+					
 					//if remember me is selected
 					(isset($_POST['remember'])) ? $this->setRememberMe($username, $u->password) : false;
-
+					
 					$this->toJSON($rs->type, true);
 					return 200;
 				}

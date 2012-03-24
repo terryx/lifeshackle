@@ -1,8 +1,11 @@
+<title><?php echo $data['title']; ?></title>
 <meta charset="UTF-8">
 <meta name="robots" content="noodp,noydir" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Lifeshackle is a personal blog of Terry Yuen who seeks to break the shackles of life." />
 <meta name="keywords" content="Lifeshackle, Life, Shackle of Life, terryxlife, social news, personal blog" />
 <meta name="author" content="Terry Yuen Wai Hoe" />
-<link rel="shortcut icon" href="<?php echo $data['baseurl']; ?>global/img/x.png" />
-<link rel="stylesheet" href="<?php echo $data['baseurl']; ?>global/css/twitter.bootstrap.1.3.0.css" media="screen" />
-<link rel="stylesheet" href="<?php echo $data['baseurl']; ?>global/css/main.css" media="screen" />
+<link rel="shortcut icon" href="<?php echo $data['baseurl']; ?>global/img/v.png?v=<?php echo $data['version']; ?>" />
+<link rel="stylesheet" href="/global/css/main.css?v=<?php echo $data['version']; ?>" />
+<link rel="stylesheet" href="/global/bootstrap/css/bootstrap.min.css?v=<?php echo $data['version']; ?>" />
+<link rel="stylesheet" href="/global/bootstrap/css/bootstrap-responsive.min.css?v=<?php echo $data['version']; ?>" />

@@ -1,23 +1,24 @@
 <?php
 
 //homecontroller control all public pages for non-register user
-class HomeController extends CommonController {
+class HomeController extends SessionController {
+	
+	private $template;
+	
+	public function __construct() {
+		Doo::loadController('TemplateController');
+		$this->template = new TemplateController();
+	}
 	
 	public function index() {
-		$data = $this->templateData(__FUNCTION__);
-		
-		// if($data['role'] !== null){
-		// 	$data['content'] =  $data['role'] . DIRECTORY_SEPARATOR . __FUNCTION__;
-		// }
-		
-		$this->render('template/layout', $data, true);
+		//set templates
+		$data = $this->template->init('index');
 	}
 
 
 	public function article() {
-		$data = $this->templateData(__FUNCTION__);
 		
-		$this->render('template/layout', $data, true);
+		$this->render('article');
 	}
 
 
@@ -40,11 +41,6 @@ class HomeController extends CommonController {
 		$this->render('template/layout', $data, true);
 	}
 
-	public function video() {
-		$data = $this->templateData(__FUNCTION__);
-		$this->render('template/layout', $data, true);
-	}
-	
 	public function contact(){
 		$data = $this->templateData(__FUNCTION__);
 		
@@ -53,6 +49,10 @@ class HomeController extends CommonController {
 		$data['chatemail'] = isset($_COOKIE['lfshackschatemail']) ? $_COOKIE['lfshackschatemail'] : '';
 		
 		$this->render('template/layout', $data, true);
+	}
+	
+	public function login() {
+		$this->template->init('login');
 	}
 }
 

@@ -24,7 +24,7 @@ Doo::acl()->defaultFailedRoute = '/lifeshackle/deny_access';
 Doo::db()->setMap($dbmap);
 Doo::db()->setDb($dbconfig, $config['APP_MODE']);
 //Doo::db()->sql_tracking = true;	#for debugging/profiling purpose
-Doo::loadController('CommonController');
+Doo::loadController('SessionController');
 Doo::app()->route = $route;
 
 # Uncomment for DB profiling

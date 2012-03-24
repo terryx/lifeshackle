@@ -1,145 +1,210 @@
-<div class="content">
-	<div class="row">
-		<div id="main-content" class="span16">
-			<div class="pagination">
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- include '{{header}}' -->
+	</head>
+	<body>
+		<!-- include '{{nav}}' -->
 
-			</div>
-			<div id="video">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span3">
+					<div class="well">
 
-			</div>
-		</div>
-	</div>
-</div>
+					</div>
+				</div><!--/span3-->
 
-<!-- include '/template/footer' -->
+				<div class="span6">
+					<div class="alert-block"></div>
+					<div class="pagination">
 
-<!--Video-->
-<script>
-	$(window).bind('hashchange', function(){
-		getPagination();
-	});
+					</div>
+					<div id="video">
+
+					</div>
+				</div>
+
+			</div><!--/row fluid -->
+
+			<!-- include '{{footer}}' -->
+
+		</div><!-- end container-fluid -->
+
+		<script>
 	
-	function checkHashKey(){
-		var hashkey = window.location.hash;
-		if(hashkey !== ''){
-			hashkey = window.location.hash.replace('#', '');
-		} else {
-			hashkey = 1;
-		}
-		return parseInt(hashkey, 10);
-	}
-	
-	function getPagination(){
-		var page = checkHashKey();
-		var last = $('.pagination ul li:last-child').children('a').attr('href');
-		var str = '';
+			$(function(){
+				//count total video pages
+				var total = countTotalPage();
 		
-		//Clear all active pages
-		if($('.pagination ul li').is('.active')){
-			$('.pagination ul li').removeClass('active');
-		}
 		
-		//First page
-		if(page === 1){
-			$('.pagination ul li:nth-child(2)').addClass('active');
-			
-			$('.pagination ul li:first-child').addClass('disabled');
-			$('.pagination ul li:last-child').removeClass('disabled');
-		}
+				var hash = window.location.hash;
+				hash = (hash === '') ? 1 : hash
 		
-		//Last page
-		if(last === '#'+page){
-			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
-			
-			$('.pagination ul li:last-child').addClass('disabled');
-			$('.pagination ul li:first-child').removeClass('disabled');
-		}
-		
-		//Active pages
-		if(page !== 1 && last !== '#'+page){
-			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
-			
-			$('.pagination ul li:first-child').removeClass('disabled');
-			$('.pagination ul li:last-child').removeClass('disabled');
-		}
-		
-		$.ajax({
-			type: 'GET',
-			url: '{{baseurl}}video/get-pagination/'+page,
-			dataType: 'json',
-			success: function(data){
-				if(data){
-					Common.clearDiv('#video');
-					var id, title, src, thumbnail;
-					str += '<ul class="media-grid">';
-					for(var i=0, len=data.length; i<len; i++){
-						id = data[i].k0;
-						title = data[i].k1;
-						src = data[i].k2
-						thumbnail = data[i].k3;
-
-						str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
+				//fetch videos
+				$.ajax({
+					type: 'GET',
+					url: '/video/fetch-videos/' + hash,
+					dataType: 'json',
+					beforeSend: function(){
+				
+					},
+					success: function(err, res){
+						renderVideoList(res);
+					},
+					error: function(){
+				
 					}
-					str += '</ul>';
-					$('#video').append(str);
-				}
-			},
-			error: function(){
-				window.location = '{{baseurl}}error';
-			},
-			complete: function(){
-				delete page;
-			}
-		});
-	}
-	
-	function videoLinkId(url){
-		var id;
-		id = url.replace(/^[^v]+v.(.{11}).*/,"$1");
-		return id;
-	}
-
-	$(function(){
-		//build pagination block
-		$.ajax({
-			type: 'GET',
-			url: '{{baseurl}}video/total-page',
-			dataType: 'json',
-			beforeSend: function(){
-				Common.wait();
-			},
-			success: function(data){
-				var str			= '';
-				str += '<ul>';
-				str += '<li class="prev"><a href="#1">First</a></li>';
-					
-				for(var i=1, len=data; i<=len; i++){
-					str += '<li><a href="#'+i+'">'+i+'</a></li>';
-				}
-				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
-				str += '</ul>';
-				$('.pagination').append(str);
-			},
-			error: function(){
-				console.log('Error part: initialize');
-			},
-			complete: function(){
-				Common.end();
-				getPagination();
-			}
-		});
+				});
 		
-	});
-</script>
+			});
+	
+			function countTotalPage(){
+				$.ajax({
+					type: 'GET',
+					url: '/video/count-total-page',
+					dataType: 'json',
+					beforeSend: function(){
+						
+					},
+					success: function(err, res){
+						
+					},
+					error: Alert.error('Function not found')
+				});
+			}
+	
+			function renderVideoList(res){
+		
+			}
+	
+			//	$(window).bind('hashchange', function(){
+			//		getPagination();
+			//	});
+			//	
+			//	function checkHashKey(){
+			//		var hashkey = window.location.hash;
+			//		if(hashkey !== ''){
+			//			hashkey = window.location.hash.replace('#', '');
+			//		} else {
+			//			hashkey = 1;
+			//		}
+			//		return parseInt(hashkey, 10);
+			//	}
+			//	
+			//	function getPagination(){
+			//		var page = checkHashKey();
+			//		var last = $('.pagination ul li:last-child').children('a').attr('href');
+			//		var str = '';
+			//		
+			//		//Clear all active pages
+			//		if($('.pagination ul li').is('.active')){
+			//			$('.pagination ul li').removeClass('active');
+			//		}
+			//		
+			//		//First page
+			//		if(page === 1){
+			//			$('.pagination ul li:nth-child(2)').addClass('active');
+			//			
+			//			$('.pagination ul li:first-child').addClass('disabled');
+			//			$('.pagination ul li:last-child').removeClass('disabled');
+			//		}
+			//		
+			//		//Last page
+			//		if(last === '#'+page){
+			//			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
+			//			
+			//			$('.pagination ul li:last-child').addClass('disabled');
+			//			$('.pagination ul li:first-child').removeClass('disabled');
+			//		}
+			//		
+			//		//Active pages
+			//		if(page !== 1 && last !== '#'+page){
+			//			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
+			//			
+			//			$('.pagination ul li:first-child').removeClass('disabled');
+			//			$('.pagination ul li:last-child').removeClass('disabled');
+			//		}
+			//		
+			//		$.ajax({
+			//			type: 'GET',
+			//			url: '{{baseurl}}video/get-pagination/'+page,
+			//			dataType: 'json',
+			//			success: function(data){
+			//				if(data){
+			//					Common.clearDiv('#video');
+			//					var id, title, src, thumbnail;
+			//					str += '<ul class="media-grid">';
+			//					for(var i=0, len=data.length; i<len; i++){
+			//						id = data[i].k0;
+			//						title = data[i].k1;
+			//						src = data[i].k2
+			//						thumbnail = data[i].k3;
+			//
+			//						str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
+			//					}
+			//					str += '</ul>';
+			//					$('#video').append(str);
+			//				}
+			//			},
+			//			error: function(){
+			//				window.location = '{{baseurl}}error';
+			//			},
+			//			complete: function(){
+			//				delete page;
+			//			}
+			//		});
+			//	}
+			//	
+			//	function videoLinkId(url){
+			//		var id;
+			//		id = url.replace(/^[^v]+v.(.{11}).*/,"$1");
+			//		return id;
+			//	}
+			//
+			//	$(function(){
+			//		//build pagination block
+			//		$.ajax({
+			//			type: 'GET',
+			//			url: '{{baseurl}}video/total-page',
+			//			dataType: 'json',
+			//			beforeSend: function(){
+			//				Common.wait();
+			//			},
+			//			success: function(data){
+			//				var str			= '';
+			//				str += '<ul>';
+			//				str += '<li class="prev"><a href="#1">First</a></li>';
+			//					
+			//				for(var i=1, len=data; i<=len; i++){
+			//					str += '<li><a href="#'+i+'">'+i+'</a></li>';
+			//				}
+			//				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
+			//				str += '</ul>';
+			//				$('.pagination').append(str);
+			//			},
+			//			error: function(){
+			//				console.log('Error part: initialize');
+			//			},
+			//			complete: function(){
+			//				Common.end();
+			//				getPagination();
+			//			}
+			//		});
+			//		
+			//	});
+		</script>
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try{
-var pageTracker = _gat._getTracker("UA-27701779-1");
-pageTracker._trackPageview();
-} catch(err) {}
-</script>
+		<!-- Google Analytics -->
+<!--		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try{
+				var pageTracker = _gat._getTracker("UA-27701779-1");
+				pageTracker._trackPageview();
+			} catch(err) {}
+		</script>-->
+
+	</body>
+</html>
