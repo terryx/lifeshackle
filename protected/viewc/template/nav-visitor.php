@@ -10,7 +10,9 @@
 			<div class="nav-collapse">
 				<ul class="nav">
 					<li class="divider-vertical"></li>
+					<li><a href="<?php echo $data['baseurl']; ?>article">Article</a></li>
 					<li><a href="<?php echo $data['baseurl']; ?>video">Video</a></li>
+					<li><a href="<?php echo $data['baseurl']; ?>profile">Profile</a></li>
 				</ul>
 				<p class="navbar-text pull-right">Sign in <a href="<?php echo $data['baseurl']; ?>login">here</a></p>
 			</div><!--/.nav-collapse -->

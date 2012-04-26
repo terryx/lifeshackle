@@ -1,22 +1,22 @@
 <?php
-//home page routing
-$route['*']['/'] = array('HomeController', 'index');
-$route['*']['/home'] = array('HomeController', 'index');
-$route['*']['/index'] = array('HomeController', 'index');
-$route['*']['/master'] = array('HomeController', 'index');
+//All template redirect
+$route['*']['/'] = array('TemplateController', 'homepage');
+$route['*']['/home'] = array('TemplateController', 'homepage');
+$route['*']['/login'] = array('TemplateController', 'login');
+$route['*']['/article'] = array('TemplateController', 'article');
+$route['*']['/video'] = array('TemplateController', 'video');
+$route['*']['/profile'] = array('TemplateController', 'profile');
 
-//home page public module view
-$route['*']['/store'] = array('HomeController', 'store');
-
-$route['*']['/picture'] = array('HomeController', 'picture');
+//Master
+$route['*']['/master'] = array('TemplateController', 'master');
+$route['*']['/master/article'] = array('TemplateController', 'master_article');
+$route['*']['/master/video'] = array('TemplateController', 'master_video');
 
 //Login
-$route['*']['/login'] = array('HomeController', 'login');
 $route['post']['/login/process-login'] = array('LoginController', 'processLogin');
 $route['*']['/logout'] = array('LoginController', 'logout');
 
 //Profile
-$route['*']['/profile'] = array('ProfileController', 'profile');
 $route['get']['/profile/get'] = array('ProfileController', 'get');
 
 $route['post']['/profile/save'] = array('ProfileController', 'save');
@@ -27,37 +27,35 @@ $route['get']['/profile/fetch-picture'] = array('ProfileController', 'fetchPictu
 $route['get']['/profile/delete-picture/:id'] = array('ProfileController', 'deletePicture');
 $route['get']['/profile/set-current-picture/:id'] = array('ProfileController', 'setCurrent');
 
-//Contact
-$route['*']['/contact'] = array('HomeController', 'contact');
 
 //iframe picture
 $route['*']['/template/picture-form'] = array('ProfileController', 'picForm');
 
 
 //Article
-$route['*']['/article'] = array('HomeController', 'article');
-$route['get']['/get-article/:date'] = array('ArticleController', 'getArticle');
-
-$route['*']['/article/edit'] = array('ArticleController', 'editPage');
-$route['get']['/article/fetch-article'] = array('ArticleController', 'fetchArticle');
+$route['*']['/article/list-articles'] = array('ArticleController', 'listArticles');
 $route['get']['/article/fetch-one-article/:id'] = array('ArticleController', 'fetchOneArticle');
+$route['*']['/article/create-pager/:content'] = array('ArticleController', 'createPager');
+$route['get']['/article/master/make-pagination/:id/:page'] = array('ArticleController', 'makePagination');
+$route['post']['/article/save'] = array('ArticleController', 'saveArticle');
+
+
+
+$route['*']['/article/:id'] = array('ArticleController', 'article');
+$route['get']['/article/fetch-articles'] = array('ArticleController', 'fetchArticles');
 $route['get']['/article/archive'] = array('ArticleController', 'archive');
 $route['*']['/article/archive-date-filter/:date'] = array('ArticleController', 'archiveDateFilter');
 $route['get']['/article/delete-one-article/:id'] = array('ArticleController', 'deleteOneArticle');
-$route['post']['/article/save-article'] = array('ArticleController', 'saveArticle');
-$route['get']['/article/admin-set-pagination/:set'] = array('ArticleController', 'adminSetPagination');
-$route['get']['/article/admin-get-pagination/:page'] = array('ArticleController', 'adminGetPagination');
 
 //Video
-$route['*']['/video'] = array('VideoController', 'video');
 $route['get']['/video/count-total'] = array('VideoController', 'countTotal');
-
+$route['get']['/video/create-pager/:content'] = array('VideoController', 'createPager');
+$route['get']['/video/master/make-pagination/:id/:page'] = array('VideoController', 'makePagination');
 
 $route['*']['/video/view'] = array('VideoController', 'viewPage');
 $route['*']['/video/edit'] = array('VideoController', 'editPage');
 $route['get']['/video/get-pagination/:page'] = array('VideoController', 'getPagination');
 
-$route['get']['/video/admin-set-pagination/:set'] = array('VideoController', 'adminSetPagination');
 $route['get']['/video/admin-get-pagination/:page'] = array('VideoController', 'adminGetPagination');
 $route['post']['/video/save_video'] = array('VideoController', 'saveVideo');
 $route['get']['/video/get_video_list'] = array('VideoController', 'getVideoList');

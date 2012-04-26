@@ -5,197 +5,137 @@
 	</head>
 	<body>
 		<!-- include '{{nav}}' -->
-
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<div class="span3">
-					<div class="well">
-
-					</div>
-				</div><!--/span3-->
-
-				<div class="span6">
-					<div class="alert-block"></div>
-					<div class="pagination">
-
-					</div>
-					<div id="video">
-
-					</div>
+		<div class="container">
+			<div class="row">
+				<div class="span9">
+					<div id="video-pager"></div>
+					<div id="video-panel"></div>
 				</div>
-
-			</div><!--/row fluid -->
+			</div><!--/row -->
+			<hr />
 
 			<!-- include '{{footer}}' -->
-
 		</div><!-- end container-fluid -->
-
 		<script>
-	
 			$(function(){
-				//count total video pages
-				var total = countTotalPage();
-		
-		
-				var hash = window.location.hash;
-				hash = (hash === '') ? 1 : hash
-		
-				//fetch videos
+				//count total
 				$.ajax({
 					type: 'GET',
-					url: '/video/fetch-videos/' + hash,
-					dataType: 'json',
+					url: '/video/count-total',
 					beforeSend: function(){
-				
+						Loader({panel: '#video-panel', display: true});
 					},
-					success: function(err, res){
-						renderVideoList(res);
-					},
-					error: function(){
-				
+					success: function(data){
+						if(data){
+							pagination(data);
+						}
 					}
 				});
-		
+				
 			});
-	
-			function countTotalPage(){
+			
+			function pagination(total){
+				var self = this;
+				
+				var str = '';
+				str += '<div class="pagination">';
+				str += '<ul>';
+				str += '<li data-id="prev-video"><a href="#">Prev</a></li>'; 
+				for(var i=1; i<=total; i++){
+					if(i===1){
+						str += '<li class="active"><a href="#">'+ i +'</a></li>';
+					} else{
+						str += '<li><a href="#">'+ i +'</a></li>';
+					}
+				}
+				str += '<li data-id="next-video"><a href="#">Next</a></li>';
+				str += '</ul>';
+				str += '</div>';
+		
+				$('#video-pager').append(str);
+		
+				get(1);
+				onChange();
+			}
+			
+			function get(page){
+				var str = '', $panel = $('#video-panel');
+				
 				$.ajax({
 					type: 'GET',
-					url: '/video/count-total-page',
-					dataType: 'json',
+					url: '/video/get-pagination/' + page,
 					beforeSend: function(){
-						
+						Loader({panel: '#video-panel', display: true});
 					},
-					success: function(err, res){
-						
-					},
-					error: Alert.error('Function not found')
+					success: function(data){
+						if(data){
+							str += '<ul class="thumbnails">';
+							for(var i=0, len=data.length; i<len; i++){
+								str += '<li class="span2">';	
+								str += '<a href="'+ data[i].k2 +'/" class="thumbnail" target="_blank">';
+								str += '<img src="'+ data[i].k3+'" alt="">'
+								str += '</a>';
+								str += '</li>';
+							}
+							str += '</ul>';
+					
+							Loader({panel: '#video-panel', display: false});
+							$panel.append(str);
+						}
+					}
 				});
 			}
-	
-			function renderVideoList(res){
+			
+			function onChange(){
+				var page, $active, activeId, self = this;
 		
+				$('.pagination ul').children('li').bind('click', function(e){
+					page = $(e.target).html();
+			
+					$active = $('.pagination ul').children('li.active');
+					activeId = $('.pagination ul').children('li.active').children('a').html();
+					activeId = parseInt(activeId);
+			
+					switch(page){
+						case 'Prev':
+							page = prev(activeId);
+							break;
+						case 'Next':
+							page = next(activeId);
+							break;
+						default:
+							$active.removeClass('active');
+							$(this).addClass('active');
+					}
+			
+					get(page);
+			
+					function prev(activeId){
+						var page = activeId - 1;
+						if(page !== 0){
+							$active.removeClass('active');
+							$active.prev().addClass('active');
+						} else {
+							page = 1;
+						}
+						return page;
+					}
+			
+					function next(activeId){
+						var page = activeId + 1;
+						var totalpage = $('.pagination ul').children('li').length - 2;
+						if(page <= totalpage){
+							$active.next().addClass('active');
+							$active.removeClass('active');
+						} else {
+							page = totalpage;
+						}
+						return page;
+					}
+				});
 			}
-	
-			//	$(window).bind('hashchange', function(){
-			//		getPagination();
-			//	});
-			//	
-			//	function checkHashKey(){
-			//		var hashkey = window.location.hash;
-			//		if(hashkey !== ''){
-			//			hashkey = window.location.hash.replace('#', '');
-			//		} else {
-			//			hashkey = 1;
-			//		}
-			//		return parseInt(hashkey, 10);
-			//	}
-			//	
-			//	function getPagination(){
-			//		var page = checkHashKey();
-			//		var last = $('.pagination ul li:last-child').children('a').attr('href');
-			//		var str = '';
-			//		
-			//		//Clear all active pages
-			//		if($('.pagination ul li').is('.active')){
-			//			$('.pagination ul li').removeClass('active');
-			//		}
-			//		
-			//		//First page
-			//		if(page === 1){
-			//			$('.pagination ul li:nth-child(2)').addClass('active');
-			//			
-			//			$('.pagination ul li:first-child').addClass('disabled');
-			//			$('.pagination ul li:last-child').removeClass('disabled');
-			//		}
-			//		
-			//		//Last page
-			//		if(last === '#'+page){
-			//			$('.pagination ul li:nth-child('+(page + 1)+')').addClass('active');
-			//			
-			//			$('.pagination ul li:last-child').addClass('disabled');
-			//			$('.pagination ul li:first-child').removeClass('disabled');
-			//		}
-			//		
-			//		//Active pages
-			//		if(page !== 1 && last !== '#'+page){
-			//			$('.pagination ul li:nth-child('+ (page+1) +')').addClass('active');
-			//			
-			//			$('.pagination ul li:first-child').removeClass('disabled');
-			//			$('.pagination ul li:last-child').removeClass('disabled');
-			//		}
-			//		
-			//		$.ajax({
-			//			type: 'GET',
-			//			url: '{{baseurl}}video/get-pagination/'+page,
-			//			dataType: 'json',
-			//			success: function(data){
-			//				if(data){
-			//					Common.clearDiv('#video');
-			//					var id, title, src, thumbnail;
-			//					str += '<ul class="media-grid">';
-			//					for(var i=0, len=data.length; i<len; i++){
-			//						id = data[i].k0;
-			//						title = data[i].k1;
-			//						src = data[i].k2
-			//						thumbnail = data[i].k3;
-			//
-			//						str += '<li><a href="'+ src +'" target="_blank" title="'+ title +'"><img id="video-'+ id +'" src="'+ thumbnail +'" class="video-box" alt="" /></a></li>';
-			//					}
-			//					str += '</ul>';
-			//					$('#video').append(str);
-			//				}
-			//			},
-			//			error: function(){
-			//				window.location = '{{baseurl}}error';
-			//			},
-			//			complete: function(){
-			//				delete page;
-			//			}
-			//		});
-			//	}
-			//	
-			//	function videoLinkId(url){
-			//		var id;
-			//		id = url.replace(/^[^v]+v.(.{11}).*/,"$1");
-			//		return id;
-			//	}
-			//
-			//	$(function(){
-			//		//build pagination block
-			//		$.ajax({
-			//			type: 'GET',
-			//			url: '{{baseurl}}video/total-page',
-			//			dataType: 'json',
-			//			beforeSend: function(){
-			//				Common.wait();
-			//			},
-			//			success: function(data){
-			//				var str			= '';
-			//				str += '<ul>';
-			//				str += '<li class="prev"><a href="#1">First</a></li>';
-			//					
-			//				for(var i=1, len=data; i<=len; i++){
-			//					str += '<li><a href="#'+i+'">'+i+'</a></li>';
-			//				}
-			//				str += '<li class="next"><a href="#'+data+'">Last</a></li>';
-			//				str += '</ul>';
-			//				$('.pagination').append(str);
-			//			},
-			//			error: function(){
-			//				console.log('Error part: initialize');
-			//			},
-			//			complete: function(){
-			//				Common.end();
-			//				getPagination();
-			//			}
-			//		});
-			//		
-			//	});
 		</script>
-
-		<!-- Google Analytics -->
-<!--		<script type="text/javascript">
+		<script type="text/javascript">
 			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 		</script>
@@ -204,7 +144,6 @@
 				var pageTracker = _gat._getTracker("UA-27701779-1");
 				pageTracker._trackPageview();
 			} catch(err) {}
-		</script>-->
-
+		</script>
 	</body>
 </html>

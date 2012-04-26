@@ -12,15 +12,8 @@ class HomeController extends SessionController {
 	
 	public function index() {
 		//set templates
-		$data = $this->template->init('index');
+		$data = $this->template->make('index');
 	}
-
-
-	public function article() {
-		
-		$this->render('article');
-	}
-
 
 	public function profile() {
 		$data = $this->templateData(__FUNCTION__);

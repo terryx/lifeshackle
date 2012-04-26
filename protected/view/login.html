@@ -5,21 +5,19 @@
 	</head>
 	<body>
 		<!-- include '{{nav}}' -->
-
-		<div class="container-fluid">
+		<div class="container">
 			<div class="row">
-				<div class="span6 offset4">
+				<div class="span6 offset3">
 					<div class="alert-row">
 						<div class="alert-block"></div>
 					</div>
-					<form id="login-form" class="form-horizontal well-white" method="post" action="{{baseurl}}login/process-login">
+					<form id="login-form" class="form-horizontal well-white" method="post" action="/login/process-login">
 						<div class="control-group">
 							<label class="control-label" for="username">Username</label>
 							<div class="controls">
 								<input type="text" id="username" name="username" placeholder="Please enter username" />
 							</div>
 						</div>
-
 						<div class="control-group">
 							<label class="control-label" for="password">Password</label>
 							<div class="controls">
@@ -41,7 +39,7 @@
 					</form>
 				</div>
 			</div>
-
+			<hr />
 			<!-- include '{{footer}}' -->
 		</div><!-- end container-fluid -->
 		<!--Login-->
@@ -73,7 +71,7 @@
 						}
 					},
 					success: function(data){
-						window.location = '{{baseurl}}'+ data;
+						window.location = data;
 					},
 					error: function(){
 						Alert.message('Invalid username/password', 'error');
@@ -82,11 +80,11 @@
 			});
 			
 			$('#username').bind('keypress', function(){
-				console.log($(this).parent().parent().removeClass('error'));
+				$(this).parent().parent().removeClass('error');
 			});
 			
 			$('#password').bind('keypress', function(){
-				console.log($(this).parent().parent().removeClass('error'));
+				$(this).parent().parent().removeClass('error');
 			});
 		</script>
 	</body>

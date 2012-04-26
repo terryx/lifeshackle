@@ -1,15 +1,110 @@
-<ul id="article-date" class="nav nav-pills">
-	<li data-id="Jan"><a href="#Jan">Jan</a></li>
-	<li data-id="Feb"><a href="#Feb">Feb</a></li>
-	<li data-id="Mar"><a href="#Mar">Mar</a></li>
-	<li data-id="Apr"><a href="#Apr">Apr</a></li>
-	<li data-id="May"><a href="#May">May</a></li>
-	<li data-id="Jun"><a href="#Jun">Jun</a></li>
-	<li data-id="Jul"><a href="#Jul">Jul</a></li>
-	<li data-id="Aug"><a href="#Aug">Aug</a></li>
-	<li data-id="Sep"><a href="#Sep">Sep</a></li>
-	<li data-id="Oct"><a href="#Oct">Oct</a></li>
-	<li data-id="Nov"><a href="#Nov">Nov</a></li>
-	<li data-id="Dec"><a href="#Dec">Dec</a></li>
-</ul>
-<div id="article"></div>
+<!DOCTYPE html>
+<html>
+	<head>
+		<?php include "{$data['header']}.php"; ?>
+	</head>
+	<body>
+		<?php include "{$data['nav']}.php"; ?>
+		<div class="container">
+			<div class="row">
+				<div class="span9">
+					<div id="article-container" class="well">
+					</div>
+				</div>
+				<div class="span3">
+					<div id="article-list">
+					</div>
+				</div>
+			</div><!--/row -->
+			<hr />
+
+			<?php include "{$data['footer']}.php"; ?>
+		</div><!-- end container-fluid -->
+		<script>
+			$(function(){
+
+				$.ajax({
+					type: 'GET',
+					url: '/article/list-articles',
+					success: function(data){
+						var str = '', latest;
+			
+						str += '<ul class="nav nav-pills nav-stacked">';
+						
+						if(data){
+							latest = data[0];
+							for(var i=0, len=data.length; i<len; i++){
+								str += '<li><a data-id="'+ data[i].article_id +'">'+ data[i].title +'</a></li>';
+							}
+						}
+			
+						str += '<ul>';
+			
+						$('#article-list').append(str);
+						
+						Article().fetchArticle(latest.article_id);
+						Article().checklist();
+					}
+				});
+	
+			});
+
+			function Article(){
+				var controller = {};
+				
+				controller.checklist = function checklist(){
+					var self = this;
+					$('#article-list ul').children('li').bind('click', function(e){
+			
+						var id = $(e.target).data('id');
+			
+						self.fetchArticle(id);
+					});
+				}
+	
+				controller.fetchArticle = function fetchArticle(id){
+		
+					$.ajax({
+						type: 'GET',
+						url: '/article/fetch-one-article/'+id,
+						beforeSend: function(){
+							Loader({
+								panel: '#article-container',
+								display: true
+							});
+						},
+						success: function(data){
+							
+							var str = '';
+				
+							if(data){
+								str += '<h2>'+ data.title +'</h2><br />';
+								str += '<div>'+ data.content +'</div>';
+								str += '<hr />';
+								str += '<p><small>'+ data.date +'</small></p>';
+					
+								Loader({
+									panel: '#article-container',
+									display: false
+								});
+								$('#article-container').append(str);
+							}
+						}
+					});
+				}
+	
+				return controller;
+			}
+		</script>
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try{
+				var pageTracker = _gat._getTracker("UA-27701779-1");
+				pageTracker._trackPageview();
+			} catch(err) {}
+		</script>
+	</body>
+</html>

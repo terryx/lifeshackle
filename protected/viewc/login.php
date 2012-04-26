@@ -5,10 +5,9 @@
 	</head>
 	<body>
 		<?php include "{$data['nav']}.php"; ?>
-
-		<div class="container-fluid">
+		<div class="container">
 			<div class="row">
-				<div class="span6 offset4">
+				<div class="span6 offset3">
 					<div class="alert-row">
 						<div class="alert-block"></div>
 					</div>
@@ -19,7 +18,6 @@
 								<input type="text" id="username" name="username" placeholder="Please enter username" />
 							</div>
 						</div>
-
 						<div class="control-group">
 							<label class="control-label" for="password">Password</label>
 							<div class="controls">
@@ -41,7 +39,7 @@
 					</form>
 				</div>
 			</div>
-
+			<hr />
 			<?php include "{$data['footer']}.php"; ?>
 		</div><!-- end container-fluid -->
 		<!--Login-->
@@ -82,11 +80,11 @@
 			});
 			
 			$('#username').bind('keypress', function(){
-				console.log($(this).parent().parent().removeClass('error'));
+				$(this).parent().parent().removeClass('error');
 			});
 			
 			$('#password').bind('keypress', function(){
-				console.log($(this).parent().parent().removeClass('error'));
+				$(this).parent().parent().removeClass('error');
 			});
 		</script>
 	</body>

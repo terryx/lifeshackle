@@ -1,32 +1,50 @@
-<div class="content">
-	<div class="page-header">
-		<h6>have a nice day xD</h6>
-	</div>
-	<div class="row">
-		<div id="main-content" class="span11">
-			{{profile_content}}
-		</div>
-		<div id="side-content" class="span5">
-			<ul class="media-grid">
-				<li>
-					<a href="{{baseurl}}{{profile_img_link}}">
-					<img src="{{baseurl}}{{profile_img_src}}" alt="" />
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- include '/template/footer' -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- include '{{header}}' -->
+	</head>
+	<body>
+		<!-- include '{{nav}}' -->
+		<div class="container">
+			<div class="row">
+				<div class="span9">
+					<div id="profile-container" class="well">
+					</div>
+				</div>
+				<div class="span3">
+					<div id="profile-picture">
+					</div>
+				</div>
+			</div><!--/row -->
+			<hr />
 
-<!-- Google Analytics -->
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try{
-var pageTracker = _gat._getTracker("UA-27701779-1");
-pageTracker._trackPageview();
-} catch(err) {}
-</script>
+			<!-- include '{{footer}}' -->
+		</div><!-- end container-fluid -->
+		<script>
+			$(function(){
+				
+				$.ajax({
+					type: 'GET',
+					url: '/profile/get',
+					success: function(data){
+						var image;
+						image = '<a href="'+ data[1][0] +'"><img src="/'+ data[1][1] +'" /></a>'; 
+						$('#profile-container').append(data[0]);
+						$('#profile-picture').append(image);
+					}
+				});
+				
+			});
+		</script>
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try{
+				var pageTracker = _gat._getTracker("UA-27701779-1");
+				pageTracker._trackPageview();
+			} catch(err) {}
+		</script>
+	</body>
+</html>

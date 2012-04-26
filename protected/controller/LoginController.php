@@ -30,11 +30,11 @@ class LoginController extends SessionController {
 						'status' => $rs->status,
 						'is_logged_in' => true
 					);
-					
+
 					//if remember me is selected
 					(isset($_POST['remember'])) ? $this->setRememberMe($username, $u->password) : false;
 					
-					$this->toJSON($rs->type, true);
+					$this->toJSON(Doo::conf()->APP_URL . $rs->type, true);
 					return 200;
 				}
 				else {

@@ -3,11 +3,41 @@
 class VideoController extends SessionController {
 
 	protected $per_page = 20;
-	protected $admin_per_page = 10;
 
-	public function video() {
+	public function createPager() {
+		$content = intval($this->params['content']);
 
-		$this->render('video');
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
+
+		$sql = array(
+			'select' => 'COUNT(video.video_id) / ? as num_of_item',
+			'where' => 'video.visible = 1',
+			'desc' => 'video.video_id',
+			'param' => array($content)
+		);
+		
+		$rs = Doo::db()->find('Video', $sql);
+		$page_number = doubleval($rs[0]->num_of_item);
+		
+		$page = $pagination->calculateExactPage($page_number);
+		$this->toJSON($page, true);
+	}
+	
+	public function makePagination(){
+		
+		$per_page = $this->params['page'];
+		$current_page = $this->params['id'];
+
+		$offset = ($current_page - 1) * $per_page;
+		$sql = array(
+			'select' => 'video.video_id, video.title',
+			'desc' => 'video.video_id',
+			'limit' => $offset . ', ' . $per_page
+		);
+
+		$rs = Doo::db()->find('Video', $sql);
+		$this->toJSON($rs, true, true);
 	}
 
 	public function countTotal() {
@@ -24,7 +54,7 @@ class VideoController extends SessionController {
 		$page = $pagination->calculateExactPage($page_number);
 		$this->toJSON($page, true);
 	}
-	
+
 	public function getPagination() {
 		if (!intval($this->params['page']) || $this->params['page'] < 1) {
 			return 404;
@@ -39,7 +69,6 @@ class VideoController extends SessionController {
 		$rs = $this->db()->fetchAll($sql);
 		$this->toJSON($rs, true);
 	}
-	
 
 	public function getVideoList() {
 		$rs = $this->db()->find('Video', array(
@@ -72,15 +101,9 @@ class VideoController extends SessionController {
 		Doo::loadController('PaginationController');
 	}
 
-
 //----------------------------------------------------------------//
 //------------------------ admin section -------------------------//
 //----------------------------------------------------------------//
-	public function editPage() {
-		$data = $this->templateData($this->checkRole() . '/video/edit');
-		$data["title"] = 'Edit | Video';
-		$this->view()->render('template/layout', $data, true);
-	}
 
 	public function adminSetPagination() {
 		if (intval($this->params['set']) < 1) {

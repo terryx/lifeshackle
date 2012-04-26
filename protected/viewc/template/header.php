@@ -9,3 +9,7 @@
 <link rel="stylesheet" href="/global/css/main.css?v=<?php echo $data['version']; ?>" />
 <link rel="stylesheet" href="/global/bootstrap/css/bootstrap.min.css?v=<?php echo $data['version']; ?>" />
 <link rel="stylesheet" href="/global/bootstrap/css/bootstrap-responsive.min.css?v=<?php echo $data['version']; ?>" />
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/jquery.js?v=<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/ejs.js?v=<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/bootstrap/js/bootstrap.min.js?v=<?php echo $data['version']; ?>"></script>
+<script type="text/javascript" src="<?php echo $data['baseurl']; ?>global/js/common.js?v=<?php echo $data['version']; ?>"></script>

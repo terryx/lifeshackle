@@ -3,7 +3,7 @@ body {
   background-color: #eee;
 }
 body {
-  padding-top: 20px;
+  padding-top: 60px;
   padding-bottom: 40px;
   min-height: 600px;
 }
@@ -22,29 +22,12 @@ body {
   min-width: 66px;
   height: 326px;
 }
-.clear {
-  clear: both;
-}
-.show {
-  display: block;
-}
-.hide {
-  display: none;
-}
 .error-page {
   background: url(../img/error-page.png) 50% 25% no-repeat #1173aa;
 }
 /*-------------- Video ---------------*/
-#modal-video {
-  padding-top: 40px;
-}
-#video-frame {
-  padding-top: 10px;
-  text-align: center;
-}
-.video-box {
+#video-list ul li {
   cursor: pointer;
-  padding: 5px;
 }
 /*------------- Status Update ------------*/
 #status-update-container {
@@ -153,28 +136,26 @@ li:hover span.zoom-in {
   cursor: pointer;
 }
 /*--------------- Article ----------------*/
-#article > hr {
-  padding-bottom: 30px;
-}
-#archive tbody tr {
+#article-list ul li {
   cursor: pointer;
 }
 .alert-row {
-  height: 68px;
+  height: 70px;
 }
-.main-panel {
+#main-panel {
   min-height: 400px;
-  padding: 10px;
   margin-bottom: 10px;
 }
 .well-white {
+  padding-top: 20px;
+  margin-bottom: 40px;
   background-color: #FFFFFF;
   border: 1px solid rgba(0, 25, 25, 0.05);
   border-radius: 8px 8px 8px 8px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) outset;
-  margin-bottom: 20px;
-  min-height: 20px;
-  padding: 19px 0 0;
+}
+.well-white .alert-block {
+  padding: 0 10px;
 }
 .well-white .form-actions {
   margin-bottom: 0;

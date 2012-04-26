@@ -6,11 +6,8 @@ var Video = {
 			type: 'GET',
 			url: '/video',
 			beforeSend: function(){
-//				$main.html('');
-//				Loader.show();
 			},
 			success: function(data){
-//				Loader.remove();
 				$main.html('');
 				$main.append(data);
 			},
@@ -76,7 +73,7 @@ var Video = {
 					str += '<ul class="thumbnails">';
 					for(var i=0, len=data.length; i<len; i++){
 						str += '<li class="span2">';	
-						str += '<a href="'+ data[i].k2 +'" class="thumbnail" target="_blank">';
+						str += '<a href="'+ data[i].k2 +'/" class="thumbnail" target="_blank">';
 						str += '<img src="'+ data[i].k3+'" alt="">'
 						str += '</a>';
 						str += '</li>';

@@ -3,45 +3,60 @@
 class ArticleController extends SessionController {
 
 	//global setting per page for visitor and admin
-	public $per_page = 2;
-	public $admin_per_page = 10;
 	private $file_path = 'global/file/';
 
-	public function editPage() {
-		$data = $this->templateData($this->checkRole() . '/article/edit');
+	public function listArticles() {
+		$sql = "SELECT article.article_id, article.title FROM article";
+		$sql .= " WHERE article.visible = 1 ORDER BY article.article_id DESC";
+		$rs = $this->db()->fetchAll($sql);
 
-		//overwrite some template array
-		$data['title'] = 'Edit | Article';
-		$this->view()->render('template/layout', $data, true);
-	}
-	
-	public function getArticle(){
-		$filter = $this->params['date'];
-		if (empty($filter)) {
-			return 404;
+		if ($rs) {
+			$this->toJSON($rs, true);
 		}
+	}
+
+	public function createPager() {
+		$content = intval($this->params['content']);
+
+		//how many sets per one page
+		Doo::loadController('PaginationController');
+		$pagination = new PaginationController();
 
 		$sql = array(
-			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
-			'where' => 'FROM_UNIXTIME(article.created, "%b-%Y") = ? AND visible = 1',
+			'select' => 'COUNT(article.article_id) / ? as num_of_item',
+			'where' => 'article.visible = 1',
 			'desc' => 'article.article_id',
-			'param' => array($filter)
+			'param' => array($content)
 		);
-		$rs = Doo::db()->find('Article', $sql);
 
-		foreach ($rs as $id) {
-			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
-			$id->k5 = $file;
-		}
-		$this->toJSON($rs, true, true);
-		
+		$rs = Doo::db()->find('Article', $sql);
+		$page_number = doubleval($rs[0]->num_of_item);
+
+		$page = $pagination->calculateExactPage($page_number);
+		$this->toJSON($page, true);
 	}
 
-	public function fetchArticle() {
+	public function makePagination() {
+
+		$per_page = $this->params['page'];
+		$current_page = $this->params['id'];
+
+		$offset = ($current_page - 1) * $per_page;
+		$sql = array(
+			'select' => 'article.article_id, article.title',
+			'desc' => 'article.article_id',
+			'limit' => $offset . ', ' . $per_page
+		);
+
+		$rs = Doo::db()->find('Article', $sql);
+		$this->toJSON($rs, true, true);
+	}
+
+	public function fetchArticles() {
 
 		$sql = array(
 			'limit' => '5',
-			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
+			'select' => 'article.article_id as id, article.title as title, article.created as created, article.last_edited as edited, article.tag as tag',
 			'where' => 'article.visible = 1',
 			'desc' => 'article.article_id'
 		);
@@ -49,9 +64,27 @@ class ArticleController extends SessionController {
 
 		//read txt file
 		foreach ($rs as $id) {
-			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
-			$id->k5 = $file;
+			if ($id->edited === '0') {
+				$id->date = 'Created on ' . date('j M Y, D g:i a', $id->created);
+			} else {
+				$id->date = 'Modified on ' . date('j M Y, D g:i a', $id->modified);
+			}
+
+			$file = file_get_contents($this->file_path . 'article_' . $id->id . '.txt');
+			$id->content = stripslashes($file);
+
+			$text = strip_tags($id->content);
+			$length = strlen($text);
+			$shortenText = substr($id->content, 0, 600);
+
+			if ($length > 600) {
+				$id->content = $shortenText . '.... <span><a href="/article/' . $id->id . '">view full text</a></span>';
+			}
+
+			unset($id->created);
+			unset($id->edited);
 		}
+
 		$this->toJSON($rs, true, true);
 	}
 
@@ -62,47 +95,35 @@ class ArticleController extends SessionController {
 			return 404;
 		}
 
-		Doo::loadModel('Article');
-		$a = new Article();
-		$a->article_id = $id;
-		$options = array(
-			'select' => 'article_id as k0, title as k1, created as k2, last_edited as k3, tag as k4, visible as k5'
-		);
-		$rs = $a->getOne($options);
-		if ($rs) {
-			$file = file_get_contents($this->file_path . 'article_' . $rs->k0 . '.txt');
-			$rs->k6 = $file;
-			$this->toJSON($rs, true, true);
-		}
-	}
-
-	public function archive() {
-		$sql = "SELECT FROM_UNIXTIME(article.created, '%M %Y') as k1";
-		$sql .= " FROM article GROUP BY k1";
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-
-	public function archiveDateFilter() {
-		$date = urldecode($this->params['date']);
-
-		if (empty($date)) {
-			return 404;
-		}
-
 		$sql = array(
-			'select' => 'article.article_id as k0, article.title as k1, article.created as k2, article.last_edited as k3, article.tag as k4',
-			'where' => 'FROM_UNIXTIME(article.created, "%M %Y") = ? AND visible = 1',
-			'desc' => 'article.article_id',
-			'param' => array($date)
+			'select' => 'article.article_id as id, article.title as title, article.created as created, article.last_edited as edited, article.tag as tag',
+			'where' => 'article.visible = 1 AND article.article_id = ?',
+			'param' => array($id)
 		);
 		$rs = Doo::db()->find('Article', $sql);
 
+		//read txt file
 		foreach ($rs as $id) {
-			$file = file_get_contents($this->file_path . 'article_' . $id->k0 . '.txt');
-			$id->k5 = $file;
+			if ($id->edited === '0') {
+				$id->date = 'Created on ' . date('j M Y, D g:i a', $id->created);
+			} else {
+				$id->date = 'Modified on ' . date('j M Y, D g:i a', $id->edited);
+			}
+
+			$file = file_get_contents($this->file_path . 'article_' . $id->id . '.txt');
+			$id->content = stripslashes($file);
+
+//			$text = strip_tags($id->content);
+//			$length = strlen($text);
+//			$shortenText = substr($id->content, 0, 600);
+//			if($length > 600){
+//				$id->content = $shortenText . '.... <span><a href="/article/'. $id->id .'">view full text</a></span>';
+//			}
+
+			unset($id->created);
+			unset($id->edited);
 		}
-		$this->toJSON($rs, true, true);
+		$this->toJSON($rs[0], true, true);
 	}
 
 	//------------------------------------//
@@ -112,64 +133,36 @@ class ArticleController extends SessionController {
 	 * 
 	 */
 
-	public function adminSetPagination() {
-		if (intval($this->params['set']) < 1) {
-			return 404;
-		}
-
-		//how many sets per one page
-		$per_page = intval($this->params['set']);
-		Doo::loadController('PaginationController');
-		$pagination = new PaginationController();
-
-		$sql = 'SELECT COUNT(article_id)/' . $per_page . ' as num_of_item FROM article ';
-		$rs = $this->db()->fetchAll($sql);
-		$page_number = doubleval($rs[0]['num_of_item']);
-
-		$page = $pagination->calculateExactPage($page_number);
-		$this->toJSON($page, true);
-	}
-
-	public function adminGetPagination() {
-		if (intval($this->params['page']) < 1) {
-			return 404;
-		}
-		$per_page = $this->admin_per_page;
-		$current_page = $this->params['page'];
-		$offset = ($current_page - 1) * $per_page;
-
-		$sql = 'SELECT article.article_id as k0, article.title as k1, article.created as k2, ';
-		$sql .= 'article.last_edited as k3 FROM article';
-		$sql .=' ORDER BY article.article_id DESC LIMIT ' . $offset . ', ' . $per_page;
-
-		$rs = $this->db()->fetchAll($sql);
-		$this->toJSON($rs, true);
-	}
-
 	public function saveArticle() {
-		$id = $_POST['article_id'];
-		$title = $this->xss($_POST['title']);
+		//TODO:: add security check for input
+
+		$id = $_POST['id'];
+		$title = $_POST['title'];
+		$tag = $_POST['tag'];
 
 		//check is content empty
-		$txtcontent = $_POST['txtcontent'];
-		if (empty($txtcontent)) {
+		$content = $_POST['content'];
+		if (empty($content)) {
 			$this->toJSON(array('failed', 'Content is empty'), true);
 			return 200;
 		}
 
-		$tag = $this->xss($_POST['tag']);
-
-		if (intval($_POST['article_id']) > 0) {
-			$this->updateArticle($id, $txtcontent, $title, $tag);
+		$data = array(
+			'id' => $id,
+			'title' => $title,
+			'content' => $content,
+			'tag' => $tag
+		);
+		
+		if (intval($id) > 0) {
+			$this->updateArticle($data);
 		} else {
-			$this->createArticle($txtcontent, $title, $tag);
+			$this->createArticle($data);
 		}
-
 		exit;
 	}
 
-	private function createArticle($txtcontent, $title='', $tag='') {
-
+	private function createArticle($data) {
 		//insert latest id
 		$latest_update_array = array(
 			'type' => 'article'
@@ -181,9 +174,9 @@ class ArticleController extends SessionController {
 
 		$now = time();
 		$article = array(
-			'title' => $title,
+			'title' => $data['title'],
 			'created' => $now,
-			'tag' => $tag,
+			'tag' => $data['tag'],
 			'visible' => 1,
 			'latest_id' => $last_insert_id
 		);
@@ -195,8 +188,8 @@ class ArticleController extends SessionController {
 		try {
 			$new_id = $a->insert();
 			$filename = 'article_' . $new_id . '.txt';
-			$output = file_put_contents($this->file_path . $filename, $this->escape_val($txtcontent));
-			$this->toJSON(array('created', $new_id, $title), true);
+			$output = file_put_contents($this->file_path . $filename, $this->escape_val($data['content']));
+			$this->toJSON(array('created', $new_id, $data['title']), true);
 			return 201;
 		} catch (PDOException $e) {
 			$a->rollBack();
@@ -205,22 +198,21 @@ class ArticleController extends SessionController {
 		exit;
 	}
 
-	private function updateArticle($id, $txtcontent, $title='', $tag='') {
-
+	private function updateArticle($data) {
 		$article = array(
-			'article_id' => $id,
-			'title' => $title,
+			'article_id' => $data['id'],
+			'title' => $data['title'],
 			'last_edited' => time(),
-			'tag' => $tag,
+			'tag' => $data['tag'],
 			'visible' => 1,
 		);
 		Doo::loadModel('Article');
 		$a = new Article($article);
 		try {
 			$a->update();
-			$filename = 'article_' . $id . '.txt';
-			$output = $output = file_put_contents($this->file_path . $filename, $this->escape_val($txtcontent));
-			$this->toJSON(array('updated', $id, $title), true);
+			$filename = 'article_' . $data['id'] . '.txt';
+			$output = $output = file_put_contents($this->file_path . $filename, $this->escape_val($data['content']));
+			$this->toJSON(array('updated', $data['id'], $data['title']), true);
 			return 200;
 		} catch (PDOException $e) {
 			$a->rollBack();
@@ -238,11 +230,11 @@ class ArticleController extends SessionController {
 			'where' => 'article.article_id = ?',
 			'param' => array($id)
 				));
-		
-		if($a){
+
+		if ($a) {
 			$title = $a->title;
 		}
-		
+
 		if ($a->count()) {
 			//get latest id
 			$la = $this->db()->find('LatestUpdate', array(
@@ -268,6 +260,16 @@ class ArticleController extends SessionController {
 			return 404;
 		}
 		exit;
+	}
+	
+	//helper function
+	//TODO:: move to a helper class
+	public function escape_val($val) {
+
+		if (get_magic_quotes_gpc()) {
+			$val = stripcslashes($val);
+		}
+		return $val;
 	}
 
 }
