@@ -1,0 +1,163 @@
+<div class="row">
+	<div class="span9">
+		<div id="video-container" class="well">
+			<form id="video-form" class="form-horizontal" method="post" action="/video/save">
+				<fieldset>
+					<input type="hidden" id="video_id" name="video_id" value="" />
+					<input type="hidden" id="title" name="title" value="" />
+					<input type="hidden" id="thumbnail" name="thumbnail" value="" />
+					<div class="control-group">
+						<label class="control-label" for="videolink">Video Link</label>
+						<div class="controls">
+							<input type="text" id="videolink" name="videolink" class="span6" />
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<ul id="video-content" class="thumbnails">
+								<li class="span4">
+
+								</li>
+							</ul>
+						</div>
+					</div>
+				</fieldset>
+				<hr />
+				<div class="alert-block"></div>
+				<div class="control-group">
+					<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#video-form-modal">Submit</button>
+					<button class="btn" type="reset">Cancel</button>
+				</div>
+
+				<div class="modal hide fade" id="video-form-modal">
+					<div class="modal-header">
+						<a class="close" data-dismiss="modal">x</a>
+						<h3>Modal header</h3>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure to save &#63;</p>
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save Changes</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="span3">
+		<div class="well">
+			<button id="new-video" class="btn btn-success">Post new</button>
+		</div>
+		<div class="pagination"></div>
+		<div id="video-list">
+		</div>
+	</div>
+</div>
+<script>
+	var Video = function Video(setting){
+		var default_setting = {
+			start: 1,
+			content: 1
+		};
+		
+		var $videoId = $('#video_id'),
+		$title = $('#title'),
+		$thumbnail = $('#thumbnail'),
+		$videolink = $('#videolink'),
+		$videolist = $('#video-list');
+		
+		setting = $.extend({}, default_setting, setting);
+		
+		var controller = {};
+		
+		controller.create_pager = function create_pager(setting){
+			var self = this;
+			var str = '';
+			
+			$.ajax({
+				type: 'GET',
+				url: '/video/create-pager/' + setting.content,
+				beforeSend: function(){
+					$('.pagination').html('');
+				},
+				success: function(data){
+					if(data){
+						str += '<ul>';
+						
+						for(var i=1; i<=data; i++){
+							str += '<li><a data-id="'+i+'" href="#">'+i+'</a></li>';
+						}
+						
+						str += '<ul>';
+					}
+					
+					$('.pagination').append(str);
+				},
+				complete: function(){
+					self.pager_onChange(setting.content);
+				}
+			});
+		}
+		
+		controller.pager_onChange = function pager_onChange(page){
+			var self = this;
+			var id = 0;
+			self.make_pagination(1, page);
+			
+			$('.pagination ul').children('li:eq(0)').addClass('active');
+			
+			$('.pagination ul').children('li').bind('click', function(e){
+				$('.pagination ul').children('li.active').removeClass('active');
+				
+				$(this).addClass('active');
+				id = $(e.target).data('id');
+				
+				self.make_pagination(id, page);
+			});
+		}
+		
+		controller.make_pagination = function make_pagination(id, page){
+			var self = this;
+			var str = '';
+			
+			$.ajax({
+				type: 'GET',
+				url: '/video/master/make-pagination/' + id + '/' + page,
+				beforeSend: function(){
+					$videolist.html('');
+				},
+				success: function(data){
+					if(data){
+						str += '<ul class="nav nav-pills nav-stacked">';
+								
+						for(var i=0, len=data.length; i<len; i++){
+									
+							str += '<li><a data-id="'+ data[i].video_id +'">'+ data[i].title +'</a></li>';
+						}
+								
+						str += '</ul>';
+								
+						$('#video-list').append(str);
+					}
+				}
+			});
+		}
+		
+		if(setting.content){
+			controller.create_pager(setting);
+		}
+		
+		return controller;
+	}
+	
+	$(function(){
+		Video({
+			start: 1,
+			content: 10
+		});
+	});
+	
+</script>
+</body>
+</html>
